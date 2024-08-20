@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/20 10:49:44 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/20 13:18:57 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,28 @@ typedef struct	s_img
 	int			endian;
 }				t_img;
 
+typedef struct	s_player
+{
+	float		x;
+	float		y;
+}				t_player;
+
+typedef struct	s_move
+{
+	bool		up;
+	bool		down;
+	bool		left;
+	bool		right;
+}				t_move;
 
 typedef struct	s_data
 {
 	void		*mlx;
 	void		*win;
 	t_img		img;
+	t_player	*player;
+	t_move		*move;
+	bool		created_player;
 	int			map[10][10];
 }				t_data;
 

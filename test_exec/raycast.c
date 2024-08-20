@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/20 10:49:39 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/20 13:25:58 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,22 @@ void	mini_parse(t_data *data, char *file)
 
 int	handle_keyrelease(int key, t_data *data)
 {
-	(void)data;
-	(void)key;
+	if (key == XK_Up)
+	{
+		data->move->up = false;
+	}
+	if (key == XK_Down)
+	{
+		data->move->down = false;
+	}
+	if (key == XK_Left)
+	{
+		data->move->left = false;
+	}
+	if (key == XK_Right)
+	{
+		data->move->right = false;
+	}
 	return (0);
 }
 
@@ -91,16 +105,17 @@ void draw_square(t_data *data, int x, int y, int coef, int color)
 
 // i want the player to be a little square in the middle of the square
 // it will be green
-void	create_player(t_data *data, int x, int y)
+void	draw_player(t_data *data)
 {
-	draw_square(data, x * COEF + COEF / 3, y * COEF + COEF / 3, COEF / 3, 0x0000FF00);
+	draw_square(data, data->player->x * COEF + (COEF / 2) - \
+			(PLAYER_SIZE / 2), data->player->y * COEF + (COEF / 2) - \
+			(PLAYER_SIZE / 2), PLAYER_SIZE, 0x0000FF00);
 }
 
 void	create_image(t_data *data)
 {
 	int 	i = 0;
 	int 	j = 0;
-	bool	created_player = false;
 
 	while (i < 10)
 	{
@@ -110,11 +125,15 @@ void	create_image(t_data *data)
 			// i want to scale the square by 30
 			if (data->map[i][j] == 1)
 				draw_square(data, i * COEF, j * COEF, COEF, 0x00FF0000);
-			if (data->map[i][j] == 0 && !created_player)
+			if (data->map[i][j] == 0 && !data->created_player)
 			{
-				create_player(data, i, j);
-				created_player = true;
+				data->player->x = i;
+				data->player->y = j;
+				draw_player(data);
+				data->created_player = true;
 			}
+			if (data->map[i][j] == 0 && data->created_player)
+				draw_player(data);
 			j++;
 		}
 		i++;
@@ -122,13 +141,54 @@ void	create_image(t_data *data)
 	mlx_put_image_to_window(data->mlx, data->win, data->img.img, 0, 0);
 }
 
+void	move_player(t_data *data)
+{
+	if (data->move->up == true)
+	{
+		data->player->y -= 0.1;
+	}
+	if (data->move->down == true)
+	{
+		data->player->y += 0.1;
+	}
+	if (data->move->left == true)
+	{
+		data->player->x -= 0.1;
+	}
+	if (data->move->right == true)
+	{
+		data->player->x += 0.1;
+	}
+}
+
 int	handle_keypressed(int key, t_data *data)
 {
 	if (key == XK_Escape)
-		return (0);
+	{
+		mlx_destroy_window(data->mlx, data->win);
+		exit(0);
+	}
+	if (key == XK_Up)
+	{
+		data->move->up = true;
+	}
+	if (key == XK_Down)
+	{
+		data->move->down = true;
+	}
+	if (key == XK_Left)
+	{
+		data->move->left = true;
+	}
+	if (key == XK_Right)
+	{
+		data->move->right = true;
+	}
+	move_player(data);
 	mlx_destroy_image(data->mlx, data->img.img);
 	data->img.img = mlx_new_image(data->mlx, HEIGHT, WIDTH);
 	create_image(data);
+	mlx_put_image_to_window(data->mlx, data->win, data->img.img, 0, 0);
 	return (0);
 }
 
@@ -138,17 +198,27 @@ int	handle_no_event(t_data *data)
 	return (0);
 }
 
+
 int	main(int ac, char **av)
 {
-	t_data	*data = NULL;
+	t_data		*data = NULL;
+	t_player	*player = NULL;
+	t_move		*move = NULL;
+	char 		*line = NULL;
 	data = malloc(sizeof(t_data));
+	player = malloc(sizeof(t_player));
+	move = malloc(sizeof(t_move));
+	data->player = player;
+	data->move = move;
 
 	if (ac != 2)
 	{
 		printf("Error\n");
 		return (0);
 	}
-	mini_parse(data, av[1]);
+	data->created_player = false;
+	line = ft_strdup(av[1]);
+	mini_parse(data, line);
 	data->mlx = mlx_init();
 	data->win = mlx_new_window(data->mlx, HEIGHT, WIDTH, "Cube3D");
 	data->img.img = mlx_new_image(data->mlx, HEIGHT, WIDTH);
