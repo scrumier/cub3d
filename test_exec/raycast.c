@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/20 13:25:58 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/20 16:49:47 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,9 +107,7 @@ void draw_square(t_data *data, int x, int y, int coef, int color)
 // it will be green
 void	draw_player(t_data *data)
 {
-	draw_square(data, data->player->x * COEF + (COEF / 2) - \
-			(PLAYER_SIZE / 2), data->player->y * COEF + (COEF / 2) - \
-			(PLAYER_SIZE / 2), PLAYER_SIZE, 0x0000FF00);
+	draw_square(data, data->player->x * COEF + (COEF / 2) - (PLAYER_SIZE / 2), data->player->y * COEF + (COEF / 2) - (PLAYER_SIZE / 2), PLAYER_SIZE, 0x0000FF00);
 }
 
 void	create_image(t_data *data)
@@ -141,23 +139,85 @@ void	create_image(t_data *data)
 	mlx_put_image_to_window(data->mlx, data->win, data->img.img, 0, 0);
 }
 
+int	float_to_int(float x)
+{
+	// i want if the number is 1.2 to return 2
+	// if the number is 1.6 to return 2
+	// if the number is 1.5 to return 2
+
+	if (x - (int)x > 0.5)
+		return ((int)x + 1);
+	return ((int)x);
+
+}
+
+bool	up_is_valid_chunk(t_data *data)
+{
+	int x = float_to_int(data->player->x);
+	int y = float_to_int(data->player->y - 0.2);
+
+	if (data->map[x][y] == 1)
+		return (false);
+	return (true);
+}
+
+bool	down_is_valid_chunk(t_data *data)
+{
+	int x = float_to_int(data->player->x);
+	int y = float_to_int(data->player->y + 0.2);
+
+	if (data->map[x][y] == 1)
+		return (false);
+	return (true);
+}
+
+bool	left_is_valid_chunk(t_data *data)
+{
+	int x = float_to_int(data->player->x - 0.2);
+	int y = float_to_int(data->player->y);
+
+	if (data->map[x][y] == 1)
+		return (false);
+	return (true);
+}
+
+bool	right_is_valid_chunk(t_data *data)
+{
+	int x = float_to_int(data->player->x + 0.3);
+	int y = float_to_int(data->player->y);
+
+	if (data->map[x	][y] == 1)
+		return (false);
+	return (true);
+}
+
 void	move_player(t_data *data)
 {
+
+	if (data->player->x < 0 || data->player->x > 9 || data->player->y < 0 || data->player->y > 9)
+	{
+		data->created_player = false;
+		return ;
+	}
 	if (data->move->up == true)
 	{
-		data->player->y -= 0.1;
+		if (up_is_valid_chunk(data) == true)
+			data->player->y -= 0.1;
 	}
 	if (data->move->down == true)
 	{
-		data->player->y += 0.1;
+		if (down_is_valid_chunk(data) == true)
+			data->player->y += 0.1;
 	}
 	if (data->move->left == true)
 	{
-		data->player->x -= 0.1;
+		if (left_is_valid_chunk(data) == true)
+			data->player->x -= 0.1;
 	}
 	if (data->move->right == true)
 	{
-		data->player->x += 0.1;
+		if (right_is_valid_chunk(data) == true)
+			data->player->x += 0.1;
 	}
 }
 
