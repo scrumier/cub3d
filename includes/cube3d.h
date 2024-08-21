@@ -13,9 +13,28 @@
 #ifndef CUBE3D_H
 # define CUBE3D_H
 
-# include <mlx.h>
+# ifdef __APPLE__
+#  include "../mlx_mac/mlx.h"
+# elif __linux__
+#  include "../mlx_linux/mlx.h"
+# endif
 # include "libft.h"
+# ifdef __APPLE__
+#  define KEY_ESC 53
+#  define KEY_S   1
+#  define KEY_A   0
+#  define KEY_W   13
+#  define KEY_D   2
+#  define KEY_LEFT 123
+#  define KEY_RIGHT 124
+#elif __linux__
 # include <X11/keysym.h>
+    #define KEY_ESC XK_Escape
+    #define KEY_A   XK_a
+    #define KEY_S   XK_s
+    #define KEY_D   XK_d
+    #define KEY_W   XK_w
+#endif
 # include <math.h>
 # include <stdio.h>
 # include <stdlib.h>
@@ -36,7 +55,7 @@
 # define PLAYER_ROTATE 0.1
 # define PI 3.14159265359
 # define FOV 95
-# define RAYS 10
+# define RAYS 200
 # define RENDER_DISTANCE 1000
 
 typedef struct s_line

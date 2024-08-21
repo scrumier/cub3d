@@ -69,27 +69,27 @@ void	mini_parse(t_data *data, char *file)
 
 int	handle_keyrelease(int key, t_data *data)
 {
-	if (key == XK_Up)
+	if (key == KEY_W)
 	{
 		data->move->up = false;
 	}
-	if (key == XK_Down)
+	if (key == KEY_S)
 	{
 		data->move->down = false;
 	}
-	if (key == XK_Left)
+	if (key == KEY_A)
 	{
 		data->move->left = false;
 	}
-	if (key == XK_Right)
+	if (key == KEY_D)
 	{
 		data->move->right = false;
 	}
-	if (key == XK_a)
+	if (key == KEY_LEFT)
 	{
 		data->move->turn_left = false;
 	}
-	if (key == XK_d)
+	if (key == KEY_RIGHT)
 	{
 		data->move->turn_right = false;
 	}
@@ -100,50 +100,18 @@ void draw_square(t_data *data, int x, int y, int coef, int color)
 {
 	int i = 0;
 	int j = 0;
+	(void)color;
+	(void)data;
+	(void)x;
+	(void)y;
+
 
 	while (i < coef)
 	{
 		j = 0;
 		while (j < coef)
 		{
-			my_mlx_pixel_put(data, x + i, y + j, color);
-			j++;
-		}
-		i++;
-	}
-}
-
-void	draw_view_angle(t_data *data)
-{
-	t_line line;
-	int i;
-	int j;
-
-	line.x = data->player->x * COEF + (COEF / 2);
-	line.y = data->player->y * COEF + (COEF / 2);
-	line.angle = data->player->player_angle;
-	line.x1 = line.x + 30 * cos(line.angle);
-	line.y1 = line.y + 30 * sin(line.angle);
-	i = 0;
-	j = 0;
-	while (i < 30)
-	{
-		j = 0;
-		while (j < 30)
-		{
-			my_mlx_pixel_put(data, line.x + i, line.y + j, 0x00FFFFFF);
-			j++;
-		}
-		i++;
-	}
-	i = 0;
-	j = 0;
-	while (i < 30)
-	{
-		j = 0;
-		while (j < 30)
-		{
-			my_mlx_pixel_put(data, line.x1 + i, line.y1 + j, 0x00FFFFFF);
+			//my_mlx_pixel_put(data, x + i, y + j, color);
 			j++;
 		}
 		i++;
@@ -276,7 +244,7 @@ float	draw_line(int x0, int y0, int x1, int y1, t_data *data)
 	{
 		if (data->map[ft_abs(bresenham.x0) / COEF][ft_abs(bresenham.y0) / COEF] == '1')
 			return (sqrt(pow(bresenham.x0 - x0, 2) + pow(bresenham.y0 - y0, 2)));
-		my_mlx_pixel_put(data, bresenham.x0, bresenham.y0, 0x00FFFFFF);
+		//my_mlx_pixel_put(data, bresenham.x0, bresenham.y0, 0x00FFFFFF);
 		bresenham.x0 += bresenham.xinc;
 		bresenham.y0 += bresenham.yinc;
 		i++;
@@ -292,7 +260,7 @@ float	find_angle()
 	return (rad / RAYS);
 }
 
-void	draw_rays(t_data *data)
+void	parse_rays(t_data *data)
 {
 	t_ray ray;
 	int ray_nbr;
@@ -310,7 +278,16 @@ void	draw_rays(t_data *data)
 		ray.yo = ray.ry;
 		ray.rx += RENDER_DISTANCE * cos(ray.ra);
 		ray.ry += RENDER_DISTANCE * sin(ray.ra);
-		data->ray_len[ray_nbr] = draw_line(ray.xo, ray.yo, ray.rx, ray.ry, data);
+		data->ray_len[ray_nbr] = draw_line(ray.xo, ray.yo, ray.rx, ray.ry, data)
+		float line_height = HEIGHT * 20 / data->ray_len[ray_nbr];
+		float line_start = (WIDTH / 2) - (line_height / 2);
+		int i = 0;
+		while (i < line_height)
+		{
+			if (ray_nbr * (WIDTH / RAYS) < WIDTH && i + line_start < HEIGHT)
+				my_mlx_pixel_put(data, ray_nbr * (WIDTH / RAYS), i + line_start, 0x00FFFFFF);
+			i++;
+		}
 		ray.ra += ray_angle;
 		ray_nbr++;
 	}
@@ -329,8 +306,8 @@ void	print_tab(float *tab)
 
 void	draw_player(t_data *data)
 {
-	draw_square(data, data->player->x * COEF + (COEF / 2) - (PLAYER_SIZE / 2), data->player->y * COEF + (COEF / 2) - (PLAYER_SIZE / 2), PLAYER_SIZE, 0x0000FF00);
-	draw_rays(data);
+	//draw_square(data, data->player->x * COEF + (COEF / 2) - (PLAYER_SIZE / 2), data->player->y * COEF + (COEF / 2) - (PLAYER_SIZE / 2), PLAYER_SIZE, 0x0000FF00);
+	parse_rays(data);
 }
 
 void	create_image(t_data *data)
@@ -358,7 +335,6 @@ void	create_image(t_data *data)
 		}
 		i++;
 	}
-	mlx_put_image_to_window(data->mlx, data->win, data->img.img, 0, 0);
 }
 
 int	float_to_int(float x)
@@ -453,32 +429,32 @@ void	move_player(t_data *data)
 
 int	handle_keypressed(int key, t_data *data)
 {
-	if (key == XK_Escape)
+	if (key == KEY_ESC)
 	{
 		mlx_destroy_window(data->mlx, data->win);
 		exit(0);
 	}
-	if (key == XK_Up)
+	if (key == KEY_W)
 	{
 		data->move->up = true;
 	}
-	if (key == XK_Down)
+	if (key == KEY_S)
 	{
 		data->move->down = true;
 	}
-	if (key == XK_Left)
+	if (key == KEY_A)
 	{
 		data->move->left = true;
 	}
-	if (key == XK_Right)
+	if (key == KEY_D)
 	{
 		data->move->right = true;
 	}
-	if (key == XK_a)
+	if (key == KEY_LEFT)
 	{
 		data->move->turn_left = true;
 	}
-	if (key == XK_d)
+	if (key == KEY_RIGHT)
 	{
 		data->move->turn_right = true;
 	}
@@ -523,10 +499,10 @@ int	main(int ac, char **av)
 	data->img.addr = mlx_get_data_addr(data->img.img, &data->img.bpp, &data->img.line_len, &data->img.endian);
 	data->player->player_angle = PI;
 	create_image(data);
+	mlx_put_image_to_window(data->mlx, data->win, data->img.img, 0, 0);
 	mlx_loop_hook(data->mlx, handle_no_event, data);
 	mlx_hook(data->win, KEYPRESS, KEYPRESSMASK, &handle_keypressed, data);
 	mlx_hook(data->win, KEYREALASE, KEYRELEASEMASK, &handle_keyrelease, data);
 	mlx_loop(data->mlx);
-	mlx_destroy_display(data->mlx);
 	return (0);
 }
