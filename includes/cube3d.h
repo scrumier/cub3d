@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/21 17:40:35 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/21 18:06:17 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@
 # define PLAYER_ROTATE 0.1
 # define PI 3.14159265359
 # define FOV 95
-# define RAYS 2000
+# define RAYS 10
 # define RENDER_DISTANCE 1000
 
 typedef struct s_line
@@ -117,6 +117,7 @@ typedef struct	s_data
 	char		map[10][10];
 	int			mapX;
 	int			mapY;
+	float		ray_len[RAYS];
 }				t_data;
 
 #endif

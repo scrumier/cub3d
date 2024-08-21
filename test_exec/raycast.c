@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/21 17:39:51 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/21 18:11:54 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,7 +236,7 @@ bool	is_looking_right(t_data *data)
 	return (false);
 }
 
-void	draw_line(int x0, int y0, int x1, int y1, t_data *data)
+float	draw_line(int x0, int y0, int x1, int y1, t_data *data)
 {
 	t_bresenham bresenham;
 	int i;
@@ -275,19 +275,19 @@ void	draw_line(int x0, int y0, int x1, int y1, t_data *data)
 	while (i < bresenham.steps)
 	{
 		if (data->map[ft_abs(bresenham.x0) / COEF][ft_abs(bresenham.y0) / COEF] == '1')
-			return ;
+			return (sqrt(pow(bresenham.x0 - x0, 2) + pow(bresenham.y0 - y0, 2)));
 		my_mlx_pixel_put(data, bresenham.x0, bresenham.y0, 0x00FFFFFF);
 		bresenham.x0 += bresenham.xinc;
 		bresenham.y0 += bresenham.yinc;
 		i++;
 	}
+	return (sqrt(pow(bresenham.x0 - x0, 2) + pow(bresenham.y0 - y0, 2)));
 }
 
 float	find_angle()
 {
 	float rad;
 
-	// convert angle to radian
 	rad = FOV * PI / 180;
 	return (rad / RAYS);
 }
@@ -310,27 +310,26 @@ void	draw_rays(t_data *data)
 		ray.yo = ray.ry;
 		ray.rx += RENDER_DISTANCE * cos(ray.ra);
 		ray.ry += RENDER_DISTANCE * sin(ray.ra);
-		draw_line(ray.xo, ray.yo, ray.rx, ray.ry, data);
+		data->ray_len[ray_nbr] = draw_line(ray.xo, ray.yo, ray.rx, ray.ry, data);
 		ray.ra += ray_angle;
 		ray_nbr++;
 	}
 }
-	//while (ray.dof < FOV / 6)
-	//{
-	//	ray.rx = data->player->x * COEF + (COEF / 2);
-	//	ray.ry = data->player->y * COEF + (COEF / 2);
-	//	ray.xo = ray.rx;
-	//	ray.yo = ray.ry;
-	//	ray.rx += RENDER_DISTANCE * cos(ray.ra);
-	//	ray.ry += RENDER_DISTANCE * sin(ray.ra);
-	//	ray.dof++;
-	//	draw_line(ray.xo, ray.yo, ray.rx, ray.ry, data);
-	//	ray.ra += PI / 30;
-	//}
+
+void	print_tab(float *tab)
+{
+	int i = 0;
+
+	while (i < RAYS)
+	{
+		printf("Ray[%i] = %f\n", i, tab[i]);
+		i++;
+	}
+}
+
 void	draw_player(t_data *data)
 {
 	draw_square(data, data->player->x * COEF + (COEF / 2) - (PLAYER_SIZE / 2), data->player->y * COEF + (COEF / 2) - (PLAYER_SIZE / 2), PLAYER_SIZE, 0x0000FF00);
-	draw_line(data->player->x * COEF + (COEF / 2), data->player->y * COEF + (COEF / 2), data->player->x * COEF + (COEF / 2) + data->player->pdx, data->player->y * COEF + (COEF / 2) + data->player->pdy, data);
 	draw_rays(data);
 }
 
