@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/21 18:06:17 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/22 11:11:43 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@
     #define KEY_S   XK_s
     #define KEY_D   XK_d
     #define KEY_W   XK_w
+	#define KEY_LEFT XK_Left
+	#define KEY_RIGHT XK_Right
 #endif
 # include <math.h>
 # include <stdio.h>
@@ -55,7 +57,7 @@
 # define PLAYER_ROTATE 0.1
 # define PI 3.14159265359
 # define FOV 95
-# define RAYS 200
+# define RAYS 20
 # define RENDER_DISTANCE 1000
 
 typedef struct s_line

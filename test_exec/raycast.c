@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/21 18:11:54 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/22 11:10:59 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,14 +278,18 @@ void	parse_rays(t_data *data)
 		ray.yo = ray.ry;
 		ray.rx += RENDER_DISTANCE * cos(ray.ra);
 		ray.ry += RENDER_DISTANCE * sin(ray.ra);
-		data->ray_len[ray_nbr] = draw_line(ray.xo, ray.yo, ray.rx, ray.ry, data)
+		data->ray_len[ray_nbr] = draw_line(ray.xo, ray.yo, ray.rx, ray.ry, data);
 		float line_height = HEIGHT * 20 / data->ray_len[ray_nbr];
 		float line_start = (WIDTH / 2) - (line_height / 2);
 		int i = 0;
 		while (i < line_height)
 		{
+			int n = -1;
 			if (ray_nbr * (WIDTH / RAYS) < WIDTH && i + line_start < HEIGHT)
-				my_mlx_pixel_put(data, ray_nbr * (WIDTH / RAYS), i + line_start, 0x00FFFFFF);
+			{
+				while (++n < WIDTH / RAYS)
+					my_mlx_pixel_put(data, ray_nbr * (WIDTH / RAYS) + n, i + line_start, 0x00FFFFFF);
+			}
 			i++;
 		}
 		ray.ra += ray_angle;
