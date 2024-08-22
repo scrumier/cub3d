@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/22 11:11:43 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/22 11:54:54 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,13 @@
 # define KEYREALASE 3
 # define HEIGHT 800
 # define WIDTH 800
-# define COEF 60
+# define COEF 15
 # define PLAYER_SIZE 10
 # define PLAYER_SPEED 0.1
 # define PLAYER_ROTATE 0.1
 # define PI 3.14159265359
 # define FOV 95
-# define RAYS 20
+# define RAYS 100
 # define RENDER_DISTANCE 1000
 
 typedef struct s_line
@@ -119,10 +119,8 @@ typedef struct	s_player
 
 typedef struct	s_move
 {
-	bool		up;
-	bool		down;
-	bool		left;
-	bool		right;
+	bool		forward;
+	bool		backward;
 	bool		turn_left;
 	bool		turn_right;
 }				t_move;
