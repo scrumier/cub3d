@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/22 18:25:43 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/22 20:04:02 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ typedef struct s_ray
 	double yo;
 	double dstx;
 	double dsty;
+	int	color;
 }				t_ray;
 
 typedef struct s_coord

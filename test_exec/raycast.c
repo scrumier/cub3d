@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/22 19:31:13 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/22 20:31:39 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,6 +177,44 @@ void	bresenham(t_data *data)
 	}
 }
 
+int	find_wall_facing(t_data *data, t_ray *ray)
+{
+	(void)data;
+	double wall_center_x = (double)double_to_int(ray->dstx) + 0.5;
+	double wall_center_y = (double)double_to_int(ray->dsty) + 0.5;
+	double x = ray->dstx - wall_center_x;
+	double y = ray->dsty - wall_center_y;
+	int north = 0;
+	int south = 0;
+	int east = 0;
+	int west = 0;
+
+	while (ray->dstx)
+	if (north < south && north < east && north < west)
+		return (1);
+	if (south < north && south < east && south < west)
+		return (2);
+	if (east < north && east < south && east < west)
+		return (3);
+	if (west < north && west < south && west < east)
+		return (4);
+	return (0);
+}
+
+int	find_ray_color(t_data *data, t_ray *ray)
+{
+	int face = find_wall_facing(data, ray);
+	if (face == 1) // purple
+		return (0x00FF00FF);
+	else if (face == 2) // red
+		return (0x00FF0033);
+	else if (face == 3) // blue
+		return (0x007777FF);
+	else if (face == 4) // green
+		return (0x0044FF44);
+	return (0x00000000);
+}
+
 double	draw_line(t_ray *ray, t_data *data, int mode)
 {
 	t_bresenham bresenham;
@@ -222,11 +260,15 @@ double	draw_line(t_ray *ray, t_data *data, int mode)
 			return (sqrt(pow(bresenham.x0 - ray->xo, 2) + pow(bresenham.y0 - ray->yo, 2)));
 		}
 		if (mode == 1)
-			my_mlx_pixel_put(data, bresenham.x0, bresenham.y0, 0x00FFFFFF);
+		{
+			my_mlx_pixel_put(data, bresenham.x0, bresenham.y0, ray->color);
+		}
 		bresenham.x0 += bresenham.xinc;
 		bresenham.y0 += bresenham.yinc;
 		i++;
 	}
+	ray->dstx = bresenham.x0;
+	ray->dsty = bresenham.y0;
 	return (sqrt(pow(bresenham.x0 - ray->xo, 2) + pow(bresenham.y0 - ray->ry, 2)));
 }
 
@@ -248,75 +290,6 @@ int	round_double(double x)
 	return (result - 1);
 }
 
-int	find_wall_facing(t_data *data, t_ray ray)
-{
-	(void)data;
-	t_coord coord;
-	int north = 0;
-	int south = 0;
-	int east = 0;
-	int west = 0;
-	coord.x = ray.dstx / COEF;
-	coord.y = ray.dsty / COEF;
-
-	if (coord.x == 0 && coord.y == 0)
-		return (0);
-	while (coord.x >= 0 && coord.y >= 0 && coord.x < 10 && coord.y < 10 && data->map[double_to_int(coord.x)][double_to_int(coord.y)] == '0')
-	{
-		coord.x += cos(PI / 2);
-		coord.y += sin(PI / 2);
-		north++;
-	}
-	coord.x = ray.dstx / COEF;
-	coord.y = ray.dsty / COEF;
-	while (coord.x >= 0 && coord.y >= 0 && coord.x < 10 && coord.y < 10 && data->map[double_to_int(coord.x)][double_to_int(coord.y)] == '0')
-	{
-		coord.x -= cos(PI / 2);
-		coord.y -= sin(PI / 2);
-		south++;
-	}
-	coord.x = ray.dstx / COEF;
-	coord.y = ray.dsty / COEF;
-	while (coord.x >= 0 && coord.y >= 0 && coord.x < 10 && coord.y < 10 && data->map[double_to_int(coord.x)][double_to_int(coord.y)] == '0')
-	{
-		coord.x += cos(PI);
-		coord.y += sin(PI);
-		east++;
-	}
-	coord.x = ray.dstx / COEF;
-	coord.y = ray.dsty / COEF;
-	while (coord.x >= 0 && coord.y >= 0 && coord.x < 10 && coord.y < 10 && data->map[double_to_int(coord.x)][double_to_int(coord.y)] == '0')
-	{
-		coord.x -= cos(PI);
-		coord.y -= sin(PI);
-		west++;
-	}
-	if (north < south && north < east && north < west)
-		return (1);
-	if (south < north && south < east && south < west)
-		return (2);
-	if (east < north && east < south && east < west)
-		return (3);
-	if (west < north && west < south && west < east)
-		return (4);
-	return (0);
-}
-
-int	find_ray_color(t_data *data, t_ray ray)
-{
-	(void)data;
-	(void)ray;
-	int face = find_wall_facing(data, ray);
-	if (face == 1) // purple
-		return (0x00FF00FF);
-	else if (face == 2) // red
-		return (0x00FF0033);
-	else if (face == 3) // blue
-		return (0x007777FF);
-	else if (face == 4) // green
-		return (0x0044FF44);
-	return (0x00000000);
-}
 
 void	print_minimap(t_data *data, int mode)
 {
@@ -360,7 +333,6 @@ void	parse_rays(t_data *data)
 	t_ray ray;
 	int ray_nbr;
 	double ray_angle;
-	int color = 0x0000FF00;
 
 	ray.ra = data->player->player_angle;
 	ray.dof = 0;
@@ -370,29 +342,28 @@ void	parse_rays(t_data *data)
 	{
 		ray.rx = data->player->x * COEF + (COEF / 2);
 		ray.ry = data->player->y * COEF + (COEF / 2);
-		ray.xo = ray.rx;
-		ray.yo = ray.ry;
+		ray.xo = ray.rx + 1;
+		ray.yo = ray.ry + 1;
 		ray.rx += RENDER_DISTANCE * cos(ray.ra);
 		ray.ry += RENDER_DISTANCE * sin(ray.ra);
-		data->ray_len[ray_nbr] = draw_line(&ray, data, 1);
 		//remove fish eye effect
-		double line_height = HEIGHT * COEF3D / data->ray_len[ray_nbr];
 		double angle = ray.ra - (data->player->player_angle + deg_to_rad(FOV / 2));
 		if (angle < 0)
 			angle += 2 * PI;
-		if (angle > PI)
-			angle = 2 * PI - angle;
+		if (angle > 2 * PI)
+			angle -= 2 * PI;
+		data->ray_len[ray_nbr] = draw_line(&ray, data, 1);
+		double line_height = HEIGHT * COEF3D / data->ray_len[ray_nbr];
 		double line_start = (WIDTH / 2) - (line_height / 2);
-		line_start *= cos(angle);
 		int i = 0;
-		color = find_ray_color(data, ray);
+		ray.color = find_ray_color(data, &ray);
 		while (i < line_height)
 		{
 			int n = -1;
 			if (ray_nbr * (double)(WIDTH / RAYS) < WIDTH && i + line_start < HEIGHT)
 			{
 				while (++n < (double)(WIDTH / RAYS))
-					my_mlx_pixel_put(data, ray_nbr * (double)(WIDTH / RAYS) + n, i + line_start, color);
+					my_mlx_pixel_put(data, ray_nbr * (double)(WIDTH / RAYS) + n, i + line_start, ray.color);
 			}
 			i++;
 		}
