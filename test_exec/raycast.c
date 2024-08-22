@@ -6,11 +6,18 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/22 12:04:24 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/22 19:31:13 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3d.h"
+
+int	double_to_int(double x)
+{
+	if (x - (int)x > 0.5)
+		return ((int)x + 1);
+	return ((int)x);
+}
 
 void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {
@@ -66,7 +73,7 @@ void	mini_parse(t_data *data, char *file)
 		line = get_next_line(fd);
 		i++;
 	}
-	print_map(data->map);
+	
 }
 
 int	handle_keyrelease(int key, t_data *data)
@@ -148,8 +155,8 @@ void init_bresenham(t_data *data, t_bresenham *bresenham)
 		bresenham->steps = bresenham->dx;
 	else
 		bresenham->steps = bresenham->dy;
-	bresenham->xinc *= (float)bresenham->dx / bresenham->steps;
-	bresenham->yinc *= (float)bresenham->dy / bresenham->steps;
+	bresenham->xinc *= (double)bresenham->dx / bresenham->steps;
+	bresenham->yinc *= (double)bresenham->dy / bresenham->steps;
 	bresenham->x0 = bresenham->x;
 	bresenham->y0 = bresenham->y;
 }
@@ -170,44 +177,16 @@ void	bresenham(t_data *data)
 	}
 }
 
-bool	is_looking_up(int ray_angle)
-{
-	if (ray_angle > 0 && ray_angle < PI)
-		return (true);
-	return (false);
-}
-
-bool	is_looking_down(int ray_angle)
-{
-	if (ray_angle > PI && ray_angle < 2 * PI)
-		return (true);
-	return (false);
-}
-
-bool	is_looking_left(int ray_angle)
-{
-	if (ray_angle > 3 * PI / 2 || ray_angle < PI / 2)
-		return (true);
-	return (false);
-}
-
-bool	is_looking_right(int ray_angle)
-{
-	if (ray_angle > PI / 2 && ray_angle < 3 * PI / 2)
-		return (true);
-	return (false);
-}
-
-float	draw_line(int x0, int y0, int x1, int y1, t_data *data)
+double	draw_line(t_ray *ray, t_data *data, int mode)
 {
 	t_bresenham bresenham;
 	int i;
 
 	i = 0;
-	bresenham.x = x0;
-	bresenham.y = y0;
-	bresenham.x1 = x1;
-	bresenham.y1 = y1;
+	bresenham.x = ray->xo;
+	bresenham.y = ray->yo;
+	bresenham.x1 = ray->rx;
+	bresenham.y1 = ray->ry;
 	bresenham.dx = bresenham.x1 - bresenham.x;
 	bresenham.dy = bresenham.y1 - bresenham.y;
 	if (bresenham.dx < 0)
@@ -230,88 +209,157 @@ float	draw_line(int x0, int y0, int x1, int y1, t_data *data)
 		bresenham.steps = bresenham.dx;
 	else
 		bresenham.steps = bresenham.dy;
-	bresenham.xinc *= (float)bresenham.dx / bresenham.steps;
-	bresenham.yinc *= (float)bresenham.dy / bresenham.steps;
+	bresenham.xinc *= (double)bresenham.dx / bresenham.steps;
+	bresenham.yinc *= (double)bresenham.dy / bresenham.steps;
 	bresenham.x0 = bresenham.x;
 	bresenham.y0 = bresenham.y;
 	while (i < bresenham.steps)
 	{
 		if (data->map[ft_abs(bresenham.x0) / COEF][ft_abs(bresenham.y0) / COEF] == '1')
-			return (sqrt(pow(bresenham.x0 - x0, 2) + pow(bresenham.y0 - y0, 2)));
-		my_mlx_pixel_put(data, bresenham.x0, bresenham.y0, 0x00FFFFFF);
+		{
+			ray->dstx = bresenham.x0;
+			ray->dsty = bresenham.y0;
+			return (sqrt(pow(bresenham.x0 - ray->xo, 2) + pow(bresenham.y0 - ray->yo, 2)));
+		}
+		if (mode == 1)
+			my_mlx_pixel_put(data, bresenham.x0, bresenham.y0, 0x00FFFFFF);
 		bresenham.x0 += bresenham.xinc;
 		bresenham.y0 += bresenham.yinc;
 		i++;
 	}
-	return (sqrt(pow(bresenham.x0 - x0, 2) + pow(bresenham.y0 - y0, 2)));
+	return (sqrt(pow(bresenham.x0 - ray->xo, 2) + pow(bresenham.y0 - ray->ry, 2)));
 }
 
-float	find_angle()
+double	find_angle()
 {
-	float rad;
+	double rad;
 
 	rad = FOV * PI / 180;
 	return (rad / RAYS);
 }
 
-bool	wall_face_north(t_data *data, t_ray ray)
+int	round_double(double x)
 {
-	if (is_looking_up(ray.ra))
-	{
-		if (data->map[(int)ray.rx / COEF][(int)ray.ry / COEF] == '1')
-			return (true);
-	}
-	return (false);
+	int result;
+
+	result = (int)x;
+	if (x > result)
+		return (result);
+	return (result - 1);
 }
 
-bool	wall_face_south(t_data *data, t_ray ray)
+int	find_wall_facing(t_data *data, t_ray ray)
 {
-	if (is_looking_down(ray.ra))
+	(void)data;
+	t_coord coord;
+	int north = 0;
+	int south = 0;
+	int east = 0;
+	int west = 0;
+	coord.x = ray.dstx / COEF;
+	coord.y = ray.dsty / COEF;
+
+	if (coord.x == 0 && coord.y == 0)
+		return (0);
+	while (coord.x >= 0 && coord.y >= 0 && coord.x < 10 && coord.y < 10 && data->map[double_to_int(coord.x)][double_to_int(coord.y)] == '0')
 	{
-		if (data->map[(int)ray.rx / COEF][(int)ray.ry / COEF] == '1')
-			return (true);
+		coord.x += cos(PI / 2);
+		coord.y += sin(PI / 2);
+		north++;
 	}
-	return (false);
+	coord.x = ray.dstx / COEF;
+	coord.y = ray.dsty / COEF;
+	while (coord.x >= 0 && coord.y >= 0 && coord.x < 10 && coord.y < 10 && data->map[double_to_int(coord.x)][double_to_int(coord.y)] == '0')
+	{
+		coord.x -= cos(PI / 2);
+		coord.y -= sin(PI / 2);
+		south++;
+	}
+	coord.x = ray.dstx / COEF;
+	coord.y = ray.dsty / COEF;
+	while (coord.x >= 0 && coord.y >= 0 && coord.x < 10 && coord.y < 10 && data->map[double_to_int(coord.x)][double_to_int(coord.y)] == '0')
+	{
+		coord.x += cos(PI);
+		coord.y += sin(PI);
+		east++;
+	}
+	coord.x = ray.dstx / COEF;
+	coord.y = ray.dsty / COEF;
+	while (coord.x >= 0 && coord.y >= 0 && coord.x < 10 && coord.y < 10 && data->map[double_to_int(coord.x)][double_to_int(coord.y)] == '0')
+	{
+		coord.x -= cos(PI);
+		coord.y -= sin(PI);
+		west++;
+	}
+	if (north < south && north < east && north < west)
+		return (1);
+	if (south < north && south < east && south < west)
+		return (2);
+	if (east < north && east < south && east < west)
+		return (3);
+	if (west < north && west < south && west < east)
+		return (4);
+	return (0);
 }
 
-bool	wall_face_east(t_data *data, t_ray ray)
+int	find_ray_color(t_data *data, t_ray ray)
 {
-	if (is_looking_right(ray.ra))
-	{
-		if (data->map[(int)ray.rx / COEF][(int)ray.ry / COEF] == '1')
-			return (true);
-	}
-	return (false);
-}
-
-bool	wall_face_west(t_data *data, t_ray ray)
-{
-	if (is_looking_left(ray.ra))
-	{
-		if (data->map[ft_abs(ray.rx) / COEF][ft_abs(ray.ry) / COEF] == '1')
-			return (true);
-	}
-	return (false);
-}
-
-int	find_wall_color(t_data *data, t_ray ray)
-{
-	if (wall_face_north(data, ray))
-		return (0x00FF0000);
-	if (wall_face_south(data, ray))
-		return (0x0000FF00);
-	if (wall_face_east(data, ray))
-		return (0x000000FF);
-	if (wall_face_west(data, ray))
+	(void)data;
+	(void)ray;
+	int face = find_wall_facing(data, ray);
+	if (face == 1) // purple
 		return (0x00FF00FF);
-	return (0x00FFFFFF);
+	else if (face == 2) // red
+		return (0x00FF0033);
+	else if (face == 3) // blue
+		return (0x007777FF);
+	else if (face == 4) // green
+		return (0x0044FF44);
+	return (0x00000000);
+}
+
+void	print_minimap(t_data *data, int mode)
+{
+	int i = 0;
+	int j = 0;
+
+	while (i < 10)
+	{
+		j = 0;
+		while (j < 10)
+		{
+			if (data->map[i][j] == '1' && mode == 2)
+				draw_square(data, i * COEF, j * COEF, COEF, 0x00FF0000);
+			else if (data->map[i][j] == '0' && mode == 1)
+				draw_square(data, i * COEF, j * COEF, COEF, 0x00000000);
+			
+			j++;
+		}
+		i++;
+	}
+}
+
+void	print_tab(double *tab)
+{
+	int i = 0;
+
+	while (i < RAYS)
+	{
+		printf("Ray[%i] = %f\n", i, tab[i]);
+		i++;
+	}
+}
+
+int deg_to_rad(int deg)
+{
+	return (deg * PI / 180);
 }
 
 void	parse_rays(t_data *data)
 {
 	t_ray ray;
 	int ray_nbr;
-	float ray_angle;
+	double ray_angle;
 	int color = 0x0000FF00;
 
 	ray.ra = data->player->player_angle;
@@ -326,34 +374,30 @@ void	parse_rays(t_data *data)
 		ray.yo = ray.ry;
 		ray.rx += RENDER_DISTANCE * cos(ray.ra);
 		ray.ry += RENDER_DISTANCE * sin(ray.ra);
-		data->ray_len[ray_nbr] = draw_line(ray.xo, ray.yo, ray.rx, ray.ry, data);
-		float line_height = HEIGHT * 20 / data->ray_len[ray_nbr];
-		float line_start = (WIDTH / 2) - (line_height / 2);
+		data->ray_len[ray_nbr] = draw_line(&ray, data, 1);
+		//remove fish eye effect
+		double line_height = HEIGHT * COEF3D / data->ray_len[ray_nbr];
+		double angle = ray.ra - (data->player->player_angle + deg_to_rad(FOV / 2));
+		if (angle < 0)
+			angle += 2 * PI;
+		if (angle > PI)
+			angle = 2 * PI - angle;
+		double line_start = (WIDTH / 2) - (line_height / 2);
+		line_start *= cos(angle);
 		int i = 0;
-		color = find_wall_color(data, ray);
+		color = find_ray_color(data, ray);
 		while (i < line_height)
 		{
 			int n = -1;
-			if (ray_nbr * (WIDTH / RAYS) < WIDTH && i + line_start < HEIGHT)
+			if (ray_nbr * (double)(WIDTH / RAYS) < WIDTH && i + line_start < HEIGHT)
 			{
-				while (++n < WIDTH / RAYS)
-					my_mlx_pixel_put(data, ray_nbr * (WIDTH / RAYS) + n, i + line_start, color);
+				while (++n < (double)(WIDTH / RAYS))
+					my_mlx_pixel_put(data, ray_nbr * (double)(WIDTH / RAYS) + n, i + line_start, color);
 			}
 			i++;
 		}
 		ray.ra += ray_angle;
 		ray_nbr++;
-	}
-}
-
-void	print_tab(float *tab)
-{
-	int i = 0;
-
-	while (i < RAYS)
-	{
-		printf("Ray[%i] = %f\n", i, tab[i]);
-		i++;
 	}
 }
 
@@ -380,63 +424,6 @@ void	draw_rectangle(t_data *data, int x, int y, int height, int width, int color
 	}
 }
 
-void	create_image(t_data *data)
-{
-	int 	i = 0;
-	int 	j = 0;
-
-	draw_rectangle(data, 0, 0, HEIGHT, WIDTH / 2, 0x000000aa);
-	draw_rectangle(data, 0, WIDTH / 2, HEIGHT, WIDTH / 2, 0x00aa0000);
-	while (i < 10)
-	{
-		j = 0;
-		while (j < 10)
-		{
-			if (data->map[i][j] == '1')
-				draw_square(data, i * COEF, j * COEF, COEF, 0x00FF0000);
-			if (data->map[i][j] == '0' && !data->created_player)
-			{
-				data->player->x = i;
-				data->player->y = j;
-				draw_player(data);
-				data->created_player = true;
-			}
-			if (data->map[i][j] == '0' && data->created_player)
-				draw_player(data);
-			j++;
-		}
-		i++;
-	}
-}
-
-int	float_to_int(float x)
-{
-	if (x - (int)x > 0.5)
-		return ((int)x + 1);
-	return ((int)x);
-
-}
-
-bool	forward_is_valid_chunk(t_data *data)
-{
-	int x = float_to_int(data->player->x + 0.20 * cos(data->player->player_angle + ((FOV / 2) * PI / 180)));
-	int y = float_to_int(data->player->y + 0.20 * sin(data->player->player_angle + ((FOV / 2) * PI / 180)));
-
-	if (data->map[x][y] == '1')
-		return (false);
-	return (true);
-}
-
-bool	backward_is_valid_chunk(t_data *data)
-{
-	int x = float_to_int(data->player->x - (PLAYER_SPEED - 10) * cos(data->player->player_angle + ((FOV / 2) * PI / 180)));
-	int y = float_to_int(data->player->y - (PLAYER_SPEED - 10) * sin(data->player->player_angle + ((FOV / 2) * PI / 180)));
-
-	if (data->map[x][y] == '1')
-		return (false);
-	return (true);
-}
-
 void	move_player(t_data *data)
 {
 
@@ -447,19 +434,13 @@ void	move_player(t_data *data)
 	}
 	if (data->move->forward == true)
 	{
-		if (forward_is_valid_chunk(data) == true)
-		{
-			data->player->x += PLAYER_SPEED * cos(data->player->player_angle + ((FOV / 2) * PI / 180));
-			data->player->y += PLAYER_SPEED * sin(data->player->player_angle + ((FOV / 2) * PI / 180));
-		}
+		data->player->x += PLAYER_SPEED * cos(data->player->player_angle + ((FOV / 2) * PI / 180));
+		data->player->y += PLAYER_SPEED * sin(data->player->player_angle + ((FOV / 2) * PI / 180));
 	}
 	if (data->move->backward == true)
 	{
-		if (backward_is_valid_chunk(data) == true)
-		{
-			data->player->x -= 0.15 * cos(data->player->player_angle + ((FOV / 2) * PI / 180));
-			data->player->y -= 0.15 * sin(data->player->player_angle + ((FOV / 2) * PI / 180));
-		}
+		data->player->x -= PLAYER_SPEED * cos(data->player->player_angle + ((FOV / 2) * PI / 180));
+		data->player->y -= PLAYER_SPEED * sin(data->player->player_angle + ((FOV / 2) * PI / 180));
 	}
 	if (data->move->turn_left == true)
 	{
@@ -474,6 +455,61 @@ void	move_player(t_data *data)
 		data->player->pdy = 50 * sin(data->player->player_angle);
 	}
 }
+
+int	create_image(t_data *data)
+{
+	int 	i = 0;
+	int 	j = 0;
+\
+	move_player(data);
+	if (data->player->x < 0 || data->player->x > 9 || data->player->y < 0 || data->player->y > 9 \
+		|| data->map[double_to_int(data->player->x)][double_to_int(data->player->y)] == '1')
+		data->created_player = false;
+	draw_rectangle(data, 0, 0, HEIGHT, WIDTH / 2, 0x000000aa);
+	draw_rectangle(data, 0, WIDTH / 2, HEIGHT, WIDTH / 2, 0x00aa0000);
+	while (i < 10)
+	{
+		j = 0;
+		while (j < 10)
+		{
+			if (data->map[i][j] == '0' && !data->created_player)
+			{
+				data->player->x = i;
+				data->player->y = j;
+				draw_player(data);
+				data->created_player = true;
+			}
+			if (data->map[i][j] == '0' && data->created_player)
+				draw_player(data);
+			j++;
+		}
+		i++;
+	}
+	print_minimap(data, 2);
+	mlx_put_image_to_window(data->mlx, data->win, data->img.img, 0, 0);
+	return (0);
+}
+
+bool	forward_is_valid_chunk(t_data *data)
+{
+	int x = double_to_int(data->player->x + 0.20 * cos(data->player->player_angle + ((FOV / 2) * PI / 180)));
+	int y = double_to_int(data->player->y + 0.20 * sin(data->player->player_angle + ((FOV / 2) * PI / 180)));
+
+	if (data->map[x][y] == '1')
+		return (false);
+	return (true);
+}
+
+bool	backward_is_valid_chunk(t_data *data)
+{
+	int x = double_to_int(data->player->x - (PLAYER_SPEED - 10) * cos(data->player->player_angle + ((FOV / 2) * PI / 180)));
+	int y = double_to_int(data->player->y - (PLAYER_SPEED - 10) * sin(data->player->player_angle + ((FOV / 2) * PI / 180)));
+
+	if (data->map[x][y] == '1')
+		return (false);
+	return (true);
+}
+
 
 int	handle_keypressed(int key, t_data *data)
 {
@@ -498,20 +534,34 @@ int	handle_keypressed(int key, t_data *data)
 	{
 		data->move->turn_right = true;
 	}
-	move_player(data);
-	mlx_destroy_image(data->mlx, data->img.img);
-	data->img.img = mlx_new_image(data->mlx, HEIGHT, WIDTH);
-	create_image(data);
-	mlx_put_image_to_window(data->mlx, data->win, data->img.img, 0, 0);
 	return (0);
 }
 
 int	handle_no_event(t_data *data)
 {
-	(void)data;
+	create_image(data);
 	return (0);
 }
 
+bool left_is_valid_chunk(t_data *data)
+{
+	int x = double_to_int(data->player->x + 0.20 * cos(data->player->player_angle + ((FOV / 2) * PI / 180)));
+	int y = double_to_int(data->player->y + 0.20 * sin(data->player->player_angle + ((FOV / 2) * PI / 180)));
+
+	if (data->map[x][y] == '1')
+		return (false);
+	return (true);
+}
+
+bool right_is_valid_chunk(t_data *data)
+{
+	int x = double_to_int(data->player->x + 0.20 * cos(data->player->player_angle - ((FOV / 2) * PI / 180)));
+	int y = double_to_int(data->player->y + 0.20 * sin(data->player->player_angle - ((FOV / 2) * PI / 180)));
+
+	if (data->map[x][y] == '1')
+		return (false);
+	return (true);
+}
 
 int	main(int ac, char **av)
 {
@@ -534,13 +584,11 @@ int	main(int ac, char **av)
 	line = ft_strdup(av[1]);
 	mini_parse(data, line);
 	data->mlx = mlx_init();
-	data->win = mlx_new_window(data->mlx, HEIGHT, WIDTH, "Cube3D");
+	data->win = mlx_new_window(data->mlx, WIDTH, HEIGHT, "Cube3D");
 	data->img.img = mlx_new_image(data->mlx, HEIGHT, WIDTH);
 	data->img.addr = mlx_get_data_addr(data->img.img, &data->img.bpp, &data->img.line_len, &data->img.endian);
-	data->player->player_angle = PI;
-	create_image(data);
-	mlx_put_image_to_window(data->mlx, data->win, data->img.img, 0, 0);
-	mlx_loop_hook(data->mlx, handle_no_event, data);
+	data->player->player_angle = 0;
+	mlx_loop_hook(data->mlx, create_image, data);
 	mlx_hook(data->win, KEYPRESS, KEYPRESSMASK, &handle_keypressed, data);
 	mlx_hook(data->win, KEYREALASE, KEYRELEASEMASK, &handle_keyrelease, data);
 	mlx_loop(data->mlx);

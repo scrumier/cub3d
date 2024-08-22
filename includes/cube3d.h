@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/22 11:54:54 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/22 18:25:43 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,24 +49,25 @@
 # define KEYRELEASEMASK (1L<<1)
 # define KEYPRESS 2
 # define KEYREALASE 3
-# define HEIGHT 800
-# define WIDTH 800
+# define HEIGHT 900
+# define WIDTH 900
 # define COEF 15
+# define COEF3D 15
 # define PLAYER_SIZE 10
-# define PLAYER_SPEED 0.1
-# define PLAYER_ROTATE 0.1
+# define PLAYER_SPEED 0.05
+# define PLAYER_ROTATE 0.005
 # define PI 3.14159265359
-# define FOV 95
-# define RAYS 100
+# define FOV 85
+# define RAYS 900
 # define RENDER_DISTANCE 1000
 
 typedef struct s_line
 {
-	float x;
-	float y;
-	float angle;
-	float x1;
-	float y1;
+	double x;
+	double y;
+	double angle;
+	double x1;
+	double y1;
 }				t_line;
 
 typedef struct s_ray
@@ -76,27 +77,35 @@ typedef struct s_ray
 	int my;
 	int mp;
 	int dof;
-	float rx;
-	float ry;
-	float ra;
-	float xo;
-	float yo;
+	double rx;
+	double ry;
+	double ra;
+	double xo;
+	double yo;
+	double dstx;
+	double dsty;
 }				t_ray;
+
+typedef struct s_coord
+{
+	double x;
+	double y;
+}				t_coord;
 
 typedef struct s_bresenham
 {
-	float	x;
-	float	y;
-	float angle;
-	float x1;
-	float y1;
-	float dx;
-	float dy;
-	float xinc;
-	float yinc;
-	float steps;
-	float x0;
-	float y0;
+	double	x;
+	double	y;
+	double angle;
+	double x1;
+	double y1;
+	double dx;
+	double dy;
+	double xinc;
+	double yinc;
+	double steps;
+	double x0;
+	double y0;
 }				t_bresenham;
 
 typedef struct	s_img
@@ -110,11 +119,11 @@ typedef struct	s_img
 
 typedef struct	s_player
 {
-	float		x;
-	float		y;
-	float		player_angle;
-	float		pdx;
-	float		pdy;
+	double		x;
+	double		y;
+	double		player_angle;
+	double		pdx;
+	double		pdy;
 }				t_player;
 
 typedef struct	s_move
@@ -136,7 +145,7 @@ typedef struct	s_data
 	char		map[10][10];
 	int			mapX;
 	int			mapY;
-	float		ray_len[RAYS];
+	double		ray_len[RAYS];
 }				t_data;
 
 #endif
