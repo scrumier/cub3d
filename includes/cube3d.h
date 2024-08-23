@@ -45,6 +45,7 @@
 # include <string.h>
 # include <errno.h>
 # include <stdbool.h>
+# include <sys/time.h>
 # define KEYPRESSMASK (1L<<0)
 # define KEYRELEASEMASK (1L<<1)
 # define KEYPRESS 2
@@ -52,13 +53,14 @@
 # define HEIGHT 900
 # define WIDTH 900
 # define COEF 15
-# define COEF3D 15
-# define PLAYER_SIZE 10
+# define COEF3D 10
+# define PLAYER_SIZE 5
 # define PLAYER_SPEED 0.05
-# define PLAYER_ROTATE 0.005
+# define PLAYER_ROTATE 30
 # define PI 3.14159265359
-# define FOV 85
+# define FOV 360
 # define RAYS 900
+# define FPS 200
 # define RENDER_DISTANCE 1000
 
 typedef struct s_line
@@ -147,6 +149,11 @@ typedef struct	s_data
 	int			mapX;
 	int			mapY;
 	double		ray_len[RAYS];
+	struct timeval current_time;
+	struct timeval last_time;
+	double fps;
+	int frame;
+	double last_fps[FPS];
 }				t_data;
 
 #endif

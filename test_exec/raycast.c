@@ -177,40 +177,88 @@ void	bresenham(t_data *data)
 	}
 }
 
+double find_cube_center(double x)
+{
+	int i = 0;
+
+	while (i < 10)
+	{
+		if (x >= i && x < i + 1)
+			return (i + 0.5);
+		i++;
+	}
+	return (0);
+}
+
+double get_fractional_part(double number)
+{
+	int integer_part;
+	double fractional_part;
+
+	integer_part = (int)number;
+	fractional_part = number - (double)integer_part;
+	return (fractional_part);
+}
+
+double	ft_dabs(double d)
+{
+	if (d < 0)
+		d = -d;
+	return (d);
+}
+
+int find_closest_to_05(double x, double y)
+{
+	// this function find if (x, -x) or (y, -y) is the closest to 0.5
+	double delta_x = ft_dabs(x - 0.5);
+	double delta_y = ft_dabs(y - 0.5);
+
+	if (delta_x < delta_y)
+		return (0);
+	return (1);
+}
+
 int	find_wall_facing(t_data *data, t_ray *ray)
 {
 	(void)data;
-	double wall_center_x = (double)double_to_int(ray->dstx) + 0.5;
-	double wall_center_y = (double)double_to_int(ray->dsty) + 0.5;
-	double x = ray->dstx - wall_center_x;
-	double y = ray->dsty - wall_center_y;
-	int north = 0;
-	int south = 0;
-	int east = 0;
-	int west = 0;
+	double x = ray->dstx;
+	double y = ray->dsty;
+	double x_center = find_cube_center(x);
+	double y_center = find_cube_center(y);
+	double x_fractional = get_fractional_part(x);
+	double y_fractional = get_fractional_part(y);
+	int face = 0;
 
-	while (ray->dstx)
-	if (north < south && north < east && north < west)
-		return (1);
-	if (south < north && south < east && south < west)
-		return (2);
-	if (east < north && east < south && east < west)
-		return (3);
-	if (west < north && west < south && west < east)
-		return (4);
-	return (0);
+	if (x_fractional < y_fractional)
+	{
+		if (x_center < x)
+			face = 'w';
+		else if (x_center > x)
+			face = 'e';
+	}
+	else if (x_fractional > y_fractional)
+	{
+		if (y_center < y)
+			face = 'n';
+		else if (y_center > y)
+			face = 's';
+	}
+	else
+		face = 0;
+	return (face);
 }
 
 int	find_ray_color(t_data *data, t_ray *ray)
 {
 	int face = find_wall_facing(data, ray);
-	if (face == 1) // purple
+
+	if (face == 'n') // purple
 		return (0x00FF00FF);
-	else if (face == 2) // red
+	else if (face == 's') // red
 		return (0x00FF0033);
-	else if (face == 3) // blue
+	else if (face == 'e') // blue
 		return (0x007777FF);
-	else if (face == 4) // green
+	else if (face == 'w') // green
 		return (0x0044FF44);
 	return (0x00000000);
 }
@@ -241,8 +289,8 @@ double	draw_line(t_ray *ray, t_data *data, int mode)
 	}
 	else
 		bresenham.yinc = 1;
-	bresenham.dx = ft_abs(bresenham.dx);
-	bresenham.dy = ft_abs(bresenham.dy);
+	bresenham.dx = ft_dabs(bresenham.dx);
+	bresenham.dy = ft_dabs(bresenham.dy);
 	if (bresenham.dx > bresenham.dy)
 		bresenham.steps = bresenham.dx;
 	else
@@ -253,43 +301,35 @@ double	draw_line(t_ray *ray, t_data *data, int mode)
 	bresenham.y0 = bresenham.y;
 	while (i < bresenham.steps)
 	{
-		if (data->map[ft_abs(bresenham.x0) / COEF][ft_abs(bresenham.y0) / COEF] == '1')
+		if (data->map[ft_abs((int)bresenham.x0) / COEF][ft_abs((int)bresenham.y0) / COEF] == '1')
 		{
-			ray->dstx = bresenham.x0;
-			ray->dsty = bresenham.y0;
+			// move 1 pixel more to get the exact position of the wall
+			bresenham.x0 += bresenham.xinc;
+			bresenham.y0 += bresenham.yinc;
+			ray->dstx = bresenham.x0 / COEF;
+			ray->dsty = bresenham.y0 / COEF;
 			return (sqrt(pow(bresenham.x0 - ray->xo, 2) + pow(bresenham.y0 - ray->yo, 2)));
 		}
 		if (mode == 1)
 		{
-			my_mlx_pixel_put(data, bresenham.x0, bresenham.y0, ray->color);
+			my_mlx_pixel_put(data, (int)bresenham.x0, (int)bresenham.y0, 0x00FFFFFF);
 		}
 		bresenham.x0 += bresenham.xinc;
 		bresenham.y0 += bresenham.yinc;
 		i++;
 	}
-	ray->dstx = bresenham.x0;
-	ray->dsty = bresenham.y0;
+	ray->dstx = bresenham.x0 / COEF;
+	ray->dsty = bresenham.y0 / COEF;
 	return (sqrt(pow(bresenham.x0 - ray->xo, 2) + pow(bresenham.y0 - ray->ry, 2)));
 }
 
-double	find_angle()
+double	find_angle(int total_rays)
 {
 	double rad;
 
 	rad = FOV * PI / 180;
-	return (rad / RAYS);
+	return (rad / total_rays);
 }
-
-int	round_double(double x)
-{
-	int result;
-
-	result = (int)x;
-	if (x > result)
-		return (result);
-	return (result - 1);
-}
-
 
 void	print_minimap(t_data *data, int mode)
 {
@@ -328,17 +368,43 @@ int deg_to_rad(int deg)
 	return (deg * PI / 180);
 }
 
+double get_fps_average(t_data *data)
+{
+	int i = 0;
+	double sum = 0;
+
+	while (i < FPS)
+	{
+		sum += data->last_fps[i];
+		i++;
+	}
+	return (sum / FPS);
+}
+
 void	parse_rays(t_data *data)
 {
 	t_ray ray;
 	int ray_nbr;
 	double ray_angle;
+	int total_rays;
 
-	ray.ra = data->player->player_angle;
+	ray.ra = data->player->player_angle - (FOV / 2) * PI / 180;
 	ray.dof = 0;
 	ray_nbr = 0;
-	ray_angle = find_angle();
-	while (ray_nbr < RAYS)
+	double last_fps = get_fps_average(data);
+	if (last_fps < 20)
+		total_rays = RAYS / 8;
+	else if (last_fps < 40)
+		total_rays = RAYS / 4;
+	else if (last_fps < 60)
+		total_rays = RAYS / 2;
+	else if (last_fps < 80)
+		total_rays = RAYS;
+	else
+		total_rays = RAYS * 2;
+	//total_rays = RAYS;
+	ray_angle = find_angle(total_rays);
+	while (ray_nbr < total_rays)
 	{
 		ray.rx = data->player->x * COEF + (COEF / 2);
 		ray.ry = data->player->y * COEF + (COEF / 2);
@@ -347,12 +413,13 @@ void	parse_rays(t_data *data)
 		ray.rx += RENDER_DISTANCE * cos(ray.ra);
 		ray.ry += RENDER_DISTANCE * sin(ray.ra);
 		//remove fish eye effect
-		double angle = ray.ra - (data->player->player_angle + deg_to_rad(FOV / 2));
-		if (angle < 0)
-			angle += 2 * PI;
-		if (angle > 2 * PI)
-			angle -= 2 * PI;
+		double corrected_angle = ray.ra - data->player->player_angle;
+		if (corrected_angle < 0)
+			corrected_angle += 2 * PI;
+		if (corrected_angle > 2 * PI)
+			corrected_angle -= 2 * PI;
 		data->ray_len[ray_nbr] = draw_line(&ray, data, 1);
+		data->ray_len[ray_nbr] *= cos(corrected_angle);  // Correct the fish-eye effect
 		double line_height = HEIGHT * COEF3D / data->ray_len[ray_nbr];
 		double line_start = (WIDTH / 2) - (line_height / 2);
 		int i = 0;
@@ -360,10 +427,10 @@ void	parse_rays(t_data *data)
 		while (i < line_height)
 		{
 			int n = -1;
-			if (ray_nbr * (double)(WIDTH / RAYS) < WIDTH && i + line_start < HEIGHT)
+			if (ray_nbr * (double)(WIDTH / total_rays) < WIDTH && i + line_start < HEIGHT)
 			{
-				while (++n < (double)(WIDTH / RAYS))
-					my_mlx_pixel_put(data, ray_nbr * (double)(WIDTH / RAYS) + n, i + line_start, ray.color);
+				while (++n < (double)(WIDTH / total_rays))
+					my_mlx_pixel_put(data, ray_nbr * (double)(WIDTH / total_rays) + n, i + line_start, ray.color);
 			}
 			i++;
 		}
@@ -395,72 +462,6 @@ void	draw_rectangle(t_data *data, int x, int y, int height, int width, int color
 	}
 }
 
-void	move_player(t_data *data)
-{
-
-	if (data->player->x < 0 || data->player->x > 9 || data->player->y < 0 || data->player->y > 9)
-	{
-		data->created_player = false;
-		return ;
-	}
-	if (data->move->forward == true)
-	{
-		data->player->x += PLAYER_SPEED * cos(data->player->player_angle + ((FOV / 2) * PI / 180));
-		data->player->y += PLAYER_SPEED * sin(data->player->player_angle + ((FOV / 2) * PI / 180));
-	}
-	if (data->move->backward == true)
-	{
-		data->player->x -= PLAYER_SPEED * cos(data->player->player_angle + ((FOV / 2) * PI / 180));
-		data->player->y -= PLAYER_SPEED * sin(data->player->player_angle + ((FOV / 2) * PI / 180));
-	}
-	if (data->move->turn_left == true)
-	{
-		data->player->player_angle = (data->player->player_angle - PI / 30);
-		data->player->pdx = 50 * cos(data->player->player_angle);
-		data->player->pdy = 50 * sin(data->player->player_angle);
-	}
-	if (data->move->turn_right == true)
-	{
-		data->player->player_angle = (data->player->player_angle + PI / 30);
-		data->player->pdx = 50 * cos(data->player->player_angle);
-		data->player->pdy = 50 * sin(data->player->player_angle);
-	}
-}
-
-int	create_image(t_data *data)
-{
-	int 	i = 0;
-	int 	j = 0;
-\
-	move_player(data);
-	if (data->player->x < 0 || data->player->x > 9 || data->player->y < 0 || data->player->y > 9 \
-		|| data->map[double_to_int(data->player->x)][double_to_int(data->player->y)] == '1')
-		data->created_player = false;
-	draw_rectangle(data, 0, 0, HEIGHT, WIDTH / 2, 0x000000aa);
-	draw_rectangle(data, 0, WIDTH / 2, HEIGHT, WIDTH / 2, 0x00aa0000);
-	while (i < 10)
-	{
-		j = 0;
-		while (j < 10)
-		{
-			if (data->map[i][j] == '0' && !data->created_player)
-			{
-				data->player->x = i;
-				data->player->y = j;
-				draw_player(data);
-				data->created_player = true;
-			}
-			if (data->map[i][j] == '0' && data->created_player)
-				draw_player(data);
-			j++;
-		}
-		i++;
-	}
-	print_minimap(data, 2);
-	mlx_put_image_to_window(data->mlx, data->win, data->img.img, 0, 0);
-	return (0);
-}
-
 bool	forward_is_valid_chunk(t_data *data)
 {
 	int x = double_to_int(data->player->x + 0.20 * cos(data->player->player_angle + ((FOV / 2) * PI / 180)));
@@ -480,6 +481,120 @@ bool	backward_is_valid_chunk(t_data *data)
 		return (false);
 	return (true);
 }
+
+void	move_player(t_data *data)
+{
+
+	if (data->player->x < 0 || data->player->x > 9 || data->player->y < 0 || data->player->y > 9)
+	{
+		data->created_player = false;
+		return ;
+	}
+	if (data->move->forward == true)
+	{
+		data->player->x += PLAYER_SPEED * cos(data->player->player_angle);
+		data->player->y += PLAYER_SPEED * sin(data->player->player_angle);
+	}
+	if (data->move->backward == true)
+	{
+		data->player->x -= PLAYER_SPEED * cos(data->player->player_angle);
+		data->player->y -= PLAYER_SPEED * sin(data->player->player_angle);
+	}
+	if (data->move->turn_left == true)
+	{
+		data->player->player_angle = (data->player->player_angle - PI / 30);
+		data->player->pdx = PLAYER_ROTATE * cos(data->player->player_angle);
+		data->player->pdy = PLAYER_ROTATE * sin(data->player->player_angle);
+	}
+	if (data->move->turn_right == true)
+	{
+		data->player->player_angle = (data->player->player_angle + PI / 30);
+		data->player->pdx = PLAYER_ROTATE * cos(data->player->player_angle);
+		data->player->pdy = PLAYER_ROTATE * sin(data->player->player_angle);
+
+	}
+}
+
+double find_lowest_value(double *tab, int size)
+{
+	int i = 0;
+	double lowest = tab[0];
+
+	while (i < size)
+	{
+		if (tab[i] < lowest)
+			lowest = tab[i];
+		i++;
+	}
+	return (lowest);
+}
+
+double find_highest_value(double *tab, int size)
+{
+	int i = 0;
+	double highest = tab[0];
+
+	while (i < size)
+	{
+		if (tab[i] > highest)
+			highest = tab[i];
+		i++;
+	}
+	return (highest);
+}
+
+int	create_image(t_data *data)
+{
+	int 	i = 0;
+	int 	j;
+
+	gettimeofday(&data->current_time, NULL);
+	double elapsed_time = (data->current_time.tv_sec - data->last_time.tv_sec) +
+						  (data->current_time.tv_usec - data->last_time.tv_usec) / 1000000.0;
+	data->fps = 1.0 / elapsed_time;
+	data->last_time = data->current_time;
+	move_player(data);
+	if (data->player->x < 0 || data->player->x > 9 || data->player->y < 0 || data->player->y > 9 \
+		|| data->map[double_to_int(data->player->x)][double_to_int(data->player->y)] == '1') {
+		data->created_player = false;
+	}
+	draw_rectangle(data, 0, 0, HEIGHT, WIDTH / 2, 0x000000aa);
+	draw_rectangle(data, 0, WIDTH / 2, HEIGHT, WIDTH / 2, 0x00aa0000);
+	while (i < 10)
+	{
+		j = 0;
+		while (j < 10)
+		{
+			if (data->map[i][j] == '0' && !data->created_player)
+			{
+				data->player->x = i;
+				data->player->y = j;
+				draw_player(data);
+				data->created_player = true;
+			}
+			if (data->map[i][j] == '0' && data->created_player) {
+				draw_player(data);
+			}
+			j++;
+		}
+		i++;
+	}
+	print_minimap(data, 2);
+	data->last_fps[data->frame % FPS] = data->fps;
+	data->frame++;
+	char fps_str[20];
+	char lowest_fps_str[20];
+	char highest_fps_str[20];
+	snprintf(lowest_fps_str, sizeof(lowest_fps_str), "Lowest FPS: %.2f", find_lowest_value(data->last_fps, FPS));
+	snprintf(highest_fps_str, sizeof(highest_fps_str), "Highest FPS: %.2f", find_highest_value(data->last_fps, FPS));
+	snprintf(fps_str, sizeof(fps_str), "FPS: %.2f", data->fps);
+	mlx_put_image_to_window(data->mlx, data->win, data->img.img, 0, 0);
+	mlx_string_put(data->mlx, data->win, WIDTH - 125, 30, 0xFFFFFF, lowest_fps_str);
+	mlx_string_put(data->mlx, data->win, WIDTH - 130, 50, 0xFFFFFF, highest_fps_str);
+	mlx_string_put(data->mlx, data->win, WIDTH - 75, 10, 0xFFFFFF, fps_str);
+	return (0);
+}
+
 
 
 int	handle_keypressed(int key, t_data *data)
@@ -558,7 +673,7 @@ int	main(int ac, char **av)
 	data->win = mlx_new_window(data->mlx, WIDTH, HEIGHT, "Cube3D");
 	data->img.img = mlx_new_image(data->mlx, HEIGHT, WIDTH);
 	data->img.addr = mlx_get_data_addr(data->img.img, &data->img.bpp, &data->img.line_len, &data->img.endian);
-	data->player->player_angle = 0;
+	data->player->player_angle = (FOV / 2) * PI / 180;
 	mlx_loop_hook(data->mlx, create_image, data);
 	mlx_hook(data->win, KEYPRESS, KEYPRESSMASK, &handle_keypressed, data);
 	mlx_hook(data->win, KEYREALASE, KEYRELEASEMASK, &handle_keyrelease, data);
