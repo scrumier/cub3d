@@ -542,30 +542,117 @@ double find_highest_value(double *tab, int size)
 	return (highest);
 }
 
-int	create_image(t_data *data)
+// Helper function to blend colors of neighboring pixels
+unsigned int blend_colors(unsigned int color, unsigned int color_left, unsigned int color_right, unsigned int color_up, unsigned int color_down)
 {
-	int 	i = 0;
-	int 	j;
+	int r = 0, g = 0, b = 0;
+
+	r += (color >> 16) & 0xFF;
+	g += (color >> 8) & 0xFF;
+	b += color & 0xFF;
+
+	r += (color_left >> 16) & 0xFF;
+	g += (color_left >> 8) & 0xFF;
+	b += color_left & 0xFF;
+
+	r += (color_right >> 16) & 0xFF;
+	g += (color_right >> 8) & 0xFF;
+	b += color_right & 0xFF;
+
+	r += (color_up >> 16) & 0xFF;
+	g += (color_up >> 8) & 0xFF;
+	b += color_up & 0xFF;
+
+	r += (color_down >> 16) & 0xFF;
+	g += (color_down >> 8) & 0xFF;
+	b += color_down & 0xFF;
+
+	// Average the colors
+	r /= 5;
+	g /= 5;
+	b /= 5;
+
+	return (r << 16) | (g << 8) | b;
+}
+
+// Helper function to retrieve the pixel color at a specific location
+unsigned int get_pixel_color(t_data *data, int x, int y)
+{
+	char *dst = data->img.addr + (y * data->img.line_len + x * (data->img.bpp / 8));
+	return *(unsigned int *)dst;
+}
+
+// Helper function to set the pixel color at a specific location
+void set_pixel_color(t_data *data, int x, int y, unsigned int color)
+{
+	char *dst = data->img.addr + (y * data->img.line_len + x * (data->img.bpp / 8));
+	*(unsigned int *)dst = color;
+}
+
+// Helper function to determine if there is a significant color difference between pixels
+int color_difference(unsigned int color1, unsigned int color2)
+{
+	int r1 = (color1 >> 16) & 0xFF;
+	int g1 = (color1 >> 8) & 0xFF;
+	int b1 = color1 & 0xFF;
+
+	int r2 = (color2 >> 16) & 0xFF;
+	int g2 = (color2 >> 8) & 0xFF;
+	int b2 = color2 & 0xFF;
+
+	return abs(r1 - r2) + abs(g1 - g2) + abs(b1 - b2);
+}
+
+void apply_custom_antialiasing(t_data *data)
+{
+	for (int y = 1; y < HEIGHT - 1; y++) {
+		for (int x = 1; x < WIDTH - 1; x++) {
+			unsigned int color = get_pixel_color(data, x, y);
+
+			unsigned int color_left = get_pixel_color(data, x - 1, y);
+			unsigned int color_right = get_pixel_color(data, x + 1, y);
+			unsigned int color_up = get_pixel_color(data, x, y - 1);
+			unsigned int color_down = get_pixel_color(data, x, y + 1);
+
+			// Determine if the current pixel is part of an edge by checking color difference
+			if (color_difference(color, color_left) > THRESHOLD ||
+				color_difference(color, color_right) > THRESHOLD ||
+				color_difference(color, color_up) > THRESHOLD ||
+				color_difference(color, color_down) > THRESHOLD) {
+
+				// Blend the colors to smooth the edge
+				unsigned int blended_color = blend_colors(color, color_left, color_right, color_up, color_down);
+				set_pixel_color(data, x, y, blended_color);
+			}
+		}
+	}
+}
+
+int create_image(t_data *data)
+{
+	int i = 0;
+	int j;
 
 	gettimeofday(&data->current_time, NULL);
 	double elapsed_time = (data->current_time.tv_sec - data->last_time.tv_sec) +
 						  (data->current_time.tv_usec - data->last_time.tv_usec) / 1000000.0;
 	data->fps = 1.0 / elapsed_time;
 	data->last_time = data->current_time;
+
 	move_player(data);
-	if (data->player->x < 0 || data->player->x > 9 || data->player->y < 0 || data->player->y > 9 \
-		|| data->map[double_to_int(data->player->x)][double_to_int(data->player->y)] == '1') {
+
+	if (data->player->x < 0 || data->player->x > 9 || data->player->y < 0 || data->player->y > 9 ||
+		data->map[double_to_int(data->player->x)][double_to_int(data->player->y)] == '1') {
 		data->created_player = false;
 	}
+
 	draw_rectangle(data, 0, 0, HEIGHT, WIDTH / 2, 0x000000aa);
 	draw_rectangle(data, 0, WIDTH / 2, HEIGHT, WIDTH / 2, 0x00aa0000);
-	while (i < 10)
-	{
+
+	while (i < 10) {
 		j = 0;
-		while (j < 10)
-		{
-			if (data->map[i][j] == '0' && !data->created_player)
-			{
+		while (j < 10) {
+			if (data->map[i][j] == '0' && !data->created_player) {
 				data->player->x = i;
 				data->player->y = j;
 				draw_player(data);
@@ -578,19 +665,28 @@ int	create_image(t_data *data)
 		}
 		i++;
 	}
+
 	print_minimap(data, 2);
+
 	data->last_fps[data->frame % FPS] = data->fps;
 	data->frame++;
+
 	char fps_str[20];
 	char lowest_fps_str[20];
 	char highest_fps_str[20];
 	snprintf(lowest_fps_str, sizeof(lowest_fps_str), "Lowest FPS: %.2f", find_lowest_value(data->last_fps, FPS));
 	snprintf(highest_fps_str, sizeof(highest_fps_str), "Highest FPS: %.2f", find_highest_value(data->last_fps, FPS));
 	snprintf(fps_str, sizeof(fps_str), "FPS: %.2f", data->fps);
+
+	// Apply custom anti-aliasing as a post-processing step
+	apply_custom_antialiasing(data);
+
+	// Display the image after applying anti-aliasing
 	mlx_put_image_to_window(data->mlx, data->win, data->img.img, 0, 0);
 	mlx_string_put(data->mlx, data->win, WIDTH - 125, 30, 0xFFFFFF, lowest_fps_str);
 	mlx_string_put(data->mlx, data->win, WIDTH - 130, 50, 0xFFFFFF, highest_fps_str);
 	mlx_string_put(data->mlx, data->win, WIDTH - 75, 10, 0xFFFFFF, fps_str);
+
 	return (0);
 }
 

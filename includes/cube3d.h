@@ -61,6 +61,7 @@
 # define FOV 85
 # define RAYS 900
 # define FPS 200
+#define THRESHOLD 0.000001
 # define RENDER_DISTANCE 1000
 
 typedef struct s_line
