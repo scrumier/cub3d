@@ -58,10 +58,10 @@
 # define PLAYER_SPEED 0.05
 # define PLAYER_ROTATE 30
 # define PI 3.14159265359
-# define FOV 85
+# define FOV 60
 # define RAYS 900
 # define FPS 200
-#define THRESHOLD 0.000001
+#define THRESHOLD 0.000000001
 # define RENDER_DISTANCE 1000
 
 typedef struct s_line

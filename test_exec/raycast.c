@@ -403,6 +403,8 @@ void	parse_rays(t_data *data)
 	else
 		total_rays = RAYS * 2;
 	ray_angle = find_angle(total_rays);
+	print_minimap(data, 1);
+	draw_square(data, data->player->x * COEF + (COEF / 2) - (PLAYER_SIZE / 2), data->player->y * COEF + (COEF / 2) - (PLAYER_SIZE / 2), PLAYER_SIZE, 0x0000FF00);
 	while (ray_nbr < total_rays)
 	{
 		ray.rx = data->player->x * COEF + (COEF / 2);
@@ -428,8 +430,11 @@ void	parse_rays(t_data *data)
 			if (ray_nbr * (double)(WIDTH / total_rays) < WIDTH && i + line_start < HEIGHT)
 			{
 				int n = -1;
-				while (++n < (double)(WIDTH / total_rays))
-					my_mlx_pixel_put(data, ray_nbr * (double)(WIDTH / total_rays) + n, i + line_start, ray.color);
+				while (++n < (double)(WIDTH / total_rays)) {
+					// i dont want to print if i am on the area of the minimap
+					if (!(n + ray_nbr * (double)(WIDTH / total_rays) < 150 && i + line_start < 150))
+						my_mlx_pixel_put(data, ray_nbr * (double) (WIDTH / total_rays) + n, i + line_start, ray.color);
+				}
 			}
 			i++;
 		}
@@ -440,7 +445,6 @@ void	parse_rays(t_data *data)
 
 void	draw_player(t_data *data)
 {
-	draw_square(data, data->player->x * COEF + (COEF / 2) - (PLAYER_SIZE / 2), data->player->y * COEF + (COEF / 2) - (PLAYER_SIZE / 2), PLAYER_SIZE, 0x0000FF00);
 	parse_rays(data);
 }
 
@@ -459,26 +463,6 @@ void	draw_rectangle(t_data *data, int x, int y, int height, int width, int color
 		}
 		i++;
 	}
-}
-
-bool	forward_is_valid_chunk(t_data *data)
-{
-	int x = double_to_int(data->player->x + 0.20 * cos(data->player->player_angle + ((FOV / 2) * PI / 180)));
-	int y = double_to_int(data->player->y + 0.20 * sin(data->player->player_angle + ((FOV / 2) * PI / 180)));
-
-	if (data->map[x][y] == '1')
-		return (false);
-	return (true);
-}
-
-bool	backward_is_valid_chunk(t_data *data)
-{
-	int x = double_to_int(data->player->x - (PLAYER_SPEED - 10) * cos(data->player->player_angle + ((FOV / 2) * PI / 180)));
-	int y = double_to_int(data->player->y - (PLAYER_SPEED - 10) * sin(data->player->player_angle + ((FOV / 2) * PI / 180)));
-
-	if (data->map[x][y] == '1')
-		return (false);
-	return (true);
 }
 
 void	move_player(t_data *data)
@@ -716,32 +700,6 @@ int	handle_keypressed(int key, t_data *data)
 		data->move->turn_right = true;
 	}
 	return (0);
-}
-
-int	handle_no_event(t_data *data)
-{
-	create_image(data);
-	return (0);
-}
-
-bool left_is_valid_chunk(t_data *data)
-{
-	int x = double_to_int(data->player->x + 0.20 * cos(data->player->player_angle + ((FOV / 2) * PI / 180)));
-	int y = double_to_int(data->player->y + 0.20 * sin(data->player->player_angle + ((FOV / 2) * PI / 180)));
-
-	if (data->map[x][y] == '1')
-		return (false);
-	return (true);
-}
-
-bool right_is_valid_chunk(t_data *data)
-{
-	int x = double_to_int(data->player->x + 0.20 * cos(data->player->player_angle - ((FOV / 2) * PI / 180)));
-	int y = double_to_int(data->player->y + 0.20 * sin(data->player->player_angle - ((FOV / 2) * PI / 180)));
-
-	if (data->map[x][y] == '1')
-		return (false);
-	return (true);
 }
 
 int	main(int ac, char **av)
