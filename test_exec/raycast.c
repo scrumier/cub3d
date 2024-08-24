@@ -55,8 +55,8 @@ void	mini_parse(t_data *data, char *file)
 	int fd = open(file, O_RDONLY);
 	char *line = get_next_line(fd);
 	int i = 0;
-	int j = 0;
-	int k = 0;
+	int j;
+	int k;
 	data->mapX = 10;
 	data->mapY = 10;
 
@@ -73,7 +73,7 @@ void	mini_parse(t_data *data, char *file)
 		line = get_next_line(fd);
 		i++;
 	}
-	
+	print_map(data->map);
 }
 
 int	handle_keyrelease(int key, t_data *data)
@@ -402,7 +402,6 @@ void	parse_rays(t_data *data)
 		total_rays = RAYS;
 	else
 		total_rays = RAYS * 2;
-	//total_rays = RAYS;
 	ray_angle = find_angle(total_rays);
 	while (ray_nbr < total_rays)
 	{
@@ -426,9 +425,9 @@ void	parse_rays(t_data *data)
 		ray.color = find_ray_color(data, &ray);
 		while (i < line_height)
 		{
-			int n = -1;
 			if (ray_nbr * (double)(WIDTH / total_rays) < WIDTH && i + line_start < HEIGHT)
 			{
+				int n = -1;
 				while (++n < (double)(WIDTH / total_rays))
 					my_mlx_pixel_put(data, ray_nbr * (double)(WIDTH / total_rays) + n, i + line_start, ray.color);
 			}
