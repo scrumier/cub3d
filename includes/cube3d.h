@@ -60,9 +60,11 @@
 # define PI 3.14159265359
 # define FOV 60
 # define RAYS 900
-# define FPS 200
+# define FPS_OPTI 1
+# define FPS 100
 # define FXAA_ENABLED false
-#define THRESHOLD 0.000000001
+# define WALL_ACCURACY 2
+# define THRESHOLD 20
 # define RENDER_DISTANCE 1000
 
 typedef struct s_line

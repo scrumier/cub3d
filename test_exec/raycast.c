@@ -296,8 +296,8 @@ double	draw_line(t_ray *ray, t_data *data, int mode)
 		if (data->map[ft_abs((int)bresenham.x0) / COEF][ft_abs((int)bresenham.y0) / COEF] == '1')
 		{
 			// move 1 pixel more to get the exact position of the wall
-			bresenham.x0 += bresenham.xinc;
-			bresenham.y0 += bresenham.yinc;
+			bresenham.x0 += bresenham.xinc / WALL_ACCURACY;
+			bresenham.y0 += bresenham.yinc / WALL_ACCURACY;
 			ray->dstx = bresenham.x0 / COEF;
 			ray->dsty = bresenham.y0 / COEF;
 			return (sqrt(pow(bresenham.x0 - ray->xo, 2) + pow(bresenham.y0 - ray->yo, 2)));
@@ -306,8 +306,8 @@ double	draw_line(t_ray *ray, t_data *data, int mode)
 		{
 			my_mlx_pixel_put(data, (int)bresenham.x0, (int)bresenham.y0, 0x00FFFFFF);
 		}
-		bresenham.x0 += bresenham.xinc;
-		bresenham.y0 += bresenham.yinc;
+		bresenham.x0 += bresenham.xinc / WALL_ACCURACY;
+		bresenham.y0 += bresenham.yinc / WALL_ACCURACY;
 		i++;
 	}
 	ray->dstx = bresenham.x0 / COEF;
@@ -373,6 +373,31 @@ double get_fps_average(t_data *data)
 	return (sum / FPS);
 }
 
+int	optimize_fps(double last_fps)
+{
+	if (FPS_OPTI == 1)
+	{
+		if (last_fps < 20)
+			return (RAYS / 8);
+		else if (last_fps < 40)
+			return (RAYS / 4);
+		else if (last_fps < 60)
+			return (RAYS);
+		else
+			return (RAYS * 2);
+	}
+	else if (FPS_OPTI == 2)
+	{
+		if (last_fps < 20)
+			return (RAYS / 4);
+		else if (last_fps < 40)
+			return (RAYS / 2);
+		else
+			return (RAYS);
+	}
+	return (RAYS);
+}
+
 void	parse_rays(t_data *data)
 {
 	t_ray ray;
@@ -383,17 +408,10 @@ void	parse_rays(t_data *data)
 	ray.ra = data->player->player_angle - (FOV / 2) * PI / 180;
 	ray.dof = 0;
 	ray_nbr = 0;
+	total_rays = RAYS;
 	double last_fps = get_fps_average(data);
-	if (last_fps < 20)
-		total_rays = RAYS / 8;
-	else if (last_fps < 40)
-		total_rays = RAYS / 4;
-	else if (last_fps < 60)
-		total_rays = RAYS / 2;
-	else if (last_fps < 80)
-		total_rays = RAYS;
-	else
-		total_rays = RAYS * 2;
+	if (FPS_OPTI != 0)
+		total_rays = optimize_fps(last_fps);
 	ray_angle = find_angle(total_rays);
 	print_minimap(data, 1);
 	draw_square(data, data->player->x * COEF + (COEF / 2) - (PLAYER_SIZE / 2), data->player->y * COEF + (COEF / 2) - (PLAYER_SIZE / 2), PLAYER_SIZE, 0x0000FF00);
