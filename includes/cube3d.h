@@ -61,6 +61,7 @@
 # define FOV 60
 # define RAYS 900
 # define FPS 200
+# define FXAA_ENABLED false
 #define THRESHOLD 0.000000001
 # define RENDER_DISTANCE 1000
 

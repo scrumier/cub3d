@@ -79,21 +79,13 @@ void	mini_parse(t_data *data, char *file)
 int	handle_keyrelease(int key, t_data *data)
 {
 	if (key == KEY_W)
-	{
 		data->move->forward = false;
-	}
 	if (key == KEY_S)
-	{
 		data->move->backward = false;
-	}
 	if (key == KEY_A)
-	{
 		data->move->turn_left = false;
-	}
 	if (key == KEY_D)
-	{
 		data->move->turn_right = false;
-	}
 	return (0);
 }
 
@@ -622,17 +614,13 @@ int create_image(t_data *data)
 						  (data->current_time.tv_usec - data->last_time.tv_usec) / 1000000.0;
 	data->fps = 1.0 / elapsed_time;
 	data->last_time = data->current_time;
-
 	move_player(data);
-
 	if (data->player->x < 0 || data->player->x > 9 || data->player->y < 0 || data->player->y > 9 ||
 		data->map[double_to_int(data->player->x)][double_to_int(data->player->y)] == '1') {
 		data->created_player = false;
 	}
-
 	draw_rectangle(data, 0, 0, HEIGHT, WIDTH / 2, 0x000000aa);
 	draw_rectangle(data, 0, WIDTH / 2, HEIGHT, WIDTH / 2, 0x00aa0000);
-
 	while (i < 10) {
 		j = 0;
 		while (j < 10) {
@@ -661,16 +649,12 @@ int create_image(t_data *data)
 	snprintf(lowest_fps_str, sizeof(lowest_fps_str), "Lowest FPS: %.2f", find_lowest_value(data->last_fps, FPS));
 	snprintf(highest_fps_str, sizeof(highest_fps_str), "Highest FPS: %.2f", find_highest_value(data->last_fps, FPS));
 	snprintf(fps_str, sizeof(fps_str), "FPS: %.2f", data->fps);
-
-	// Apply custom anti-aliasing as a post-processing step
-	apply_custom_antialiasing(data);
-
-	// Display the image after applying anti-aliasing
+	if (FXAA_ENABLED == true)
+		apply_custom_antialiasing(data);
 	mlx_put_image_to_window(data->mlx, data->win, data->img.img, 0, 0);
 	mlx_string_put(data->mlx, data->win, WIDTH - 125, 30, 0xFFFFFF, lowest_fps_str);
 	mlx_string_put(data->mlx, data->win, WIDTH - 130, 50, 0xFFFFFF, highest_fps_str);
 	mlx_string_put(data->mlx, data->win, WIDTH - 75, 10, 0xFFFFFF, fps_str);
-
 	return (0);
 }
 
@@ -684,21 +668,13 @@ int	handle_keypressed(int key, t_data *data)
 		exit(0);
 	}
 	if (key == KEY_W)
-	{
 		data->move->forward = true;
-	}
 	if (key == KEY_S)
-	{
 		data->move->backward = true;
-	}
 	if (key == KEY_A)
-	{
 		data->move->turn_left = true;
-	}
 	if (key == KEY_D)
-	{
 		data->move->turn_right = true;
-	}
 	return (0);
 }
 
