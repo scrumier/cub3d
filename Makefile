@@ -1,5 +1,5 @@
 CC			=	cc
-FLAGS		=	-Wall -Wextra -Werror -Ofast -MMD -MP -g3 -O3
+FLAGS		=	-Wall -Wextra -Werror -Ofast -MMD -MP -O3 -march=native
 INC_DIR		=	includes/
 INC			=	$(addprefix $(INC_DIR), \
 				cube3d.h \
@@ -7,7 +7,7 @@ INC			=	$(addprefix $(INC_DIR), \
 SRC_DIR		=	test_exec/
 OBJ_DIR		=	.obj
 LIBFT_DIR	=	libft
-NAME		=	cube3d
+NAME		=	cub3d
 RM			=	rm -f
 SRC_FILES	=	$(addprefix $(SRC_DIR), \
 				raycast.c \

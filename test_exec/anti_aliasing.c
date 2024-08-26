@@ -6,13 +6,12 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:26:45 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/26 10:27:29 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/26 14:49:31 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3d.h"
 
-// Helper function to blend colors of neighboring pixels
 unsigned int blend_colors(unsigned int color, unsigned int color_left, unsigned int color_right, unsigned int color_up, unsigned int color_down)
 {
 	int r = 0, g = 0, b = 0;

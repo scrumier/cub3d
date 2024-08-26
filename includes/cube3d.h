@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/26 11:24:34 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/26 14:50:55 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@
 # define KEYRELEASEMASK (1L<<1)
 # define KEYPRESS 2
 # define KEYREALASE 3
-# define HEIGHT 900
-# define WIDTH 900
+# define HEIGHT (900)
+# define WIDTH (900)
 # define COEF 15
 # define COEF3D 10
 # define PLAYER_SIZE 5
@@ -59,11 +59,11 @@
 # define PLAYER_ROTATE 30
 # define PI 3.14159265359
 # define FOV 60
-# define RAYS 900
+# define RAYS 450
 # define FPS_OPTI 2
 # define BEAM_WIDTH 64
 # define FPS 100
-# define FXAA_ENABLED true
+# define FXAA_ENABLED false
 # define WALL_ACCURACY 8
 # define THRESHOLD 8
 # define RENDER_DISTANCE 10000
@@ -92,7 +92,15 @@ typedef struct s_ray
 	double dstx;
 	double dsty;
 	int	color;
+	int face;
 }				t_ray;
+
+typedef struct s_texture
+{
+	void	*img;
+	int		width;
+	int		height;
+}				t_texture;
 
 typedef struct s_coord
 {
@@ -144,21 +152,22 @@ typedef struct	s_move
 
 typedef struct	s_data
 {
-	void		*mlx;
-	void		*win;
-	t_img		img;
-	t_player	*player;
-	t_move		*move;
-	bool		created_player;
-	char		map[10][10];
-	int			mapX;
-	int			mapY;
-	double		ray_len[RAYS];
-	struct timeval current_time;
-	struct timeval last_time;
-	double fps;
-	int frame;
-	double last_fps[FPS];
+	void			*mlx;
+	void			*win;
+	t_img			img;
+	t_player		*player;
+	t_move			*move;
+	bool			created_player;
+	char			map[10][10];
+	int				mapX;
+	int				mapY;
+	double			ray_len[RAYS];
+	struct timeval	current_time;
+	struct timeval	last_time;
+	double			fps;
+	int				frame;
+	t_texture		texture[5];
+	double			last_fps[FPS];
 }				t_data;
 
 int	handle_keypressed(int key, t_data *data);
@@ -176,13 +185,14 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color);
 int	double_to_int(double x);
 void	print_map(char map[10][10]);
 int ft_abs(int x);
-int	find_ray_color(t_data *data, t_ray *ray);
+int	find_ray_face(t_data *data, t_ray *ray);
 double	draw_line(t_ray *ray, t_data *data, int mode);
 bool	wall_around(t_data *data, double x, double y);
 double get_fps_average(t_data *data);
 int	optimize_fps(double last_fps);
 void	parse_rays(t_data *data);
 void	mini_parse(t_data *data, char *file);
+int	find_wall_facing(t_data *data, t_ray *ray);
 
 void	print_tab(double *tab);
 #endif

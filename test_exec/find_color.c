@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:47:05 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/26 10:48:46 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/26 14:02:46 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int	find_wall_facing(t_data *data, t_ray *ray)
 	return (0);
 }
 
-int	find_ray_color(t_data *data, t_ray *ray)
+int	find_ray_face(t_data *data, t_ray *ray)
 {
 	int face = find_wall_facing(data, ray);
 

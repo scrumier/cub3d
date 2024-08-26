@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 11:17:49 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/26 11:18:00 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/26 14:23:28 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	parse_rays(t_data *data)
 		double line_height = HEIGHT * COEF3D / data->ray_len[ray_nbr];
 		double line_start = (WIDTH / 2) - (line_height / 2);
 		int i = 0;
-		ray.color = find_ray_color(data, &ray);
+		ray.color = find_ray_face(data, &ray);
 		while (i < line_height)
 		{
 			if (ray_nbr * (double)(WIDTH / total_rays) < WIDTH && i + line_start < HEIGHT)
