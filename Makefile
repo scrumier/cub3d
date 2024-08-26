@@ -1,5 +1,5 @@
 CC			=	cc
-FLAGS		=	-Wall -Wextra -Werror -Ofast -MMD -MP -g3
+FLAGS		=	-Wall -Wextra -Werror -Ofast -MMD -MP -g3 -O3
 INC_DIR		=	includes/
 INC			=	$(addprefix $(INC_DIR), \
 				cube3d.h \
@@ -11,6 +11,17 @@ NAME		=	cube3d
 RM			=	rm -f
 SRC_FILES	=	$(addprefix $(SRC_DIR), \
 				raycast.c \
+				key_handle.c \
+				anti_aliasing.c \
+				find_fps.c \
+				move.c \
+				utils.c \
+				draw.c \
+				mlx_utils.c \
+				find_color.c \
+				opti.c \
+				mini_parse.c \
+				rays.c \
 				)
 OBJ_FILES	=	$(SRC_FILES:$(SRC_DIR)%.c=$(OBJ_DIR)/%.o)
 DEP			=	$(OBJ_FILES:.o=.d)

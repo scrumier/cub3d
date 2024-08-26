@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/22 20:04:02 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/26 11:24:34 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,12 +60,13 @@
 # define PI 3.14159265359
 # define FOV 60
 # define RAYS 900
-# define FPS_OPTI 1
+# define FPS_OPTI 2
+# define BEAM_WIDTH 64
 # define FPS 100
-# define FXAA_ENABLED false
-# define WALL_ACCURACY 2
-# define THRESHOLD 20
-# define RENDER_DISTANCE 1000
+# define FXAA_ENABLED true
+# define WALL_ACCURACY 8
+# define THRESHOLD 8
+# define RENDER_DISTANCE 10000
 
 typedef struct s_line
 {
@@ -160,4 +161,28 @@ typedef struct	s_data
 	double last_fps[FPS];
 }				t_data;
 
+int	handle_keypressed(int key, t_data *data);
+int	handle_keyrelease(int key, t_data *data);
+void apply_custom_antialiasing(t_data *data);
+double find_lowest_value(double *tab, int size);
+double find_highest_value(double *tab, int size);
+void	move_player(t_data *data);
+int deg_to_rad(int deg);
+void	print_minimap(t_data *data, int mode);
+double	find_angle(int total_rays);
+double	ft_dabs(double d);
+void draw_square(t_data *data, int x, int y, int coef, int color);
+void	my_mlx_pixel_put(t_data *data, int x, int y, int color);
+int	double_to_int(double x);
+void	print_map(char map[10][10]);
+int ft_abs(int x);
+int	find_ray_color(t_data *data, t_ray *ray);
+double	draw_line(t_ray *ray, t_data *data, int mode);
+bool	wall_around(t_data *data, double x, double y);
+double get_fps_average(t_data *data);
+int	optimize_fps(double last_fps);
+void	parse_rays(t_data *data);
+void	mini_parse(t_data *data, char *file);
+
+void	print_tab(double *tab);
 #endif
