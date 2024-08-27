@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:35:31 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/26 10:35:45 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/27 12:21:04 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	move_player(t_data *data)
 {
 
-	if (data->player->x < 0 || data->player->x > 9 || data->player->y < 0 || data->player->y > 9)
+	if (double_to_int(data->player->x) < 0 || double_to_int(data->player->x) > data->mapX || double_to_int(data->player->y) < 0 || double_to_int(data->player->y) > data->mapY)
 	{
 		data->created_player = false;
 		return ;

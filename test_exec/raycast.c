@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/26 14:34:24 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/27 13:01:24 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,27 +40,32 @@ int create_image(t_data *data)
 	data->fps = 1.0 / elapsed_time;
 	data->last_time = data->current_time;
 	move_player(data);
-	if (data->player->x < 0 || data->player->x > 9 || data->player->y < 0 || data->player->y > 9 ||
-		data->map[double_to_int(data->player->x)][double_to_int(data->player->y)] == '1') {
-		data->created_player = false;
-	}
-	draw_rectangle(data, 0, 0, HEIGHT, WIDTH / 2, 0x000000aa);
-	draw_rectangle(data, 0, WIDTH / 2, HEIGHT, WIDTH / 2, 0x00aa0000);
-	while (i < 10) {
-		j = 0;
-		while (j < 10) {
-			if (data->map[i][j] == '0' && !data->created_player) {
-				data->player->x = i;
-				data->player->y = j;
-				parse_rays(data);
-				data->created_player = true;
+	if (data->created_player == false)
+	{
+		while (i < data->mapX)
+		{
+			j = 0;
+			while (j < data->mapY)
+			{
+				if (data->map[i][j] == '0' && !data->created_player) {
+					data->player->x = i;
+					data->player->y = j;
+					parse_rays(data);
+					data->created_player = true;
+					break ;
+				}
+				if (data->map[i][j] == '0' && data->created_player)
+				{
+					parse_rays(data);
+					break ;
+				}
+				j++;
 			}
-			if (data->map[i][j] == '0' && data->created_player)
-				parse_rays(data);
-			j++;
+			i++;
 		}
-		i++;
 	}
+	else
+		parse_rays(data);
 	print_minimap(data, 2);
 	data->last_fps[data->frame % FPS] = data->fps;
 	data->frame++;
@@ -68,7 +73,7 @@ int create_image(t_data *data)
 	char fps_str[20];
 	char lowest_fps_str[20];
 	char highest_fps_str[20];
-	char *tmp = ft_itoa(data->fps);
+	char *tmp = ft_itoa((int)get_fps_average(data));
 	ft_strlcpy(fps_str, "FPS: ", 6);
 	ft_strlcat(fps_str, tmp, 20);
 	free(tmp);
@@ -100,15 +105,17 @@ int	main(int ac, char **av)
 	move = malloc(sizeof(t_move));
 	data->player = player;
 	data->move = move;
-
 	if (ac != 2)
 	{
 		printf("Error\n");
 		return (0);
 	}
+	data->flash_light = false;
 	data->created_player = false;
 	line = ft_strdup(av[1]);
 	mini_parse(data, line);
+	data->ceiling_color = 0x000000FF;
+	data->floor_color = 0x00A52A2A;
 	data->mlx = mlx_init();
 	data->win = mlx_new_window(data->mlx, WIDTH, HEIGHT, "Cube3D");
 	data->img.img = mlx_new_image(data->mlx, HEIGHT, WIDTH);

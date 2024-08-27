@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:21:06 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/26 10:25:31 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/27 13:04:32 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,11 @@ int	handle_keypressed(int key, t_data *data)
 	{
 		mlx_destroy_window(data->mlx, data->win);
 		exit(0);
+	}
+	if (key == KEY_F)
+	{
+		data->flash_light = !data->flash_light;
+		print_minimap(data, 3);
 	}
 	if (key == KEY_W)
 		data->move->forward = true;

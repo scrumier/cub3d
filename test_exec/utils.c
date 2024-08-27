@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:36:06 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/26 10:46:12 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/27 13:05:05 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,16 +33,25 @@ void	print_minimap(t_data *data, int mode)
 	int i = 0;
 	int j = 0;
 
-	while (i < 10)
+	// i want the minimap to be displayed in the top left corner
+	// walls are displayed in black
+	// player is displayed in blue
+	// empty space is displayed in gray black
+	// i want the minimap to be 100x100 always (even if the map is bigger)
+	// use COEF to scale the minimap
+	// use PLAYER_SIZE to display the player
+
+	while (i < data->mapX)
 	{
 		j = 0;
-		while (j < 10)
+		while (j < data->mapY)
 		{
 			if (data->map[i][j] == '1' && mode == 2)
-				draw_square(data, i * COEF, j * COEF, COEF, 0x00FF0000);
-			else if (data->map[i][j] == '0' && mode == 1)
 				draw_square(data, i * COEF, j * COEF, COEF, 0x00000000);
-			
+			else if (data->map[i][j] == '0' && mode == !data->flash_light)
+				draw_square(data, i * COEF, j * COEF, COEF, 0x00A9A9A9);
+			else if (data->map[i][j] == '0' && mode == 3)
+				draw_square(data, i * COEF, j * COEF, COEF, 0x00000000);
 			j++;
 		}
 		i++;
@@ -78,7 +87,7 @@ int ft_abs(int x)
 	return (x);
 }
 
-void	print_map(char map[10][10])
+void	print_map(char **map)
 {
 	int i = 0;
 	int j = 0;

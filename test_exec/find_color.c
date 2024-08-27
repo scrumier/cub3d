@@ -6,17 +6,17 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:47:05 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/26 14:02:46 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/27 13:26:02 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3d.h"
 
-double find_cube_center(double x)
+double find_cube_center(t_data *data, double x)
 {
 	int i = 0;
 
-	while (i < 10)
+	while (i < data->mapX)
 	{
 		if (x >= i && x < i + 1)
 			return (i + 0.5);
@@ -38,7 +38,7 @@ int find_closest_to_05(double x, double y)
 int	find_wall_facing(t_data *data, t_ray *ray)
 {
 	(void)data;
-	t_coord center = {find_cube_center(ray->dstx), find_cube_center(ray->dsty)};
+	t_coord center = {find_cube_center(data, ray->dstx), find_cube_center(data, ray->dsty)};
 	double angle = atan2(center.y - ray->dsty, center.x - ray->dstx);
 	angle += PI / 4;
 	if (angle < 0)

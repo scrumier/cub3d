@@ -9,6 +9,7 @@
 		"get_next_line.h": "c",
 		"keysym.h": "c",
 		"keysymdef.h": "c",
-		"cmath": "c"
+		"cmath": "c",
+		"cube3d.h": "c"
 	}
 }

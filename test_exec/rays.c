@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 11:17:49 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/26 14:23:28 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/27 13:17:42 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,14 +48,40 @@ void	parse_rays(t_data *data)
 		double line_start = (WIDTH / 2) - (line_height / 2);
 		int i = 0;
 		ray.color = find_ray_face(data, &ray);
+		while (i < line_start)
+		{
+			if (ray_nbr * (double)(WIDTH / total_rays) < WIDTH && i < HEIGHT)
+			{
+				double n = -1;
+				while (++n < (double)(WIDTH / total_rays)) {
+					if (!(n + ray_nbr * (double)(WIDTH / total_rays) < 150 && i < 150))
+						my_mlx_pixel_put(data, ray_nbr * (double) (WIDTH / total_rays) + n, i, data->ceiling_color);
+				}
+			}
+			i++;
+		}
+		i = 0;
 		while (i < line_height)
 		{
 			if (ray_nbr * (double)(WIDTH / total_rays) < WIDTH && i + line_start < HEIGHT)
 			{
-				int n = -1;
+				double n = -1;
 				while (++n < (double)(WIDTH / total_rays)) {
 					if (!(n + ray_nbr * (double)(WIDTH / total_rays) < 150 && i + line_start < 150))
 						my_mlx_pixel_put(data, ray_nbr * (double) (WIDTH / total_rays) + n, i + line_start, ray.color);
+				}
+			}
+			i++;
+		}
+		i = line_start + line_height;
+		while (i < HEIGHT)
+		{
+			if (ray_nbr * (double)(WIDTH / total_rays) < WIDTH && i < HEIGHT)
+			{
+				double n = -1;
+				while (++n < (double)(WIDTH / total_rays)) {
+					if (!(n + ray_nbr * (double)(WIDTH / total_rays) < 150 && i < 150))
+						my_mlx_pixel_put(data, ray_nbr * (double) (WIDTH / total_rays) + n, i, data->floor_color);
 				}
 			}
 			i++;

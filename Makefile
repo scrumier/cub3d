@@ -1,5 +1,5 @@
 CC			=	cc
-FLAGS		=	-Wall -Wextra -Werror -Ofast -MMD -MP -O3 -march=native
+FLAGS		=	-Wall -Wextra -Werror -Ofast -MMD -MP -O3
 INC_DIR		=	includes/
 INC			=	$(addprefix $(INC_DIR), \
 				cube3d.h \
