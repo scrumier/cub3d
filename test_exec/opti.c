@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:50:35 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/27 16:16:20 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/28 15:28:37 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,9 @@ bool	wall_around_01(t_data *data, double x, double y)
 	return (false);
 }
 
-bool	wall_around_05(t_data *data, double x, double y)
+bool __attribute__((hot))	wall_around_05(t_data *data, double x, double y)
 {
+	// return true if there is a wall around theses coordinates
 	if (data->map[double_to_int(x) / COEF][double_to_int(y) / COEF] == '1')
 		return (true);
 	if (data->map[double_to_int(x + 0.5) / COEF][double_to_int(y) / COEF] == '1')

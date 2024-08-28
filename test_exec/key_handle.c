@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:21:06 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/27 13:44:26 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/28 15:28:45 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,14 @@ int	handle_keypressed(int key, t_data *data)
 		data->move->forward = true;
 	if (key == KEY_S)
 		data->move->backward = true;
-	if (key == KEY_A)
+	if (key == KEY_LEFT)
 		data->move->turn_left = true;
-	if (key == KEY_D)
+	if (key == KEY_RIGHT)
 		data->move->turn_right = true;
+	if (key == KEY_A)
+		data->move->go_left = true;
+	if (key == KEY_D)
+		data->move->go_right = true;
 	return (0);
 }
 
@@ -41,9 +45,13 @@ int	handle_keyrelease(int key, t_data *data)
 		data->move->forward = false;
 	if (key == KEY_S)
 		data->move->backward = false;
-	if (key == KEY_A)
+	if (key == KEY_LEFT)
 		data->move->turn_left = false;
-	if (key == KEY_D)
+	if (key == KEY_RIGHT)
 		data->move->turn_right = false;
+	if (key == KEY_A)
+		data->move->go_left = false;
+	if (key == KEY_D)
+		data->move->go_right = false;
 	return (0);
 }

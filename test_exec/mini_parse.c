@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 11:17:17 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/27 12:17:38 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/28 15:28:43 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	mini_parse(t_data *data, char *file)
 	int i = 0;
 	int j;
 	int k;
-	data->map = ft_calloc(MAP_SIZE, sizeof(char *));
+	data->map = ft_calloc(600, sizeof(char *));
 
 	while (line)
 	{

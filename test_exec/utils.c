@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:36:06 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/27 13:05:05 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/28 15:28:27 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,10 +92,10 @@ void	print_map(char **map)
 	int i = 0;
 	int j = 0;
 
-	while (i < 10)
+	while (i < 4)
 	{
 		j = 0;
-		while (j < 10)
+		while (j < 0)
 		{
 			printf("%c", map[i][j]);
 			j++;

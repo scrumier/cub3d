@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/28 10:40:20 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/28 15:29:38 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,10 @@
 # define FPS 50
 # define MAP_SIZE 40
 # define FXAA_ENABLED true
-# define WALL_ACCURACY 1000
+# define WALL_ACCURACY 500
 # define THRESHOLD 8
 # define RENDER_DISTANCE 100000
+# define WALL_COLLISION 0.2
 
 typedef struct s_line
 {
@@ -153,6 +154,8 @@ typedef struct	s_move
 	bool		backward;
 	bool		turn_left;
 	bool		turn_right;
+	bool		go_left;
+	bool		go_right;
 }				t_move;
 
 typedef struct	s_data

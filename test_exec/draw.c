@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:42:18 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/27 16:16:42 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/28 15:28:51 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,8 @@ double	draw_line(t_ray *ray, t_data *data, int mode)
 	bresenham.yinc *= (double)bresenham.dy / bresenham.steps;
 	bresenham.x0 = bresenham.x;
 	bresenham.y0 = bresenham.y;
-	while (i < bresenham.steps)
+	int opti = 0;
+	while (1)
 	{
 		if (data->map[ft_abs((int)bresenham.x0) / COEF][ft_abs((int)bresenham.y0) / COEF] == '1')
 		{
@@ -84,15 +85,10 @@ double	draw_line(t_ray *ray, t_data *data, int mode)
 			ray->dsty = bresenham.y0 / COEF;
 			return (sqrt(pow(bresenham.x0 - ray->xo, 2) + pow(bresenham.y0 - ray->yo, 2)));
 		}
-		else if (wall_around_01(data, bresenham.x0, bresenham.y0))
+		else if (wall_around_05(data, bresenham.x0, bresenham.y0) == true)
 		{
 			bresenham.x0 += bresenham.xinc / (double)WALL_ACCURACY;
 			bresenham.y0 += bresenham.yinc / (double)WALL_ACCURACY;
-		}
-		else if (wall_around_05(data, bresenham.x0, bresenham.y0))
-		{
-			bresenham.y0 += bresenham.yinc / (double)(WALL_ACCURACY / 2);
-			bresenham.x0 += bresenham.xinc / (double)(WALL_ACCURACY / 2);
 		}
 		else
 		{
@@ -104,6 +100,7 @@ double	draw_line(t_ray *ray, t_data *data, int mode)
 			my_mlx_pixel_put(data, (int)bresenham.x0, (int)bresenham.y0, 0x00FFFFFF);
 		}
 		i++;
+		opti++;
 	}
 	ray->dstx = bresenham.x0 / COEF;
 	ray->dsty = bresenham.y0 / COEF;
