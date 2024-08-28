@@ -6,32 +6,58 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:50:35 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/26 11:14:32 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/27 16:16:20 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3d.h"
 
-bool	wall_around(t_data *data, double x, double y)
+bool	wall_around_01(t_data *data, double x, double y)
 {
-	// if there is a wall around the player coordinates x and y
 	if (data->map[double_to_int(x) / COEF][double_to_int(y) / COEF] == '1')
 		return (true);
+	if (data->map[double_to_int(x + 0.1) / COEF][double_to_int(y) / COEF] == '1')
+		return (true);
+	if (data->map[double_to_int(x + 0.1) / COEF][double_to_int(y + 0.1) / COEF] == '1')
+		return (true);
+	if (data->map[double_to_int(x) / COEF][double_to_int(y + 0.1) / COEF] == '1')
+		return (true);
+	if (data->map[double_to_int(x) / COEF][double_to_int(y - 0.1) / COEF] == '1')
+		return (true);
+	if (data->map[double_to_int(x - 0.1) / COEF][double_to_int(y + 0.1) / COEF] == '1')
+		return (true);
+	if (data->map[double_to_int(x - 0.1) / COEF][double_to_int(y) / COEF] == '1')
+		return (true);
+	if (data->map[double_to_int(x - 0.1) / COEF][double_to_int(y - 0.1) / COEF] == '1')
+		return (true);
+	if (data->map[double_to_int(x) / COEF][double_to_int(y - 0.1) / COEF] == '1')
+		return (true);
+	if (data->map[double_to_int(x + 0.1) / COEF][double_to_int(y - 0.1) / COEF] == '1')
+		return (true);
+	return (false);
+}
+
+bool	wall_around_05(t_data *data, double x, double y)
+{
 	if (data->map[double_to_int(x) / COEF][double_to_int(y) / COEF] == '1')
 		return (true);
-	if (data->map[double_to_int(x) / COEF][double_to_int(y + 1) / COEF] == '1')
+	if (data->map[double_to_int(x + 0.5) / COEF][double_to_int(y) / COEF] == '1')
 		return (true);
-	if (data->map[double_to_int(x + 1) / COEF][double_to_int(y + 1) / COEF] == '1')
+	if (data->map[double_to_int(x + 0.5) / COEF][double_to_int(y + 0.5) / COEF] == '1')
 		return (true);
-	if (data->map[double_to_int(x - 1) / COEF][double_to_int(y) / COEF] == '1')
+	if (data->map[double_to_int(x) / COEF][double_to_int(y + 0.5) / COEF] == '1')
 		return (true);
-	if (data->map[double_to_int(x) / COEF][double_to_int(y - 1) / COEF] == '1')
+	if (data->map[double_to_int(x) / COEF][double_to_int(y - 0.5) / COEF] == '1')
 		return (true);
-	if (data->map[double_to_int(x - 1) / COEF][double_to_int(y - 1) / COEF] == '1')
+	if (data->map[double_to_int(x - 0.5) / COEF][double_to_int(y + 0.5) / COEF] == '1')
 		return (true);
-	if (data->map[double_to_int(x - 1) / COEF][double_to_int(y + 1) / COEF] == '1')
+	if (data->map[double_to_int(x - 0.5) / COEF][double_to_int(y) / COEF] == '1')
 		return (true);
-	if (data->map[double_to_int(x + 1) / COEF][double_to_int(y - 1) / COEF] == '1')
+	if (data->map[double_to_int(x - 0.5) / COEF][double_to_int(y - 0.5) / COEF] == '1')
+		return (true);
+	if (data->map[double_to_int(x) / COEF][double_to_int(y - 0.5) / COEF] == '1')
+		return (true);
+	if (data->map[double_to_int(x + 0.5) / COEF][double_to_int(y - 0.5) / COEF] == '1')
 		return (true);
 	return (false);
 }

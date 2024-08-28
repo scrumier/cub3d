@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:42:18 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/27 13:22:29 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/27 16:16:42 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,19 +72,37 @@ double	draw_line(t_ray *ray, t_data *data, int mode)
 		{
 			while (data->map[ft_abs((int)bresenham.x0) / COEF][ft_abs((int)bresenham.y0) / COEF] == '1')
 			{
-				bresenham.x0 -= bresenham.xinc / WALL_ACCURACY;
-				bresenham.y0 -= bresenham.yinc / WALL_ACCURACY;
+				bresenham.x0 -= bresenham.xinc / (double)WALL_ACCURACY;
+				bresenham.y0 -= bresenham.yinc / (double)WALL_ACCURACY;
+			}
+			while (data->map[ft_abs((int)bresenham.x0) / COEF][ft_abs((int)bresenham.y0) / COEF] == '0')
+			{
+				bresenham.x0 += bresenham.xinc / (double)WALL_ACCURACY * 10;
+				bresenham.y0 += bresenham.yinc / (double)WALL_ACCURACY * 10;
 			}
 			ray->dstx = bresenham.x0 / COEF;
 			ray->dsty = bresenham.y0 / COEF;
 			return (sqrt(pow(bresenham.x0 - ray->xo, 2) + pow(bresenham.y0 - ray->yo, 2)));
 		}
+		else if (wall_around_01(data, bresenham.x0, bresenham.y0))
+		{
+			bresenham.x0 += bresenham.xinc / (double)WALL_ACCURACY;
+			bresenham.y0 += bresenham.yinc / (double)WALL_ACCURACY;
+		}
+		else if (wall_around_05(data, bresenham.x0, bresenham.y0))
+		{
+			bresenham.y0 += bresenham.yinc / (double)(WALL_ACCURACY / 2);
+			bresenham.x0 += bresenham.xinc / (double)(WALL_ACCURACY / 2);
+		}
+		else
+		{
+			bresenham.x0 += bresenham.xinc;
+			bresenham.y0 += bresenham.yinc;
+		}
 		if (mode == 1)
 		{
 			my_mlx_pixel_put(data, (int)bresenham.x0, (int)bresenham.y0, 0x00FFFFFF);
 		}
-		bresenham.x0 += bresenham.xinc;
-		bresenham.y0 += bresenham.yinc;
 		i++;
 	}
 	ray->dstx = bresenham.x0 / COEF;

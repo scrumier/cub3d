@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/27 13:01:24 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/27 13:41:11 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,22 @@ int create_image(t_data *data)
 	return (0);
 }
 
+int mouse_hook(int button, t_data *data)
+{
+	// handle if he mouse move to the right or to the left
+	if (button == 4)
+	{
+		data->move->turn_left = false;
+		data->move->turn_right = true;
+	}
+	else if (button == 5)
+	{
+		data->move->turn_left = true;
+		data->move->turn_right = false;
+	}
+	return (0);
+}
+
 int	main(int ac, char **av)
 {
 	t_data		*data = NULL;
@@ -123,6 +139,7 @@ int	main(int ac, char **av)
 	data->player->player_angle = (FOV / 2) * PI / 180;
 	mlx_loop_hook(data->mlx, create_image, data);
 	mlx_hook(data->win, KEYPRESS, KEYPRESSMASK, &handle_keypressed, data);
+	mlx_hook(data->win, MOUSEMOVE, MOUSEMOVEMASK, &mouse_hook, data);
 	mlx_hook(data->win, KEYREALASE, KEYRELEASEMASK, &handle_keyrelease, data);
 	mlx_loop(data->mlx);
 	return (0);

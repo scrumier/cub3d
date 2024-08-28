@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/27 13:26:13 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/28 10:40:20 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,26 +50,28 @@
 # include <sys/time.h>
 # define KEYPRESSMASK (1L<<0)
 # define KEYRELEASEMASK (1L<<1)
+# define MOUSEMOVEMASK (1L<<6)
+# define MOUSEMOVE 6
 # define KEYPRESS 2
 # define KEYREALASE 3
 # define HEIGHT (900)
 # define WIDTH (900)
 # define COEF 7
-# define COEF3D 8
+# define COEF3D 5
 # define PLAYER_SIZE 5
-# define PLAYER_SPEED 0.05
+# define PLAYER_SPEED 0.03
 # define PLAYER_ROTATE 0.01
 # define PI 3.14159265359
 # define FOV 85
 # define RAYS 900
 # define FPS_OPTI 0
 # define BEAM_WIDTH 64
-# define FPS 30
+# define FPS 50
 # define MAP_SIZE 40
 # define FXAA_ENABLED true
-# define WALL_ACCURACY 4000
+# define WALL_ACCURACY 1000
 # define THRESHOLD 8
-# define RENDER_DISTANCE 10000
+# define RENDER_DISTANCE 100000
 
 typedef struct s_line
 {
@@ -193,7 +195,8 @@ void	print_map(char **map);
 int ft_abs(int x);
 int	find_ray_face(t_data *data, t_ray *ray);
 double	draw_line(t_ray *ray, t_data *data, int mode);
-bool	wall_around(t_data *data, double x, double y);
+bool	wall_around_01(t_data *data, double x, double y);
+bool	wall_around_05(t_data *data, double x, double y);
 double get_fps_average(t_data *data);
 int	optimize_fps(double last_fps);
 void	parse_rays(t_data *data);

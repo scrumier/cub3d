@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:35:31 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/27 12:21:04 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/08/27 13:30:25 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ void	move_player(t_data *data)
 	if (data->move->turn_left == true)
 	{
 		data->player->player_angle = (data->player->player_angle - PI / 30);
-		data->player->pdx = PLAYER_ROTATE * cos(data->player->player_angle);
-		data->player->pdy = PLAYER_ROTATE * sin(data->player->player_angle);
+		data->player->pdx = (double)PLAYER_ROTATE * cos(data->player->player_angle);
+		data->player->pdy = (double)PLAYER_ROTATE * sin(data->player->player_angle);
 	}
 	if (data->move->turn_right == true)
 	{
