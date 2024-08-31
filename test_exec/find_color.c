@@ -12,13 +12,26 @@
 
 #include "cube3d.h"
 
-double find_cube_center(t_data *data, double x)
+double find_cube_center_Y(t_data *data, double y)
+{
+	int i = 0;
+
+	while (i < data->mapY)
+	{
+		if (y < i + 1)
+			return (i + 0.5);
+		i++;
+	}
+	return (0);
+}
+
+double find_cube_center_X(t_data *data, double x)
 {
 	int i = 0;
 
 	while (i < data->mapX)
 	{
-		if (x >= i && x < i + 1)
+		if (x < i + 1)
 			return (i + 0.5);
 		i++;
 	}
@@ -38,7 +51,7 @@ int find_closest_to_05(double x, double y)
 int	find_wall_facing(t_data *data, t_ray *ray)
 {
 	(void)data;
-	t_coord center = {find_cube_center(data, ray->dstx), find_cube_center(data, ray->dsty)};
+	t_coord center = {find_cube_center_X(data, ray->dstx), find_cube_center_Y(data, ray->dsty)};
 	double angle = atan2(center.y - ray->dsty, center.x - ray->dstx);
 	angle += PI / 4;
 	if (angle < 0)
@@ -56,17 +69,17 @@ int	find_wall_facing(t_data *data, t_ray *ray)
 	return (0);
 }
 
-int	find_ray_face(t_data *data, t_ray *ray)
+int	find_ray_texture(t_data *data, t_ray *ray)
 {
 	int face = find_wall_facing(data, ray);
 
 	if (face == 'n') // purple
-		return (0x00FF00FF);
+		return (0);
 	else if (face == 's') // red
-		return (0x00FF0033);
+		return (1);
 	else if (face == 'e') // blue
-		return (0x007777FF);
+		return (2);
 	else if (face == 'w') // green
-		return (0x0044FF44);
-	return (0x00000000);
+		return (3);
+	return (4);
 }

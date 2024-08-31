@@ -12,7 +12,25 @@
 
 #include "cube3d.h"
 
-void	parse_rays(t_data *data)
+// get texture color
+int get_texture_color(t_texture *texture, double texture_offset, int tex_x)
+{
+	// Ensure texture_offset and tex_x are within bounds
+	int tex_y = (int)texture_offset;
+
+	if (tex_x < 0) tex_x = 0;
+	if (tex_x >= texture->width) tex_x = texture->width - 1;
+
+	if (tex_y < 0) tex_y = 0;
+	if (tex_y >= texture->height) tex_y = texture->height - 1;
+
+	// Calculate the memory address of the pixel in the texture
+	int color = *(int *)(texture->addr + (tex_y * texture->line_len + tex_x * (texture->bpp / 8)));
+
+	return color;
+}
+
+void parse_rays(t_data *data)
 {
 	t_ray ray;
 	int ray_nbr;
@@ -47,43 +65,40 @@ void	parse_rays(t_data *data)
 		double line_height = HEIGHT * COEF3D / data->ray_len[ray_nbr];
 		double line_start = (WIDTH / 2) - (line_height / 2);
 		int i = 0;
-		ray.color = find_ray_face(data, &ray);
+		int texture_index = find_ray_texture(data, &ray);
+		int wall_face = find_wall_facing(data, &ray);
+		t_texture *texture = &data->texture[texture_index];
+
 		while (i < line_start)
 		{
-			if (ray_nbr * (double)(WIDTH / total_rays) < WIDTH && i < HEIGHT)
-			{
-				double n = -1;
-				while (++n < (double)(WIDTH / total_rays)) {
-					if (!(n + ray_nbr * (double)(WIDTH / total_rays) < 150 && i < 150))
-						my_mlx_pixel_put(data, ray_nbr * (double) (WIDTH / total_rays) + n, i, data->ceiling_color);
-				}
-			}
+			if (!(ray_nbr < 150 && i < 150))
+				my_mlx_pixel_put(data, ray_nbr, i, data->ceiling_color);
 			i++;
 		}
 		i = 0;
 		while (i < line_height)
 		{
-			if (ray_nbr * (double)(WIDTH / total_rays) < WIDTH && i + line_start < HEIGHT)
+			if (!(ray_nbr < 150 && i + line_start < 150))
 			{
-				double n = -1;
-				while (++n < (double)(WIDTH / total_rays)) {
-					if (!(n + ray_nbr * (double)(WIDTH / total_rays) < 150 && i + line_start < 150))
-						my_mlx_pixel_put(data, ray_nbr * (double) (WIDTH / total_rays) + n, i + line_start, ray.color);
-				}
+				double texture_offset = (i / line_height) * texture->height;
+
+				int tex_x;
+
+				if (wall_face == 'e' || wall_face == 'w')
+					tex_x = (int)((ray.dstx - floor(ray.dstx)) * texture->width);
+				else
+					tex_x = (int)((ray.dsty - floor(ray.dsty)) * texture->width);
+
+				int texture_color = get_texture_color(texture, texture_offset, tex_x);
+				my_mlx_pixel_put(data, ray_nbr, i + line_start, texture_color);
 			}
 			i++;
 		}
 		i = line_start + line_height;
 		while (i < HEIGHT)
 		{
-			if (ray_nbr * (double)(WIDTH / total_rays) < WIDTH && i < HEIGHT)
-			{
-				double n = -1;
-				while (++n < (double)(WIDTH / total_rays)) {
-					if (!(n + ray_nbr * (double)(WIDTH / total_rays) < 150 && i < 150))
-						my_mlx_pixel_put(data, ray_nbr * (double) (WIDTH / total_rays) + n, i, data->floor_color);
-				}
-			}
+			if (!(ray_nbr < 150 && i < 150))
+				my_mlx_pixel_put(data, ray_nbr, i, data->floor_color);
 			i++;
 		}
 		ray.ra += ray_angle;

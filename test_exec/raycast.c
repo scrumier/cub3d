@@ -54,11 +54,6 @@ int create_image(t_data *data)
 					data->created_player = true;
 					break ;
 				}
-				if (data->map[i][j] == '0' && data->created_player)
-				{
-					parse_rays(data);
-					break ;
-				}
 				j++;
 			}
 			i++;
@@ -110,33 +105,52 @@ int mouse_hook(int button, t_data *data)
 	return (0);
 }
 
+void	load_texture(t_data *data, t_texture *texture, char *path)
+{
+	texture->img = mlx_xpm_file_to_image(data->mlx, path, &texture->width, &texture->height);
+	if (texture->img == NULL)
+	{
+		printf("Error: Failed to load texture %s\n", path);
+		exit(0);
+	}
+	texture->addr = mlx_get_data_addr(texture->img, &texture->bpp, &texture->line_len, &texture->endian);
+}
+
+void	init_textures(t_data *data)
+{
+	load_texture(data, &data->texture[0], "textures/wall_1.xpm");
+	load_texture(data, &data->texture[1], "textures/wall_2.xpm");
+	load_texture(data, &data->texture[2], "textures/wall_3.xpm");
+	load_texture(data, &data->texture[3], "textures/wall_4.xpm");
+	load_texture(data, &data->texture[4], "textures/beam.xpm");
+}
+
 int	main(int ac, char **av)
 {
-	t_data		*data = NULL;
-	t_player	*player = NULL;
-	t_move		*move = NULL;
-	char 		*line = NULL;
-	data = malloc(sizeof(t_data));
-	player = malloc(sizeof(t_player));
-	move = malloc(sizeof(t_move));
-	data->player = player;
-	data->move = move;
+	t_data		*data;
+	char 		*line;
+
 	if (ac != 2)
-	{
-		printf("Error\n");
-		return (0);
-	}
+		return (printf("Error\n"), 0);
+
+	data = malloc(sizeof(t_data));
+	data->player = malloc(sizeof(t_player));
+	data->move = malloc(sizeof(t_move));
 	data->flash_light = false;
 	data->created_player = false;
 	line = ft_strdup(av[1]);
+
 	mini_parse(data, line);
 	data->ceiling_color = 0x000000FF;
 	data->floor_color = 0x00A52A2A;
 	data->mlx = mlx_init();
+	init_textures(data);
+
 	data->win = mlx_new_window(data->mlx, WIDTH, HEIGHT, "Cube3D");
 	data->img.img = mlx_new_image(data->mlx, HEIGHT, WIDTH);
 	data->img.addr = mlx_get_data_addr(data->img.img, &data->img.bpp, &data->img.line_len, &data->img.endian);
 	data->player->player_angle = (FOV / 2) * PI / 180;
+
 	mlx_loop_hook(data->mlx, create_image, data);
 	mlx_hook(data->win, KEYPRESS, KEYPRESSMASK, &handle_keypressed, data);
 	mlx_hook(data->win, MOUSEMOVE, MOUSEMOVEMASK, &mouse_hook, data);

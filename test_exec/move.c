@@ -12,97 +12,99 @@
 
 #include "cube3d.h"
 
-void	check_collision(t_data *data)
+bool is_out_of_the_map(t_data *data, double x, double y)
 {
-	if (data->map[double_to_int(data->player->x) / COEF][double_to_int(data->player->y) / COEF] == '1')
+	if (x < 0 || y < 0 || x >= data->mapX || y >= data->mapY)
+		return (true);
+	return (false);
+}
+
+bool is_wall(t_data *data, double x, double y)
+{
+	return (data->map[double_to_int(x)][double_to_int(y)] == '1');
+}
+
+void check_collision_and_slide(t_data *data, double *new_x, double *new_y)
+{
+	double radius = 0.2;  // Player collision radius
+	bool x_collision = false;
+	bool y_collision = false;
+
+	// Check for collision on the x-axis
+	if (is_out_of_the_map(data, *new_x, data->player->y) ||
+		is_wall(data, *new_x + radius, data->player->y) ||
+		is_wall(data, *new_x - radius, data->player->y))
 	{
-		data->player->x -= PLAYER_SPEED * cos(data->player->player_angle);
-		data->player->y -= PLAYER_SPEED * sin(data->player->player_angle);
+		x_collision = true;
 	}
-	if (data->map[double_to_int(data->player->x + 0.1) / COEF][double_to_int(data->player->y) / COEF] == '1')
+
+	// Check for collision on the y-axis
+	if (is_out_of_the_map(data, data->player->x, *new_y) ||
+		is_wall(data, data->player->x, *new_y + radius) ||
+		is_wall(data, data->player->x, *new_y - radius))
 	{
-		data->player->x -= PLAYER_SPEED * cos(data->player->player_angle);
-		data->player->y -= PLAYER_SPEED * sin(data->player->player_angle);
+		y_collision = true;
 	}
-	if (data->map[double_to_int(data->player->x + 0.1) / COEF][double_to_int(data->player->y + 0.1) / COEF] == '1')
-	{
-		data->player->x -= PLAYER_SPEED * cos(data->player->player_angle);
-		data->player->y -= PLAYER_SPEED * sin(data->player->player_angle);
+
+	// If both x and y would cause a collision, prevent movement in both directions
+	if (x_collision && y_collision) {
+		*new_x = data->player->x;
+		*new_y = data->player->y;
 	}
-	if (data->map[double_to_int(data->player->x) / COEF][double_to_int(data->player->y + 0.1) / COEF] == '1')
-	{
-		data->player->x -= PLAYER_SPEED * cos(data->player->player_angle);
-		data->player->y -= PLAYER_SPEED * sin(data->player->player_angle);
-	}
-	if (data->map[double_to_int(data->player->x) / COEF][double_to_int(data->player->y - 0.1) / COEF] == '1')
-	{
-		data->player->x -= PLAYER_SPEED * cos(data->player->player_angle);
-		data->player->y -= PLAYER_SPEED * sin(data->player->player_angle);
-	}
-	if (data->map[double_to_int(data->player->x - 0.1) / COEF][double_to_int(data->player->y + 0.1) / COEF] == '1')
-	{
-		data->player->x -= PLAYER_SPEED * cos(data->player->player_angle);
-		data->player->y -= PLAYER_SPEED * sin(data->player->player_angle);
-	}
-	if (data->map[double_to_int(data->player->x - 0.1) / COEF][double_to_int(data->player->y) / COEF] == '1')
-	{
-		data->player->x -= PLAYER_SPEED * cos(data->player->player_angle);
-		data->player->y -= PLAYER_SPEED * sin(data->player->player_angle);
-	}
-	if (data->map[double_to_int(data->player->x - 0.1) / COEF][double_to_int(data->player->y - 0.1) / COEF] == '1')
-	{
-		data->player->x -= PLAYER_SPEED * cos(data->player->player_angle);
-		data->player->y -= PLAYER_SPEED * sin(data->player->player_angle);
-	}
-	if (data->map[double_to_int(data->player->x) / COEF][double_to_int(data->player->y - 0.1) / COEF] == '1')
-	{
-		data->player->x -= PLAYER_SPEED * cos(data->player->player_angle);
-		data->player->y -= PLAYER_SPEED * sin(data->player->player_angle);
-	}
-	if (data->map[double_to_int(data->player->x + 0.1) / COEF][double_to_int(data->player->y - 0.1) / COEF] == '1')
-	{
-		data->player->x -= PLAYER_SPEED * cos(data->player->player_angle);
-		data->player->y -= PLAYER_SPEED * sin(data->player->player_angle);
+		// Otherwise, allow sliding along the axis that does not collide
+	else {
+		if (x_collision) {
+			*new_x = data->player->x;
+		}
+		if (y_collision) {
+			*new_y = data->player->y;
+		}
 	}
 }
 
-void	move_player(t_data *data)
+void move_player(t_data *data)
 {
-	if (double_to_int(data->player->x) < 0 || double_to_int(data->player->x) > data->mapX || double_to_int(data->player->y) < 0 || double_to_int(data->player->y) > data->mapY)
-	{
-		data->created_player = false;
-		return ;
-	}
+	double new_x = data->player->x;
+	double new_y = data->player->y;
+
 	if (data->move->forward == true)
 	{
-		data->player->x += PLAYER_SPEED * cos(data->player->player_angle);
-		data->player->y += PLAYER_SPEED * sin(data->player->player_angle);
+		new_x += PLAYER_SPEED * cos(data->player->player_angle);
+		new_y += PLAYER_SPEED * sin(data->player->player_angle);
 	}
 	if (data->move->backward == true)
 	{
-		data->player->x -= PLAYER_SPEED * cos(data->player->player_angle);
-		data->player->y -= PLAYER_SPEED * sin(data->player->player_angle);
-	}
-	if (data->move->turn_left == true)
-	{
-		data->player->player_angle = (data->player->player_angle - PI / 30);
-		data->player->pdx = (double)PLAYER_ROTATE * cos(data->player->player_angle);
-		data->player->pdy = (double)PLAYER_ROTATE * sin(data->player->player_angle);
-	}
-	if (data->move->turn_right == true)
-	{
-		data->player->player_angle = (data->player->player_angle + PI / 30);
-		data->player->pdx = PLAYER_ROTATE * cos(data->player->player_angle);
-		data->player->pdy = PLAYER_ROTATE * sin(data->player->player_angle);
+		new_x -= PLAYER_SPEED * cos(data->player->player_angle);
+		new_y -= PLAYER_SPEED * sin(data->player->player_angle);
 	}
 	if (data->move->go_left == true)
 	{
-		data->player->x -= PLAYER_SPEED * cos(data->player->player_angle + PI / 2);
-		data->player->y -= PLAYER_SPEED * sin(data->player->player_angle + PI / 2);
+		new_x -= PLAYER_SPEED * cos(data->player->player_angle + PI / 2);
+		new_y -= PLAYER_SPEED * sin(data->player->player_angle + PI / 2);
 	}
 	if (data->move->go_right == true)
 	{
-		data->player->x += PLAYER_SPEED * cos(data->player->player_angle + PI / 2);
-		data->player->y += PLAYER_SPEED * sin(data->player->player_angle + PI / 2);
+		new_x += PLAYER_SPEED * cos(data->player->player_angle + PI / 2);
+		new_y += PLAYER_SPEED * sin(data->player->player_angle + PI / 2);
+	}
+
+	// Check for collisions and allow sliding
+	check_collision_and_slide(data, &new_x, &new_y);
+
+	// Update player position
+	data->player->x = new_x;
+	data->player->y = new_y;
+
+	if (data->move->turn_left == true)
+	{
+		data->player->player_angle -= PI / 30;
+		data->player->pdx = PLAYER_ROTATE * cos(data->player->player_angle);
+		data->player->pdy = PLAYER_ROTATE * sin(data->player->player_angle);
+	}
+	if (data->move->turn_right == true)
+	{
+		data->player->player_angle += PI / 30;
+		data->player->pdx = PLAYER_ROTATE * cos(data->player->player_angle);
+		data->player->pdy = PLAYER_ROTATE * sin(data->player->player_angle);
 	}
 }

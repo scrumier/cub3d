@@ -59,7 +59,7 @@
 # define COEF 7
 # define COEF3D 5
 # define PLAYER_SIZE 5
-# define PLAYER_SPEED 0.03
+# define PLAYER_SPEED 0.06
 # define PLAYER_ROTATE 0.01
 # define PI 3.14159265359
 # define FOV 85
@@ -67,12 +67,10 @@
 # define FPS_OPTI 0
 # define BEAM_WIDTH 64
 # define FPS 50
-# define MAP_SIZE 40
 # define FXAA_ENABLED true
-# define WALL_ACCURACY 500
-# define THRESHOLD 8
+# define WALL_ACCURACY 100
+# define THRESHOLD 3
 # define RENDER_DISTANCE 100000
-# define WALL_COLLISION 0.2
 
 typedef struct s_line
 {
@@ -106,6 +104,10 @@ typedef struct s_texture
 	void	*img;
 	int		width;
 	int		height;
+	char	*addr;
+	int		bpp;
+	int		line_len;
+	int		endian;
 }				t_texture;
 
 typedef struct s_coord
@@ -196,7 +198,7 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color);
 int	double_to_int(double x);
 void	print_map(char **map);
 int ft_abs(int x);
-int	find_ray_face(t_data *data, t_ray *ray);
+int	find_ray_texture(t_data *data, t_ray *ray);
 double	draw_line(t_ray *ray, t_data *data, int mode);
 bool	wall_around_01(t_data *data, double x, double y);
 bool	wall_around_05(t_data *data, double x, double y);

@@ -12,7 +12,7 @@
 
 #include "cube3d.h"
 
-void __attribute__((flatten))	my_mlx_pixel_put(t_data *data, int x, int y, int color)
+void __attribute__((hot))	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {
 	char	*dst;
 

@@ -75,7 +75,7 @@ double	ft_dabs(double d)
 
 int	double_to_int(double x)
 {
-	if (x - (int)x > 0.5)
+	if (x - (int)x >= 0.4)
 		return ((int)x + 1);
 	return ((int)x);
 }
@@ -90,17 +90,15 @@ int ft_abs(int x)
 void	print_map(char **map)
 {
 	int i = 0;
-	int j = 0;
 
-	while (i < 4)
+	while (map[i])
 	{
-		j = 0;
-		while (j < 0)
+		int j = 0;
+		while (map[i][j])
 		{
-			printf("%c", map[i][j]);
+			write(1, &map[i][j], 1);
 			j++;
 		}
-		printf("\n");
 		i++;
 	}
 }
