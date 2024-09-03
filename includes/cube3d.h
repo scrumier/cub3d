@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/28 15:29:38 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/03 11:13:20 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,8 @@
 # define FPS_OPTI 0
 # define BEAM_WIDTH 64
 # define FPS 50
-# define FXAA_ENABLED true
-# define WALL_ACCURACY 100
+# define FXAA_ENABLED false
+# define WALL_ACCURACY 50
 # define THRESHOLD 3
 # define RENDER_DISTANCE 100000
 
@@ -181,7 +181,7 @@ typedef struct	s_data
 	double			fps;
 	int				frame;
 	bool			flash_light;
-	t_texture		texture[5];
+	t_texture		texture[6];
 	double			last_fps[FPS];
 }				t_data;
 

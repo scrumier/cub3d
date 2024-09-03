@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 11:17:49 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/27 13:17:42 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/03 11:05:21 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 // get texture color
 int get_texture_color(t_texture *texture, double texture_offset, int tex_x)
 {
-	// Ensure texture_offset and tex_x are within bounds
 	int tex_y = (int)texture_offset;
 
 	if (tex_x < 0) tex_x = 0;
@@ -24,7 +23,6 @@ int get_texture_color(t_texture *texture, double texture_offset, int tex_x)
 	if (tex_y < 0) tex_y = 0;
 	if (tex_y >= texture->height) tex_y = texture->height - 1;
 
-	// Calculate the memory address of the pixel in the texture
 	int color = *(int *)(texture->addr + (tex_y * texture->line_len + tex_x * (texture->bpp / 8)));
 
 	return color;

@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/27 13:41:11 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/03 11:16:03 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,7 @@ void	init_textures(t_data *data)
 	load_texture(data, &data->texture[2], "textures/wall_3.xpm");
 	load_texture(data, &data->texture[3], "textures/wall_4.xpm");
 	load_texture(data, &data->texture[4], "textures/beam.xpm");
+	load_texture(data, &data->texture[5], "textures/door.xpm");
 }
 
 int	main(int ac, char **av)
@@ -146,7 +147,7 @@ int	main(int ac, char **av)
 	data->mlx = mlx_init();
 	init_textures(data);
 
-	data->win = mlx_new_window(data->mlx, WIDTH, HEIGHT, "Cube3D");
+	data->win = mlx_new_window(data->mlx, WIDTH, HEIGHT, "Cub3D");
 	data->img.img = mlx_new_image(data->mlx, HEIGHT, WIDTH);
 	data->img.addr = mlx_get_data_addr(data->img.img, &data->img.bpp, &data->img.line_len, &data->img.endian);
 	data->player->player_angle = (FOV / 2) * PI / 180;
