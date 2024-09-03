@@ -62,10 +62,10 @@ double draw_line(t_ray *ray, t_data *data, int mode)
 			return (sqrt(pow(bresenham.x0 - ray->xo, 2) + pow(bresenham.y0 - ray->yo, 2)));
 
 		// Check if we've hit a wall
-		if (data->map[map_x][map_y] == '1')
+		if (data->map[map_x][map_y] == '1' || data->map[map_x][map_y] == '2')
 		{
 			// Move back slightly to get exact wall hit location
-			while (data->map[map_x][map_y] == '1')
+			while (data->map[map_x][map_y] == '1' || data->map[map_x][map_y] == '2')
 			{
 				bresenham.x0 -= bresenham.xinc / WALL_ACCURACY * 4;
 				bresenham.y0 -= bresenham.yinc / WALL_ACCURACY * 4;

@@ -36,6 +36,10 @@ int	handle_keypressed(int key, t_data *data)
 		data->move->go_left = true;
 	if (key == KEY_D)
 		data->move->go_right = true;
+	if (key == KEY_E)
+	{
+		open_door(data);
+	}
 	return (0);
 }
 

@@ -22,6 +22,7 @@ SRC_FILES	=	$(addprefix $(SRC_DIR), \
 				opti.c \
 				mini_parse.c \
 				rays.c \
+				open_door.c \
 				)
 OBJ_FILES	=	$(SRC_FILES:$(SRC_DIR)%.c=$(OBJ_DIR)/%.o)
 DEP			=	$(OBJ_FILES:.o=.d)

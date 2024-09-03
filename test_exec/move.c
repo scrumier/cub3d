@@ -21,7 +21,7 @@ bool is_out_of_the_map(t_data *data, double x, double y)
 
 bool is_wall(t_data *data, double x, double y)
 {
-	return (data->map[double_to_int(x)][double_to_int(y)] == '1');
+	return (data->map[double_to_int(x)][double_to_int(y)] == '1' || data->map[double_to_int(x)][double_to_int(y)] == '2');
 }
 
 void check_collision_and_slide(t_data *data, double *new_x, double *new_y)

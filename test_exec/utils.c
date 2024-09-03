@@ -46,7 +46,7 @@ void	print_minimap(t_data *data, int mode)
 		j = 0;
 		while (j < data->mapY)
 		{
-			if (data->map[i][j] == '1' && mode == 2)
+			if ((data->map[i][j] == '1' || data->map[i][j] == '2') && mode == 2)
 				draw_square(data, i * COEF, j * COEF, COEF, 0x00000000);
 			else if (data->map[i][j] == '0' && mode == !data->flash_light)
 				draw_square(data, i * COEF, j * COEF, COEF, 0x00A9A9A9);

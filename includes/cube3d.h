@@ -28,6 +28,7 @@
 #  define KEY_LEFT 123
 #  define KEY_RIGHT 124
 #  define KEY_F 3
+#  define KEY_E 14
 #elif __linux__
 # include <X11/keysym.h>
     #define KEY_ESC XK_Escape
@@ -38,6 +39,7 @@
 	#define KEY_LEFT XK_Left
 	#define KEY_RIGHT XK_Right
 	#define KEY_F XK_f
+	#define KEY_E XK_e
 #endif
 # include <math.h>
 # include <stdio.h>
@@ -208,7 +210,7 @@ void	parse_rays(t_data *data);
 void	mini_parse(t_data *data, char *file);
 int	find_wall_facing(t_data *data, t_ray *ray);
 void	draw_rectangle(t_data *data, int x, int y, int height, int width, int color);
-
+void	open_door(t_data *data);
 
 void	print_tab(double *tab);
 #endif
