@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:50:35 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/28 15:28:37 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/03 17:04:30 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,23 +67,16 @@ int	optimize_fps(double last_fps)
 {
 	if (FPS_OPTI == 1)
 	{
-		if (last_fps < 20)
-			return (RAYS / 8);
-		else if (last_fps < 40)
-			return (RAYS / 4);
-		else if (last_fps < 60)
-			return (RAYS);
+		if (last_fps < 60)
+			return (WALL_ACCURACY);
+		else if (last_fps < 80)
+			return (WALL_ACCURACY * 2);
+		else if (last_fps < 100)
+			return (WALL_ACCURACY * 4);
+		else if (last_fps < 120)
+			return (WALL_ACCURACY * 8);
 		else
-			return (RAYS * 2);
+			return (WALL_ACCURACY * 16);
 	}
-	else if (FPS_OPTI == 2)
-	{
-		if (last_fps < 20)
-			return (RAYS / 4);
-		else if (last_fps < 40)
-			return (RAYS / 2);
-		else
-			return (RAYS);
-	}
-	return (RAYS);
+	return (WALL_ACCURACY);
 }

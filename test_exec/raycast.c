@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/03 11:16:03 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/03 17:23:01 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,12 +86,12 @@ int create_image(t_data *data)
 	mlx_string_put(data->mlx, data->win, WIDTH - 125, 30, 0xFFFFFF, lowest_fps_str);
 	mlx_string_put(data->mlx, data->win, WIDTH - 130, 50, 0xFFFFFF, highest_fps_str);
 	mlx_string_put(data->mlx, data->win, WIDTH - 75, 10, 0xFFFFFF, fps_str);
+	usleep(3000);
 	return (0);
 }
 
 int mouse_hook(int button, t_data *data)
 {
-	// handle if he mouse move to the right or to the left
 	if (button == 4)
 	{
 		data->move->turn_left = false;

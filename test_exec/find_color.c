@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:47:05 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/03 11:12:20 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/03 17:19:39 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,6 @@ int	find_wall_facing(t_data *data, t_ray *ray)
 	(void)data;
 	t_coord center = {find_cube_center_X(data, ray->dstx), find_cube_center_Y(data, ray->dsty)};
 	double angle = atan2(center.y - ray->dsty, center.x - ray->dstx);
-	if (data->map[double_to_int(center.y / COEF)][double_to_int(center.x / COEF)] == '2')
-		return ('d');
 	angle += PI / 4;
 	if (angle < 0)
 		angle += 2 * PI;
@@ -84,6 +82,8 @@ int	find_ray_texture(t_data *data, t_ray *ray)
 	else if (face == 'w') // west
 		return (3);
 	else if (face == 'd') // door
+	{
 		return (5);
+	}
 	return (4); // beam
 }

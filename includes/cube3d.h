@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/03 11:13:20 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/03 17:24:33 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,14 +64,14 @@
 # define PLAYER_SPEED 0.06
 # define PLAYER_ROTATE 0.01
 # define PI 3.14159265359
-# define FOV 85
+# define FOV 60
 # define RAYS 900
 # define FPS_OPTI 0
 # define BEAM_WIDTH 64
-# define FPS 50
-# define FXAA_ENABLED false
+# define FPS 10
+# define FXAA_ENABLED true
 # define WALL_ACCURACY 50
-# define THRESHOLD 3
+# define THRESHOLD 0.1
 # define RENDER_DISTANCE 100000
 
 typedef struct s_line
@@ -201,7 +201,7 @@ int	double_to_int(double x);
 void	print_map(char **map);
 int ft_abs(int x);
 int	find_ray_texture(t_data *data, t_ray *ray);
-double	draw_line(t_ray *ray, t_data *data, int mode);
+double draw_line(t_ray *ray, t_data *data, int mode, int wall_accuracy);
 bool	wall_around_01(t_data *data, double x, double y);
 bool	wall_around_05(t_data *data, double x, double y);
 double get_fps_average(t_data *data);

@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 11:17:49 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/03 11:05:21 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/03 17:25:56 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,10 @@ void parse_rays(t_data *data)
 	ray.dof = 0;
 	ray_nbr = 0;
 	total_rays = RAYS;
+	int wall_accuracy = WALL_ACCURACY;
 	double last_fps = get_fps_average(data);
 	if (FPS_OPTI != 0)
-		total_rays = optimize_fps(last_fps);
+		wall_accuracy = optimize_fps(last_fps);
 	ray_angle = find_angle(total_rays);
 	print_minimap(data, 1);
 	draw_square(data, data->player->x * COEF + (COEF / 2) - (PLAYER_SIZE / 2), data->player->y * COEF + (COEF / 2) - (PLAYER_SIZE / 2), PLAYER_SIZE, 0x0000FF00);
@@ -58,12 +59,14 @@ void parse_rays(t_data *data)
 			corrected_angle += 2 * PI;
 		if (corrected_angle > 2 * PI)
 			corrected_angle -= 2 * PI;
-		data->ray_len[ray_nbr] = draw_line(&ray, data, 1);
+		data->ray_len[ray_nbr] = draw_line(&ray, data, 1, wall_accuracy);
 		data->ray_len[ray_nbr] *= cos(corrected_angle);
 		double line_height = HEIGHT * COEF3D / data->ray_len[ray_nbr];
 		double line_start = (WIDTH / 2) - (line_height / 2);
 		int i = 0;
 		int texture_index = find_ray_texture(data, &ray);
+		if (data->map[(int)ray.dstx][(int)ray.dsty] == '2')
+			texture_index = 5;
 		int wall_face = find_wall_facing(data, &ray);
 		t_texture *texture = &data->texture[texture_index];
 

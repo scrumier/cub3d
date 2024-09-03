@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:35:31 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/28 15:28:39 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/03 16:54:18 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,10 +88,8 @@ void move_player(t_data *data)
 		new_y += PLAYER_SPEED * sin(data->player->player_angle + PI / 2);
 	}
 
-	// Check for collisions and allow sliding
 	check_collision_and_slide(data, &new_x, &new_y);
 
-	// Update player position
 	data->player->x = new_x;
 	data->player->y = new_y;
 
