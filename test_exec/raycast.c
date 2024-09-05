@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/03 17:37:37 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/04 14:07:09 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,9 @@ int create_image(t_data *data)
 	else
 		parse_rays(data);
 	print_minimap(data, 2);
+
 	data->last_fps[data->frame % FPS] = data->fps;
 	data->frame++;
-
 	char fps_str[20];
 	char lowest_fps_str[20];
 	char highest_fps_str[20];
@@ -86,7 +86,6 @@ int create_image(t_data *data)
 	mlx_string_put(data->mlx, data->win, WIDTH - 125, 30, 0xFFFFFF, lowest_fps_str);
 	mlx_string_put(data->mlx, data->win, WIDTH - 130, 50, 0xFFFFFF, highest_fps_str);
 	mlx_string_put(data->mlx, data->win, WIDTH - 75, 10, 0xFFFFFF, fps_str);
-	usleep(3000);
 	return (0);
 }
 

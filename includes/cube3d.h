@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/03 17:45:08 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 10:26:30 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,12 +65,12 @@
 # define PLAYER_ROTATE 0.01
 # define PI 3.14159265359
 # define FOV 60
-# define RAYS 900
+# define RAYS WIDTH
 # define FPS_OPTI 0
 # define BEAM_WIDTH 64
 # define FPS 10
-# define FXAA_ENABLED true
-# define WALL_ACCURACY 50
+# define FXAA_ENABLED false
+# define WALL_ACCURACY 200
 # define THRESHOLD 0.1
 # define RENDER_DISTANCE 100000
 
