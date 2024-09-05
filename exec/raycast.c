@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 11:38:47 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 12:23:00 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,11 @@
 
 void	draw_rectangle(t_data *data, int x, int y, int height, int width, int color)
 {
-	int i = 0;
-	int j = 0;
+	int i;
+	int j;
 
+	i = 0;
+	j = 0;
 	while (i < height)
 	{
 		j = 0;
@@ -31,9 +33,10 @@ void	draw_rectangle(t_data *data, int x, int y, int height, int width, int color
 
 int create_image(t_data *data)
 {
-	int i = 0;
+	int i;
 	int j;
 
+	i = 0;
 	gettimeofday(&data->current_time, NULL);
 	double elapsed_time = (data->current_time.tv_sec - data->last_time.tv_sec) +
 						  (data->current_time.tv_usec - data->last_time.tv_usec) / 1000000.0;

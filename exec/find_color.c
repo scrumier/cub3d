@@ -6,16 +6,17 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:47:05 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 11:32:15 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 12:29:19 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3d.h"
 
-double find_cube_center_Y(t_data *data, double y)
+double	find_cube_center_Y(t_data *data, double y)
 {
-	int i = 0;
+	int	i;
 
+	i = 0;
 	while (i < data->mapY)
 	{
 		if (y < i + 1)
@@ -25,10 +26,11 @@ double find_cube_center_Y(t_data *data, double y)
 	return (0);
 }
 
-double find_cube_center_X(t_data *data, double x)
+double	find_cube_center_X(t_data *data, double x)
 {
-	int i = 0;
+	int	i;
 
+	i = 0;
 	while (i < data->mapX)
 	{
 		if (x < i + 1)
@@ -38,26 +40,29 @@ double find_cube_center_X(t_data *data, double x)
 	return (0);
 }
 
-int find_closest_to_05(double x, double y)
+int	find_closest_to_05(double x, double y)
 {
-	double delta_x = ft_dabs(x - 0.5);
-	double delta_y = ft_dabs(y - 0.5);
+	double	delta_x;
+	double	delta_y;
 
+	delta_x = ft_dabs(x - 0.5);
+	delta_y = ft_dabs(y - 0.5);
 	if (delta_x < delta_y)
 		return (0);
 	return (1);
 }
 
-int	find_wall_facing(t_data *data, t_ray *ray)
+double	adjust_angle(double angle)
 {
-	(void)data;
-	t_coord center = {find_cube_center_X(data, ray->dstx), find_cube_center_Y(data, ray->dsty)};
-	double angle = atan2(center.y - ray->dsty, center.x - ray->dstx);
-	angle += PI / 4;
 	if (angle < 0)
 		angle += 2 * PI;
 	if (angle > 2 * PI)
 		angle -= 2 * PI;
+	return angle;
+}
+
+int	get_wall_facing(double angle)
+{
 	if (angle > 0 + PI / BEAM_WIDTH && angle < PI / 2 - PI / BEAM_WIDTH)
 		return ('n');
 	if (angle > PI / 2 + PI / BEAM_WIDTH && angle < PI - PI / BEAM_WIDTH)
@@ -66,13 +71,30 @@ int	find_wall_facing(t_data *data, t_ray *ray)
 		return ('s');
 	if (angle > 3 * PI / 2 + PI / BEAM_WIDTH && angle < 2 * PI - PI / BEAM_WIDTH)
 		return ('w');
-	return (0);
+	return 0;
 }
+
+int	find_wall_facing(t_data *data, t_ray *ray)
+{
+	t_coord	center;
+	double	angle;
+
+	center.x = find_cube_center_X(data, ray->dstx);
+	center.y = find_cube_center_Y(data, ray->dsty);
+	angle = atan2(center.y - ray->dsty, center.x - ray->dstx);
+	angle += PI / 4;
+	
+	angle = adjust_angle(angle);
+	
+	return get_wall_facing(angle);
+}
+
 
 int	find_ray_texture(t_data *data, t_ray *ray)
 {
-	int face = find_wall_facing(data, ray);
+	int	face;
 
+	face = find_wall_facing(data, ray);
 	if (face == 'n')
 		return (0);
 	else if (face == 's')
@@ -81,7 +103,5 @@ int	find_ray_texture(t_data *data, t_ray *ray)
 		return (2);
 	else if (face == 'w')
 		return (3);
-	else if (face == 'd')
-		return (5);
 	return (4);
 }

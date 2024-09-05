@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:50:35 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 11:38:22 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 12:07:49 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,43 +41,25 @@ bool __attribute__((hot))	wall_around_05(t_data *data, double x, double y)
 {
 	x /= COEF;
 	y /= COEF;
-	if (data->map[(int)x ][(int)y ] == '1')
+	if (data->map[(int)x][(int)y] == '1')
 		return (true);
-	if (data->map[(int)(x + 0.05)][(int)y ] == '1')
+	if (data->map[(int)(x + 0.05)][(int)y] == '1')
 		return (true);
 	if (data->map[(int)(x + 0.05)][(int)(y + 0.05)] == '1')
 		return (true);
-	if (data->map[(int)x ][(int)(y + 0.05)] == '1')
+	if (data->map[(int)x][(int)(y + 0.05)] == '1')
 		return (true);
-	if (data->map[(int)x ][(int)(y - 0.05)] == '1')
+	if (data->map[(int)x][(int)(y - 0.05)] == '1')
 		return (true);
 	if (data->map[(int)(x - 0.05)][(int)(y + 0.05)] == '1')
 		return (true);
-	if (data->map[(int)(x - 0.05)][(int)y ] == '1')
+	if (data->map[(int)(x - 0.05)][(int)y] == '1')
 		return (true);
 	if (data->map[(int)(x - 0.05)][(int)(y - 0.05)] == '1')
 		return (true);
-	if (data->map[(int)x ][(int)(y - 0.05)] == '1')
+	if (data->map[(int)x][(int)(y - 0.05)] == '1')
 		return (true);
 	if (data->map[(int)(x + 0.05)][(int)(y - 0.05)] == '1')
 		return (true);
 	return (false);
-}
-
-int	optimize_fps(double last_fps)
-{
-	if (FPS_OPTI == 1)
-	{
-		if (last_fps < 60)
-			return (WALL_ACCURACY);
-		else if (last_fps < 80)
-			return (WALL_ACCURACY * 2);
-		else if (last_fps < 100)
-			return (WALL_ACCURACY * 4);
-		else if (last_fps < 120)
-			return (WALL_ACCURACY * 8);
-		else
-			return (WALL_ACCURACY * 16);
-	}
-	return (WALL_ACCURACY);
 }

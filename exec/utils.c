@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:36:06 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/28 15:28:27 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 12:29:44 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,9 @@
 
 void	print_tab(double *tab)
 {
-	int i = 0;
+	int	i;
 
+	i = 0;
 	while (i < RAYS)
 	{
 		printf("Ray[%i] = %f\n", i, tab[i]);
@@ -30,17 +31,11 @@ int deg_to_rad(int deg)
 
 void	print_minimap(t_data *data, int mode)
 {
-	int i = 0;
-	int j = 0;
+	int	j;
+	int	i;
 
-	// i want the minimap to be displayed in the top left corner
-	// walls are displayed in black
-	// player is displayed in blue
-	// empty space is displayed in gray black
-	// i want the minimap to be 100x100 always (even if the map is bigger)
-	// use COEF to scale the minimap
-	// use PLAYER_SIZE to display the player
-
+	i = 0;
+	j = 0;
 	while (i < data->mapX)
 	{
 		j = 0;
@@ -60,7 +55,7 @@ void	print_minimap(t_data *data, int mode)
 
 double	find_angle(int total_rays)
 {
-	double rad;
+	double	rad;
 
 	rad = FOV * PI / 180;
 	return (rad / total_rays);
@@ -80,7 +75,7 @@ int	double_to_int(double x)
 	return ((int)x);
 }
 
-int ft_abs(int x)
+int	ft_abs(int x)
 {
 	if (x < 0)
 		return (-x);
@@ -89,11 +84,13 @@ int ft_abs(int x)
 
 void	print_map(char **map)
 {
-	int i = 0;
+	int	i;
+	int j;
 
+	i = 0;
 	while (map[i])
 	{
-		int j = 0;
+		j = 0;
 		while (map[i][j])
 		{
 			write(1, &map[i][j], 1);

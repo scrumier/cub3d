@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 11:26:31 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 12:06:52 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,8 @@
 # define PI 3.14159265359
 # define FOV 60
 # define RAYS WIDTH
-# define FPS_OPTI 0
 # define BEAM_WIDTH 256
-# define FPS 10
+# define FPS 40
 # define FXAA_ENABLED true
 # define WALL_ACCURACY 200
 # define THRESHOLD 0.1
@@ -170,6 +169,13 @@ typedef struct	s_move
 	bool		go_right;
 }				t_move;
 
+typedef struct	s_rgb
+{
+	int		r;
+	int		g;
+	int		b;
+}				t_rgb;
+
 typedef struct	s_data
 {
 	void			*mlx;
@@ -219,7 +225,7 @@ void	mini_parse(t_data *data, char *file);
 int	find_wall_facing(t_data *data, t_ray *ray);
 void	draw_rectangle(t_data *data, int x, int y, int height, int width, int color);
 void	open_door(t_data *data);
-
+void render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, double line_height, double line_start);
 void	print_tab(double *tab);
 
 #endif
