@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:26:45 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 12:13:06 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 12:51:13 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,7 @@ unsigned int	blend_colors(unsigned int color, t_color_antialiasing colors)
 	rgb.r /= 5;
 	rgb.g /= 5;
 	rgb.b /= 5;
-
-	return (rgb.r << 16) | (rgb.g << 8) | rgb.b;
+	return ((rgb.r << 16) | (rgb.g << 8) | rgb.b);
 }
 
 unsigned int	get_pixel_color(t_data *data, int x, int y)
@@ -46,7 +45,7 @@ unsigned int	get_pixel_color(t_data *data, int x, int y)
 	char	*dst;
 
 	dst = data->img.addr + (y * data->img.line_len + x * (data->img.bpp / 8));
-	return *(unsigned int *)dst;
+	return (*(unsigned int *)dst);
 }
 
 void	set_pixel_color(t_data *data, int x, int y, unsigned int color)
@@ -68,15 +67,14 @@ int	color_difference(unsigned int color1, unsigned int color2)
 	rgb2.r = (color2 >> 16) & 0xFF;
 	rgb2.g = (color2 >> 8) & 0xFF;
 	rgb2.b = color2 & 0xFF;
-
-	return abs(rgb1.r - rgb2.r) + abs(rgb1.g - rgb2.g) + abs(rgb1.b - rgb2.b);
+	return (abs(rgb1.r - rgb2.r) + abs(rgb1.g - rgb2.g) + abs(rgb1.b - rgb2.b));
 }
 
-bool get_color_difference(t_color_antialiasing colors, unsigned int color)
+bool	get_color_difference(t_color_antialiasing colors, unsigned int color)
 {
-	if (color_difference(color, colors.color_left) > THRESHOLD ||
-		color_difference(color, colors.color_right) > THRESHOLD ||
-		color_difference(color, colors.color_up) > THRESHOLD ||
+	if (color_difference(color, colors.color_left) > THRESHOLD || \
+		color_difference(color, colors.color_right) > THRESHOLD || \
+		color_difference(color, colors.color_up) > THRESHOLD || \
 		color_difference(color, colors.color_down) > THRESHOLD)
 		return (true);
 	return (false);

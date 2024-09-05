@@ -6,23 +6,26 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 11:17:49 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 12:26:37 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 13:26:58 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3d.h"
 
-// get texture color
 int	get_texture_color(t_texture *texture, double texture_offset, int tex_x)
 {
 	int	tex_y;
 	int	color;
 
 	tex_y = (int)texture_offset;
-	if (tex_x < 0) tex_x = 0;
-	if (tex_x >= texture->width) tex_x = texture->width - 1;
-	if (tex_y < 0) tex_y = 0;
-	if (tex_y >= texture->height) tex_y = texture->height - 1;
+	if (tex_x < 0)
+		tex_x = 0;
+	if (tex_x >= texture->width)
+		tex_x = texture->width - 1;
+	if (tex_y < 0)
+		tex_y = 0;
+	if (tex_y >= texture->height)
+		tex_y = texture->height - 1;
 	color = *(int *)(texture->addr + (tex_y * texture->line_len + tex_x * \
 			(texture->bpp / 8)));
 	return (color);
@@ -45,8 +48,8 @@ int	darken_color(int color, double distance, double max_distance)
 	return ((rgb.r << 16) | (rgb.g << 8) | rgb.b);
 }
 
-
-void	initialize_ray_parameters(t_ray *ray, t_data *data, int *total_rays, double *ray_angle)
+void	initialize_ray_parameters(t_ray *ray, t_data *data, int *total_rays, \
+									double *ray_angle)
 {
 	ray->ra = data->player->player_angle - (FOV / 2) * PI / 180;
 	ray->dof = 0;
@@ -56,9 +59,12 @@ void	initialize_ray_parameters(t_ray *ray, t_data *data, int *total_rays, double
 
 void	draw_player_on_minimap(t_data *data)
 {
+	t_coord	coord;
+
+	coord.x = data->player->x * COEF;
+	coord.y = data->player->y * COEF;
 	print_minimap(data, 1);
-	draw_square(data, data->player->x * COEF + (COEF / 2) - (PLAYER_SIZE / 2),
-		data->player->y * COEF + (COEF / 2) - (PLAYER_SIZE / 2), PLAYER_SIZE, 0x0000FF00);
+	draw_square(data, coord, COEF, 0x00FF00);
 }
 
 double	correct_ray_angle(double ray_angle, double player_angle)
@@ -73,7 +79,8 @@ double	correct_ray_angle(double ray_angle, double player_angle)
 	return (corrected_angle);
 }
 
-double	draw_and_correct_ray(t_ray *ray, t_data *data, int ray_nbr, int wall_accuracy)
+double	draw_and_correct_ray(t_ray *ray, t_data *data, int ray_nbr, \
+								int wall_accuracy)
 {
 	double	ray_len;
 	double	corrected_angle;
@@ -84,22 +91,27 @@ double	draw_and_correct_ray(t_ray *ray, t_data *data, int ray_nbr, int wall_accu
 	return (ray_len * cos(corrected_angle));
 }
 
-void	render_ceiling_and_floor(t_data *data, int ray_nbr, double line_height, double line_start)
+void	render_ceiling_and_floor(t_data *data, int ray_nbr, \
+								double line_height, double line_start)
 {
 	int	i;
+	int	ceil_color;
+	int	floor_color;
 
 	i = 0;
 	while (i < line_start)
 	{
+		ceil_color = darken_color(data->ceiling_color, i, HEIGHT);
 		if (!(ray_nbr < 150 && i < 150))
-			my_mlx_pixel_put(data, ray_nbr, i, data->ceiling_color);
+			my_mlx_pixel_put(data, ray_nbr, i, ceil_color);
 		i++;
 	}
 	i = line_start + line_height;
 	while (i < HEIGHT)
 	{
+		floor_color = darken_color(data->floor_color, HEIGHT - i, HEIGHT);
 		if (!(ray_nbr < 150 && i < 150))
-			my_mlx_pixel_put(data, ray_nbr, i, data->floor_color);
+			my_mlx_pixel_put(data, ray_nbr, i, floor_color);
 		i++;
 	}
 }
@@ -117,16 +129,16 @@ int	calculate_tex_x(t_ray *ray, int wall_face, int texture_width)
 		return ((int)((ray->dsty - floor(ray->dsty)) * texture_width));
 }
 
-void	draw_texture_pixel(t_data *data, t_ray *ray, int ray_nbr, int i, double line_height, double line_start, t_texture *texture, int wall_face)
+void	draw_texture_pixel(t_data *data, t_ray *ray, t_draw_wall draw_wall, t_texture *texture)
 {
 	double texture_offset;
 	int tex_x, texture_color;
 
-	texture_offset = calculate_texture_offset(i, line_height, texture->height);
-	tex_x = calculate_tex_x(ray, wall_face, texture->width);
+	texture_offset = calculate_texture_offset(draw_wall.i, draw_wall.line_height, texture->height);
+	tex_x = calculate_tex_x(ray, draw_wall.wall_face, texture->width);
 	texture_color = get_texture_color(texture, texture_offset, tex_x);
-	texture_color = darken_color(texture_color, data->ray_len[ray_nbr], RENDER_DISTANCE);
-	my_mlx_pixel_put(data, ray_nbr, i + line_start, texture_color);
+	texture_color = darken_color(texture_color, data->ray_len[draw_wall.ray_nbr], RENDER_DISTANCE);
+	my_mlx_pixel_put(data, draw_wall.ray_nbr, draw_wall.i + draw_wall.line_start, texture_color);
 }
 
 void	render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, double line_height, double line_start)
@@ -135,6 +147,7 @@ void	render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, double line_heig
 	int			wall_face;
 	int			texture_index;
 	t_texture	*texture;
+	t_draw_wall	draw_wall;
 
 	texture_index = find_ray_texture(data, ray);
 	if (ray->dstx >= 0 && ray->dstx < data->mapX && ray->dsty >= 0 && ray->dsty < data->mapY)
@@ -148,8 +161,13 @@ void	render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, double line_heig
 	i = 0;
 	while (i < line_height)
 	{
+		draw_wall.i = i;
+		draw_wall.wall_face = wall_face;
+		draw_wall.ray_nbr = ray_nbr;
+		draw_wall.line_height = line_height;
+		draw_wall.line_start = line_start;
 		if (!(ray_nbr < 150 && i + line_start < 150))
-			draw_texture_pixel(data, ray, ray_nbr, i, line_height, line_start, texture, wall_face);
+			draw_texture_pixel(data, ray, draw_wall, texture);
 		i++;
 	}
 }

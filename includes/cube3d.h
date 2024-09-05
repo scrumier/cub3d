@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 12:06:52 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 13:27:12 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@
 # define FXAA_ENABLED true
 # define WALL_ACCURACY 200
 # define THRESHOLD 0.1
-# define RENDER_DISTANCE 100
+# define RENDER_DISTANCE 200
 
 typedef struct s_line
 {
@@ -176,6 +176,15 @@ typedef struct	s_rgb
 	int		b;
 }				t_rgb;
 
+typedef struct	s_draw_wall
+{
+	int		i;
+	int		wall_face;
+	int		ray_nbr;
+	double	line_height;
+	double	line_start;
+}				t_draw_wall;
+
 typedef struct	s_data
 {
 	void			*mlx;
@@ -209,7 +218,7 @@ int deg_to_rad(int deg);
 void	print_minimap(t_data *data, int mode);
 double	find_angle(int total_rays);
 double	ft_dabs(double d);
-void draw_square(t_data *data, int x, int y, int coef, int color);
+void draw_square(t_data *data, t_coord coord, int coef, int color);
 void	my_mlx_pixel_put(t_data *data, int x, int y, int color);
 int	double_to_int(double x);
 void	print_map(char **map);

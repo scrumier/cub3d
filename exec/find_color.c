@@ -6,13 +6,13 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:47:05 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 12:29:19 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 13:02:04 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3d.h"
 
-double	find_cube_center_Y(t_data *data, double y)
+double	find_cube_center_y(t_data *data, double y)
 {
 	int	i;
 
@@ -26,7 +26,7 @@ double	find_cube_center_Y(t_data *data, double y)
 	return (0);
 }
 
-double	find_cube_center_X(t_data *data, double x)
+double	find_cube_center_x(t_data *data, double x)
 {
 	int	i;
 
@@ -58,7 +58,7 @@ double	adjust_angle(double angle)
 		angle += 2 * PI;
 	if (angle > 2 * PI)
 		angle -= 2 * PI;
-	return angle;
+	return (angle);
 }
 
 int	get_wall_facing(double angle)
@@ -69,9 +69,10 @@ int	get_wall_facing(double angle)
 		return ('e');
 	if (angle > PI + PI / BEAM_WIDTH && angle < 3 * PI / 2 - PI / BEAM_WIDTH)
 		return ('s');
-	if (angle > 3 * PI / 2 + PI / BEAM_WIDTH && angle < 2 * PI - PI / BEAM_WIDTH)
+	if (angle > 3 * PI / 2 + PI / BEAM_WIDTH && angle < 2 * PI - PI / \
+			BEAM_WIDTH)
 		return ('w');
-	return 0;
+	return (0);
 }
 
 int	find_wall_facing(t_data *data, t_ray *ray)
@@ -79,16 +80,13 @@ int	find_wall_facing(t_data *data, t_ray *ray)
 	t_coord	center;
 	double	angle;
 
-	center.x = find_cube_center_X(data, ray->dstx);
-	center.y = find_cube_center_Y(data, ray->dsty);
+	center.x = find_cube_center_x(data, ray->dstx);
+	center.y = find_cube_center_y(data, ray->dsty);
 	angle = atan2(center.y - ray->dsty, center.x - ray->dstx);
 	angle += PI / 4;
-	
 	angle = adjust_angle(angle);
-	
-	return get_wall_facing(angle);
+	return (get_wall_facing(angle));
 }
-
 
 int	find_ray_texture(t_data *data, t_ray *ray)
 {

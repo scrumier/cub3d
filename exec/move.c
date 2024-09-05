@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:35:31 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 12:04:01 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 13:03:44 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,25 +25,28 @@ bool	is_wall(t_data *data, double x, double y)
 			data->map[double_to_int(x)][double_to_int(y)] == '2');
 }
 
-bool	check_x_collision(t_data *data, double new_x, double player_y, double radius)
+bool	check_x_collision(t_data *data, double new_x, \
+						double player_y, double radius)
 {
-	return (is_out_of_the_map(data, new_x, player_y) ||
-			is_wall(data, new_x + radius, player_y) ||
+	return (is_out_of_the_map(data, new_x, player_y) || \
+			is_wall(data, new_x + radius, player_y) || \
 			is_wall(data, new_x - radius, player_y));
 }
 
-bool	check_y_collision(t_data *data, double player_x, double new_y, double radius)
+bool	check_y_collision(t_data *data, double player_x, double new_y, \
+							double radius)
 {
-	return (is_out_of_the_map(data, player_x, new_y) ||
-			is_wall(data, player_x, new_y + radius) ||
+	return (is_out_of_the_map(data, player_x, new_y) || \
+			is_wall(data, player_x, new_y + radius) || \
 			is_wall(data, player_x, new_y - radius));
 }
 
-bool	check_corner_collision(t_data *data, double new_x, double new_y, double radius)
+bool	check_corner_collision(t_data *data, double new_x, double new_y, \
+								double radius)
 {
-	return (is_wall(data, new_x + radius, new_y + radius) ||
-			is_wall(data, new_x - radius, new_y + radius) ||
-			is_wall(data, new_x + radius, new_y - radius) ||
+	return (is_wall(data, new_x + radius, new_y + radius) || \
+			is_wall(data, new_x - radius, new_y + radius) || \
+			is_wall(data, new_x + radius, new_y - radius) || \
 			is_wall(data, new_x - radius, new_y - radius));
 }
 
@@ -74,8 +77,6 @@ void	check_collision_and_slide(t_data *data, double *new_x, double *new_y)
 		*new_y = data->player->y;
 	}
 }
-
-
 
 void	update_position(t_data *data, double *new_x, double *new_y)
 {
