@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:42:18 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 10:25:52 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 10:50:52 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,8 @@ double draw_line(t_ray *ray, t_data *data, int mode, int wall_accuracy)
 	bresenham.y0 = ray->yo;
 	bresenham.xinc = cos(ray->ra) / wall_accuracy;
 	bresenham.yinc = sin(ray->ra) / wall_accuracy;
-
-	while (1)
+	int i = 0;
+	while (i++ < RENDER_DISTANCE * wall_accuracy)
 	{
 		int map_x = (int)(bresenham.x0 / COEF);
 		int map_y = (int)(bresenham.y0 / COEF);
@@ -62,4 +62,5 @@ double draw_line(t_ray *ray, t_data *data, int mode, int wall_accuracy)
 			my_mlx_pixel_put(data, (int)bresenham.x0, (int)bresenham.y0, 0x00FFFFFF);
 		}
 	}
+	return (RENDER_DISTANCE);
 }

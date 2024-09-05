@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 11:17:49 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/04 11:27:13 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 10:44:49 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,27 @@ int get_texture_color(t_texture *texture, double texture_offset, int tex_x)
 
 	return color;
 }
+
+int darken_color(int color, double distance, double max_distance)
+{
+    double factor;
+    int r, g, b;
+
+    factor = 1.0 - (distance / max_distance);
+    if (factor < 0.0)
+        factor = 0.0;
+
+    r = (color >> 16) & 0xFF;
+    g = (color >> 8) & 0xFF;
+    b = color & 0xFF;
+
+    r *= factor;
+    g *= factor;
+    b *= factor;
+
+    return (r << 16) | (g << 8) | b;
+}
+
 
 void parse_rays(t_data *data)
 {
@@ -82,7 +103,6 @@ void parse_rays(t_data *data)
 			if (!(ray_nbr < 150 && i + line_start < 150))
 			{
 				double texture_offset = (i / line_height) * texture->height;
-
 				int tex_x;
 
 				if (wall_face == 'e' || wall_face == 'w')
@@ -91,6 +111,9 @@ void parse_rays(t_data *data)
 					tex_x = (int)((ray.dsty - floor(ray.dsty)) * texture->width);
 
 				int texture_color = get_texture_color(texture, texture_offset, tex_x);
+
+				texture_color = darken_color(texture_color, data->ray_len[ray_nbr], RENDER_DISTANCE);
+
 				my_mlx_pixel_put(data, ray_nbr, i + line_start, texture_color);
 			}
 			i++;

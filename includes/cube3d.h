@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 10:34:21 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 10:52:47 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,18 +61,18 @@
 # define COEF 7
 # define COEF3D 5
 # define PLAYER_SIZE 5
-# define PLAYER_SPEED 0.06
-# define PLAYER_ROTATE 0.01
+# define PLAYER_SPEED 0.09
+# define PLAYER_ROTATE 0.5
 # define PI 3.14159265359
 # define FOV 60
 # define RAYS WIDTH
 # define FPS_OPTI 0
-# define BEAM_WIDTH 64
+# define BEAM_WIDTH 256
 # define FPS 10
 # define FXAA_ENABLED true
 # define WALL_ACCURACY 200
 # define THRESHOLD 0.1
-# define RENDER_DISTANCE 100000
+# define RENDER_DISTANCE 100
 
 typedef struct s_line
 {
