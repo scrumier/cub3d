@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:35:31 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 10:53:49 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 11:23:55 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,10 @@ bool is_wall(t_data *data, double x, double y)
 
 void check_collision_and_slide(t_data *data, double *new_x, double *new_y)
 {
-	double radius = 0.2;  // Player collision radius
+	double radius = 0.2;
 	bool x_collision = false;
 	bool y_collision = false;
 
-	// Check for collision on the x-axis
 	if (is_out_of_the_map(data, *new_x, data->player->y) ||
 		is_wall(data, *new_x + radius, data->player->y) ||
 		is_wall(data, *new_x - radius, data->player->y))
@@ -38,7 +37,6 @@ void check_collision_and_slide(t_data *data, double *new_x, double *new_y)
 		x_collision = true;
 	}
 
-	// Check for collision on the y-axis
 	if (is_out_of_the_map(data, data->player->x, *new_y) ||
 		is_wall(data, data->player->x, *new_y + radius) ||
 		is_wall(data, data->player->x, *new_y - radius))
@@ -46,19 +44,28 @@ void check_collision_and_slide(t_data *data, double *new_x, double *new_y)
 		y_collision = true;
 	}
 
-	// If both x and y would cause a collision, prevent movement in both directions
-	if (x_collision && y_collision) {
+	if (x_collision && y_collision)
+	{
 		*new_x = data->player->x;
 		*new_y = data->player->y;
 	}
-		// Otherwise, allow sliding along the axis that does not collide
-	else {
-		if (x_collision) {
+	else
+	{
+		if (x_collision)
 			*new_x = data->player->x;
-		}
-		if (y_collision) {
+		if (y_collision)
 			*new_y = data->player->y;
-		}
+	}
+	// when i go in an angle, the collision is not working
+	// i need to check the 4 corners of the wall
+
+	if (is_wall(data, *new_x + radius, *new_y + radius) ||
+		is_wall(data, *new_x - radius, *new_y + radius) ||
+		is_wall(data, *new_x + radius, *new_y - radius) ||
+		is_wall(data, *new_x - radius, *new_y - radius))
+	{
+		*new_x = data->player->x;
+		*new_y = data->player->y;
 	}
 }
 
@@ -95,14 +102,14 @@ void move_player(t_data *data)
 
 	if (data->move->turn_left == true)
 	{
-		data->player->player_angle -= PI / 30;
-		data->player->pdx = (double)PLAYER_ROTATE * cos(data->player->player_angle);
-		data->player->pdy = (double)PLAYER_ROTATE * sin(data->player->player_angle);
+		data->player->player_angle -= (PI / 30) * PLAYER_ROTATE;
+		data->player->pdx = cos(data->player->player_angle);
+		data->player->pdy = sin(data->player->player_angle);
 	}
 	if (data->move->turn_right == true)
 	{
-		data->player->player_angle += PI / 30;
-		data->player->pdx = PLAYER_ROTATE * cos(data->player->player_angle);
-		data->player->pdy = PLAYER_ROTATE * sin(data->player->player_angle);
+		data->player->player_angle += PI / 30 * PLAYER_ROTATE;
+		data->player->pdx = cos(data->player->player_angle);
+		data->player->pdy = sin(data->player->player_angle);
 	}
 }
