@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:28:49 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/26 10:51:43 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 11:33:23 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,11 @@
 
 double find_lowest_value(double *tab, int size)
 {
-	int i = 0;
-	double lowest = tab[0];
+	int i;
+	double lowest;
 
+	i = 0;
+	lowest = tab[0];
 	while (i < size)
 	{
 		if (tab[i] < lowest)
@@ -28,9 +30,11 @@ double find_lowest_value(double *tab, int size)
 
 double get_fps_average(t_data *data)
 {
-	int i = 0;
-	double sum = 0;
+	int i;
+	double sum;
 
+	i = 0;
+	sum = 0;
 	while (i < FPS)
 	{
 		sum += data->last_fps[i];
@@ -41,9 +45,11 @@ double get_fps_average(t_data *data)
 
 double find_highest_value(double *tab, int size)
 {
-	int i = 0;
-	double highest = tab[0];
+	int i;
+	double highest;
 
+	i = 0;
+	highest = tab[0];
 	while (i < size)
 	{
 		if (tab[i] > highest)

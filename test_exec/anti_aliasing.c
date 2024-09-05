@@ -6,31 +6,31 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:26:45 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/26 14:49:31 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 11:29:47 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3d.h"
 
-unsigned int blend_colors(unsigned int color, unsigned int color_left, unsigned int color_right, unsigned int color_up, unsigned int color_down)
+unsigned int blend_colors(unsigned int color, t_color_antialiasing colors)
 {
 	int r = 0, g = 0, b = 0;
 
 	r += (color >> 16) & 0xFF;
 	g += (color >> 8) & 0xFF;
 	b += color & 0xFF;
-	r += (color_left >> 16) & 0xFF;
-	g += (color_left >> 8) & 0xFF;
-	b += color_left & 0xFF;
-	r += (color_right >> 16) & 0xFF;
-	g += (color_right >> 8) & 0xFF;
-	b += color_right & 0xFF;
-	r += (color_up >> 16) & 0xFF;
-	g += (color_up >> 8) & 0xFF;
-	b += color_up & 0xFF;
-	r += (color_down >> 16) & 0xFF;
-	g += (color_down >> 8) & 0xFF;
-	b += color_down & 0xFF;
+	r += (colors.color_left >> 16) & 0xFF;
+	g += (colors.color_left >> 8) & 0xFF;
+	b += colors.color_left & 0xFF;
+	r += (colors.color_right >> 16) & 0xFF;
+	g += (colors.color_right >> 8) & 0xFF;
+	b += colors.color_right & 0xFF;
+	r += (colors.color_up >> 16) & 0xFF;
+	g += (colors.color_up >> 8) & 0xFF;
+	b += colors.color_up & 0xFF;
+	r += (colors.color_down >> 16) & 0xFF;
+	g += (colors.color_down >> 8) & 0xFF;
+	b += colors.color_down & 0xFF;
 	r /= 5;
 	g /= 5;
 	b /= 5;
@@ -63,22 +63,35 @@ int color_difference(unsigned int color1, unsigned int color2)
 	return abs(r1 - r2) + abs(g1 - g2) + abs(b1 - b2);
 }
 
-void apply_custom_antialiasing(t_data *data)
+void	apply_custom_antialiasing(t_data *data)
 {
-	for (int y = 1; y < HEIGHT - 1; y++) {
-		for (int x = 1; x < WIDTH - 1; x++) {
-			unsigned int color = get_pixel_color(data, x, y);
-			unsigned int color_left = get_pixel_color(data, x - 1, y);
-			unsigned int color_right = get_pixel_color(data, x + 1, y);
-			unsigned int color_up = get_pixel_color(data, x, y - 1);
-			unsigned int color_down = get_pixel_color(data, x, y + 1);
-			if (color_difference(color, color_left) > THRESHOLD ||
-				color_difference(color, color_right) > THRESHOLD ||
-				color_difference(color, color_up) > THRESHOLD ||
-				color_difference(color, color_down) > THRESHOLD) {
-				unsigned int blended_color = blend_colors(color, color_left, color_right, color_up, color_down);
+	t_color_antialiasing	colors;
+	unsigned int			color;
+	unsigned int			blended_color;
+	int						x;
+	int						y;
+
+	y = 1;
+	while (y < HEIGHT - 1)
+	{
+		x = 1;
+		while (x < WIDTH - 1)
+		{
+			color = get_pixel_color(data, x, y);
+			colors.color_left = get_pixel_color(data, x - 1, y);
+			colors.color_right = get_pixel_color(data, x + 1, y);
+			colors.color_up = get_pixel_color(data, x, y - 1);
+			colors.color_down = get_pixel_color(data, x, y + 1);
+			if (color_difference(color, colors.color_left) > THRESHOLD ||
+				color_difference(color, colors.color_right) > THRESHOLD ||
+				color_difference(color, colors.color_up) > THRESHOLD ||
+				color_difference(color, colors.color_down) > THRESHOLD)
+			{
+				blended_color = blend_colors(color, colors);
 				set_pixel_color(data, x, y, blended_color);
 			}
+			x++;
 		}
+		y++;
 	}
 }

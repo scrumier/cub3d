@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:47:05 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/03 17:19:39 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 11:32:15 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,17 +73,15 @@ int	find_ray_texture(t_data *data, t_ray *ray)
 {
 	int face = find_wall_facing(data, ray);
 
-	if (face == 'n') // north
+	if (face == 'n')
 		return (0);
-	else if (face == 's') // south
+	else if (face == 's')
 		return (1);
-	else if (face == 'e') // east
+	else if (face == 'e')
 		return (2);
-	else if (face == 'w') // west
+	else if (face == 'w')
 		return (3);
-	else if (face == 'd') // door
-	{
+	else if (face == 'd')
 		return (5);
-	}
-	return (4); // beam
+	return (4);
 }

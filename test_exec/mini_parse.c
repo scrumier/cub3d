@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 11:17:17 by scrumier          #+#    #+#             */
-/*   Updated: 2024/08/28 15:28:43 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 11:38:38 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,18 @@
 
 void	mini_parse(t_data *data, char *file)
 {
-	int fd = open(file, O_RDONLY);
-	char *line = get_next_line(fd);
-	int i = 0;
-	int j;
-	int k;
-	data->map = ft_calloc(600, sizeof(char *));
+	int		fd;
+	char	*line;
+	int		i;
+	int		j;
+	int		k;
 
+	data->ceiling_color = 0x404040;
+	data->floor_color = 0x5C4033;
+	fd = open(file, O_RDONLY);
+	line = get_next_line(fd);
+	i = 0;
+	data->map = ft_calloc(600, sizeof(char *));
 	while (line)
 	{
 		j = 0;

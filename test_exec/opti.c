@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:50:35 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 10:17:18 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 11:38:22 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,26 +41,6 @@ bool __attribute__((hot))	wall_around_05(t_data *data, double x, double y)
 {
 	x /= COEF;
 	y /= COEF;
-	if (data->map[double_to_int(x)][double_to_int(y)] == '1')
-		return (true);
-	if (data->map[double_to_int(x + 0.05)][double_to_int(y)] == '1')
-		return (true);
-	if (data->map[double_to_int(x + 0.05)][double_to_int(y + 0.05)] == '1')
-		return (true);
-	if (data->map[double_to_int(x)][double_to_int(y + 0.05)] == '1')
-		return (true);
-	if (data->map[double_to_int(x)][double_to_int(y - 0.05)] == '1')
-		return (true);
-	if (data->map[double_to_int(x - 0.05)][double_to_int(y + 0.05)] == '1')
-		return (true);
-	if (data->map[double_to_int(x - 0.05)][double_to_int(y)] == '1')
-		return (true);
-	if (data->map[double_to_int(x - 0.05)][double_to_int(y - 0.05)] == '1')
-		return (true);
-	if (data->map[double_to_int(x)][double_to_int(y - 0.05)] == '1')
-		return (true);
-	if (data->map[double_to_int(x + 0.05)][double_to_int(y - 0.05)] == '1')
-		return (true);
 	if (data->map[(int)x ][(int)y ] == '1')
 		return (true);
 	if (data->map[(int)(x + 0.05)][(int)y ] == '1')

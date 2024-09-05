@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 10:52:47 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 11:26:31 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,14 @@ typedef struct s_line
 	double x1;
 	double y1;
 }				t_line;
+
+typedef struct s_color_antialiasing
+{
+	unsigned int color_left;
+	unsigned int color_right;
+	unsigned int color_up;
+	unsigned int color_down;
+}				t_color_antialiasing;
 
 typedef struct s_ray
 {

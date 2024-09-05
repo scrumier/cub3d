@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 10:47:21 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 11:38:47 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,11 +139,7 @@ int	main(int ac, char **av)
 	data->flash_light = false;
 	data->created_player = false;
 	line = ft_strdup(av[1]);
-
 	mini_parse(data, line);
-	// a ceiling color grey dark
-	data->ceiling_color = 0x404040;
-	data->floor_color = 0x5C4033;
 	data->mlx = mlx_init();
 	init_textures(data);
 
