@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 10:26:30 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 10:34:21 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@
 # define FPS_OPTI 0
 # define BEAM_WIDTH 64
 # define FPS 10
-# define FXAA_ENABLED false
+# define FXAA_ENABLED true
 # define WALL_ACCURACY 200
 # define THRESHOLD 0.1
 # define RENDER_DISTANCE 100000
@@ -213,4 +213,5 @@ void	draw_rectangle(t_data *data, int x, int y, int height, int width, int color
 void	open_door(t_data *data);
 
 void	print_tab(double *tab);
+
 #endif
