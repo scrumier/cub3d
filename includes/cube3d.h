@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 13:27:12 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 16:28:05 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@
 # define FXAA_ENABLED true
 # define WALL_ACCURACY 200
 # define THRESHOLD 0.1
-# define RENDER_DISTANCE 200
+# define RENDER_DISTANCE 100
 
 typedef struct s_line
 {
@@ -187,6 +187,7 @@ typedef struct	s_draw_wall
 
 typedef struct	s_data
 {
+	int				texture_index;
 	void			*mlx;
 	void			*win;
 	t_img			img;
@@ -204,7 +205,7 @@ typedef struct	s_data
 	double			fps;
 	int				frame;
 	bool			flash_light;
-	t_texture		texture[6];
+	t_texture		texture[6][5];
 	double			last_fps[FPS];
 }				t_data;
 

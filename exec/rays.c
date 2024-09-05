@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 11:17:49 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 13:26:58 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 14:09:04 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,11 +123,17 @@ double	calculate_texture_offset(int i, double line_height, int texture_height)
 
 int	calculate_tex_x(t_ray *ray, int wall_face, int texture_width)
 {
-	if (wall_face == 'e' || wall_face == 'w')
+	if (wall_face == 'w')
+		return (texture_width - (int)((ray->dstx - floor(ray->dstx)) * texture_width) - 1);
+	else if (wall_face == 'e')
 		return ((int)((ray->dstx - floor(ray->dstx)) * texture_width));
-	else
+	else if (wall_face == 'n')
+		return (texture_width - (int)((ray->dsty - floor(ray->dsty)) * texture_width) - 1);
+	else if (wall_face == 's')
 		return ((int)((ray->dsty - floor(ray->dsty)) * texture_width));
+	return (0);
 }
+
 
 void	draw_texture_pixel(t_data *data, t_ray *ray, t_draw_wall draw_wall, t_texture *texture)
 {

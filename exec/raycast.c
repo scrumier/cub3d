@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 12:23:00 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/05 16:29:23 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ int create_image(t_data *data)
 	int j;
 
 	i = 0;
+	
 	gettimeofday(&data->current_time, NULL);
 	double elapsed_time = (data->current_time.tv_sec - data->last_time.tv_sec) +
 						  (data->current_time.tv_usec - data->last_time.tv_usec) / 1000000.0;
@@ -120,12 +121,12 @@ void	load_texture(t_data *data, t_texture *texture, char *path)
 
 void	init_textures(t_data *data)
 {
-	load_texture(data, &data->texture[0], "textures/wall_1.xpm");
-	load_texture(data, &data->texture[1], "textures/wall_2.xpm");
-	load_texture(data, &data->texture[2], "textures/wall_3.xpm");
-	load_texture(data, &data->texture[3], "textures/wall_4.xpm");
-	load_texture(data, &data->texture[4], "textures/beam.xpm");
-	load_texture(data, &data->texture[5], "textures/door.xpm");
+	load_texture(data, &data->texture[0][0], "textures/wall_1.xpm");
+	load_texture(data, &data->texture[1][0], "textures/wall_2.xpm");
+	load_texture(data, &data->texture[2][0], "textures/wall_3.xpm");
+	load_texture(data, &data->texture[3][0], "textures/wall_4.xpm");
+	load_texture(data, &data->texture[4][0], "textures/beam.xpm");
+	load_texture(data, &data->texture[5][0], "textures/door.xpm");
 }
 
 int	main(int ac, char **av)
