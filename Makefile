@@ -1,10 +1,10 @@
 CC			=	cc
-FLAGS		=	-Wall -Wextra -Werror -Ofast -MMD -MP -O3
+FLAGS		=	-Wall -Wextra -Werror -Ofast -MMD -MP -O3 -g3
 INC_DIR		=	includes/
 INC			=	$(addprefix $(INC_DIR), \
 				cube3d.h \
 				)
-SRC_DIR		=	test_exec/
+SRC_DIR		=	exec/
 OBJ_DIR		=	.obj
 LIBFT_DIR	=	libft
 NAME		=	cub3d
