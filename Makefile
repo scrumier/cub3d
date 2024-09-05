@@ -1,21 +1,43 @@
 CC			=	cc
-FLAGS		=	-Wall -Wextra -Werror -Ofast -MMD -MP -g3
-LIBRARIES	=	-Lmlx_linux -lmlx_Linux -Llibft -lft -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz
-INCLUDES	=	-I/usr/include -Imlx_linux
+FLAGS		=	-Wall -Wextra -Werror -Ofast -MMD -MP -O3 -g3
 INC_DIR		=	includes/
-INC			=	$(addprefiX $(INC_DIR), \
-				
+INC			=	$(addprefix $(INC_DIR), \
+				cube3d.h \
 				)
-SRC_DIR		=	src/
+SRC_DIR		=	exec/
 OBJ_DIR		=	.obj
 LIBFT_DIR	=	libft
-NAME		=	fdf
+NAME		=	cub3d
 RM			=	rm -f
-MLX			=	mlx_linux
 SRC_FILES	=	$(addprefix $(SRC_DIR), \
+				raycast.c \
+				key_handle.c \
+				anti_aliasing.c \
+				find_fps.c \
+				move.c \
+				utils.c \
+				draw.c \
+				mlx_utils.c \
+				find_color.c \
+				opti.c \
+				mini_parse.c \
+				rays.c \
+				open_door.c \
 				)
 OBJ_FILES	=	$(SRC_FILES:$(SRC_DIR)%.c=$(OBJ_DIR)/%.o)
 DEP			=	$(OBJ_FILES:.o=.d)
+
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+    MLX = mlx_linux
+    MLX_DIR = mlx_linux/
+    LIBRARIES = -L$(MLX) -lmlx_Linux -Llibft -lft -L/usr/lib -lXext -lX11 -lm -lz
+else ifeq ($(UNAME_S),Darwin)
+    MLX = mlx_mac
+    MLX_DIR = mlx_mac/
+    LIBRARIES = -L$(MLX) -lmlx -framework OpenGL -framework AppKit -L$(LIBFT_DIR) -lft
+endif
+INCLUDES	=	-I/usr/include -I$(MLX_DIR) -Ilibft/includes -I$(INC_DIR)
 
 all: mlx libft $(NAME)
 
@@ -31,7 +53,7 @@ $(OBJ_DIR):
 mlx:
 	@make -C $(MLX)
 
-libft:
+libft: FORCE
 	@make -C $(LIBFT_DIR)
 
 -include $(DEP)
@@ -43,6 +65,8 @@ clean:
 fclean: clean
 	$(RM) $(NAME)
 	@make -C $(LIBFT_DIR) fclean
+
+FORCE:
 
 re: fclean all
 
