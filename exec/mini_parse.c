@@ -46,6 +46,6 @@ void	mini_parse(t_data *data, char *file)
 		i++;
 	}
 	data->mapX = i;
-	data->mapY = j;
+	data->mapY = j / 2 + 1;
 	print_map(data->map);
 }

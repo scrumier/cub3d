@@ -39,7 +39,7 @@ int create_image(t_data *data)
 	i = 0;
 
 	data->next_image++;
-	if (data->next_image == 30) {
+	if (data->next_image == 10) {
 		data->next_image = 0;
 		data->animated_texture_index++;
 	}
@@ -97,21 +97,6 @@ int create_image(t_data *data)
 	mlx_string_put(data->mlx, data->win, WIDTH - 125, 30, 0xFFFFFF, lowest_fps_str);
 	mlx_string_put(data->mlx, data->win, WIDTH - 130, 50, 0xFFFFFF, highest_fps_str);
 	mlx_string_put(data->mlx, data->win, WIDTH - 75, 10, 0xFFFFFF, fps_str);
-	return (0);
-}
-
-int mouse_hook(int button, t_data *data)
-{
-	if (button == 4)
-	{
-		data->move->turn_left = false;
-		data->move->turn_right = true;
-	}
-	else if (button == 5)
-	{
-		data->move->turn_left = true;
-		data->move->turn_right = false;
-	}
 	return (0);
 }
 
@@ -177,7 +162,6 @@ int	main(int ac, char **av)
 
 	mlx_loop_hook(data->mlx, create_image, data);
 	mlx_hook(data->win, KEYPRESS, KEYPRESSMASK, &handle_keypressed, data);
-	mlx_hook(data->win, MOUSEMOVE, MOUSEMOVEMASK, &mouse_hook, data);
 	mlx_hook(data->win, KEYREALASE, KEYRELEASEMASK, &handle_keyrelease, data);
 	mlx_loop(data->mlx);
 	return (0);

@@ -101,15 +101,17 @@ void	render_ceiling_and_floor(t_data *data, int ray_nbr, \
 	while (i < line_start)
 	{
 		ceil_color = darken_color(data->ceiling_color, i, HEIGHT);
-		if (!(ray_nbr < 150 && i < 150))
+		if (!(ray_nbr < data->mapX * COEF && i < data->mapY * COEF))
 			my_mlx_pixel_put(data, ray_nbr, i, ceil_color);
 		i++;
 	}
 	i = line_start + line_height;
 	while (i < HEIGHT)
 	{
+		//printf("data->mapX = %i\ndata->mapY = %i\n", data->mapX, data->mapY);
+
 		floor_color = darken_color(data->floor_color, HEIGHT - i, HEIGHT);
-		if (!(ray_nbr < 150 && i < 150))
+		if (!(ray_nbr < data->mapX * COEF && i < data->mapY * COEF))
 			my_mlx_pixel_put(data, ray_nbr, i, floor_color);
 		i++;
 	}
@@ -174,7 +176,7 @@ void	render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, double line_heig
 		draw_wall.ray_nbr = ray_nbr;
 		draw_wall.line_height = line_height;
 		draw_wall.line_start = line_start;
-		if (!(ray_nbr < 150 && i + line_start < 150))
+		if (!(ray_nbr < data->mapX * COEF && i + line_start < data->mapY * COEF))
 			draw_texture_pixel(data, ray, draw_wall, texture);
 		i++;
 	}
