@@ -35,7 +35,7 @@ ifeq ($(UNAME_S),Linux)
 else ifeq ($(UNAME_S),Darwin)
     MLX = mlx_mac
     MLX_DIR = mlx_mac/
-    LIBRARIES = -L$(MLX) -lmlx -framework OpenGL -framework AppKit -L$(LIBFT_DIR) -lft
+    LIBRARIES = -L$(MLX) -lmlx -framework OpenGL -framework AppKit -L$(LIBFT_DIR) -lft -lm -lz
 endif
 INCLUDES	=	-I/usr/include -I$(MLX_DIR) -Ilibft/includes -I$(INC_DIR)
 

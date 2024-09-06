@@ -79,14 +79,13 @@ double	correct_ray_angle(double ray_angle, double player_angle)
 	return (corrected_angle);
 }
 
-double	draw_and_correct_ray(t_ray *ray, t_data *data, int ray_nbr, \
+double	draw_and_correct_ray(t_ray *ray, t_data *data, \
 								int wall_accuracy)
 {
 	double	ray_len;
 	double	corrected_angle;
 
 	ray_len = draw_line(ray, data, 1, wall_accuracy);
-	ray_nbr = RAYS;
 	corrected_angle = correct_ray_angle(ray->ra, data->player->player_angle);
 	return (ray_len * cos(corrected_angle));
 }
@@ -123,13 +122,13 @@ double	calculate_texture_offset(int i, double line_height, int texture_height)
 
 int	calculate_tex_x(t_ray *ray, int wall_face, int texture_width)
 {
-	if (wall_face == 'w')
+	if (wall_face == 'e')
 		return (texture_width - (int)((ray->dstx - floor(ray->dstx)) * texture_width) - 1);
-	else if (wall_face == 'e')
+	else if (wall_face == 'w')
 		return ((int)((ray->dstx - floor(ray->dstx)) * texture_width));
-	else if (wall_face == 'n')
-		return (texture_width - (int)((ray->dsty - floor(ray->dsty)) * texture_width) - 1);
 	else if (wall_face == 's')
+		return (texture_width - (int)((ray->dsty - floor(ray->dsty)) * texture_width) - 1);
+	else if (wall_face == 'n')
 		return ((int)((ray->dsty - floor(ray->dsty)) * texture_width));
 	return (0);
 }
@@ -162,7 +161,10 @@ void	render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, double line_heig
 		texture_index = 5;
 	}
 	wall_face = find_wall_facing(data, ray);
-	texture = &data->texture[texture_index];
+	if (texture_index != 4)
+		texture = &data->texture[texture_index][data->animated_texture_index];
+	else
+		texture = &data->texture[texture_index][0];
 	
 	i = 0;
 	while (i < line_height)
@@ -194,7 +196,7 @@ void	cast_rays(t_data *data, t_ray *ray, int total_rays, double ray_angle)
 		ray->yo = ray->ry + 1;
 		ray->rx += RENDER_DISTANCE * cos(ray->ra);
 		ray->ry += RENDER_DISTANCE * sin(ray->ra);
-		data->ray_len[ray_nbr] = draw_and_correct_ray(ray, data, ray_nbr, WALL_ACCURACY);
+		data->ray_len[ray_nbr] = draw_and_correct_ray(ray, data, WALL_ACCURACY);
 		line_height = HEIGHT * COEF3D / data->ray_len[ray_nbr];
 		line_start = (WIDTH / 2) - (line_height / 2);
 		render_wall_texture(data, ray, ray_nbr, line_height, line_start);

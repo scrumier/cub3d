@@ -187,7 +187,8 @@ typedef struct	s_draw_wall
 
 typedef struct	s_data
 {
-	int				texture_index;
+	int				animated_texture_index;
+	int				next_image;
 	void			*mlx;
 	void			*win;
 	t_img			img;

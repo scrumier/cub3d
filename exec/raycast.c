@@ -37,7 +37,14 @@ int create_image(t_data *data)
 	int j;
 
 	i = 0;
-	
+
+	data->next_image++;
+	if (data->next_image == 30) {
+		data->next_image = 0;
+		data->animated_texture_index++;
+	}
+	if (data->animated_texture_index == 4)
+		data->animated_texture_index = 0;
 	gettimeofday(&data->current_time, NULL);
 	double elapsed_time = (data->current_time.tv_sec - data->last_time.tv_sec) +
 						  (data->current_time.tv_usec - data->last_time.tv_usec) / 1000000.0;
@@ -121,12 +128,27 @@ void	load_texture(t_data *data, t_texture *texture, char *path)
 
 void	init_textures(t_data *data)
 {
-	load_texture(data, &data->texture[0][0], "textures/wall_1.xpm");
-	load_texture(data, &data->texture[1][0], "textures/wall_2.xpm");
-	load_texture(data, &data->texture[2][0], "textures/wall_3.xpm");
-	load_texture(data, &data->texture[3][0], "textures/wall_4.xpm");
+	load_texture(data, &data->texture[0][0], "textures/cobble-animated-1.xpm");
+	load_texture(data, &data->texture[0][1], "textures/cobble-animated-2.xpm");
+	load_texture(data, &data->texture[0][2], "textures/cobble-animated-3.xpm");
+	load_texture(data, &data->texture[0][3], "textures/cobble-animated-4.xpm");
+	load_texture(data, &data->texture[1][0], "textures/cobble-animated-1.xpm");
+	load_texture(data, &data->texture[1][1], "textures/cobble-animated-2.xpm");
+	load_texture(data, &data->texture[1][2], "textures/cobble-animated-3.xpm");
+	load_texture(data, &data->texture[1][3], "textures/cobble-animated-4.xpm");
+	load_texture(data, &data->texture[2][0], "textures/cobble-animated-1.xpm");
+	load_texture(data, &data->texture[2][1], "textures/cobble-animated-2.xpm");
+	load_texture(data, &data->texture[2][2], "textures/cobble-animated-3.xpm");
+	load_texture(data, &data->texture[2][3], "textures/cobble-animated-4.xpm");
+	load_texture(data, &data->texture[3][0], "textures/cobble-animated-1.xpm");
+	load_texture(data, &data->texture[3][1], "textures/cobble-animated-2.xpm");
+	load_texture(data, &data->texture[3][2], "textures/cobble-animated-3.xpm");
+	load_texture(data, &data->texture[3][3], "textures/cobble-animated-4.xpm");
 	load_texture(data, &data->texture[4][0], "textures/beam.xpm");
-	load_texture(data, &data->texture[5][0], "textures/door.xpm");
+	load_texture(data, &data->texture[5][0], "textures/door_animated-1.xpm");
+	load_texture(data, &data->texture[5][1], "textures/door_animated-2.xpm");
+	load_texture(data, &data->texture[5][2], "textures/door_animated-3.xpm");
+	load_texture(data, &data->texture[5][3], "textures/door_animated-4.xpm");
 }
 
 int	main(int ac, char **av)
@@ -141,6 +163,7 @@ int	main(int ac, char **av)
 	data->player = malloc(sizeof(t_player));
 	data->move = malloc(sizeof(t_move));
 	data->flash_light = false;
+	data->animated_texture_index = 0;
 	data->created_player = false;
 	line = ft_strdup(av[1]);
 	mini_parse(data, line);
