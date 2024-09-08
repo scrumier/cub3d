@@ -107,17 +107,6 @@ int mouse_hook(int button, t_data *data)
 	return (0);
 }
 
-void	load_texture(t_data *data, t_texture *texture, char *path)
-{
-	texture->img = mlx_xpm_file_to_image(data->mlx, path, &texture->width, &texture->height);
-	if (texture->img == NULL)
-	{
-		printf("Error: Failed to load texture %s\n", path);
-		exit(0);
-	}
-	texture->addr = mlx_get_data_addr(texture->img, &texture->bpp, &texture->line_len, &texture->endian);
-}
-
 void	init_textures(t_data *data)
 {
 	load_texture(data, &data->texture[0], "textures/wall_1.xpm");
@@ -130,31 +119,39 @@ void	init_textures(t_data *data)
 
 int	main(int ac, char **av)
 {
-	t_data		*data;
-	char 		*line;
+	t_parsedata	data;
 
 	if (ac != 2)
 		return (printf("Error\n"), 0);
-
-	data = malloc(sizeof(t_data));
-	data->player = malloc(sizeof(t_player));
-	data->move = malloc(sizeof(t_move));
-	data->flash_light = false;
-	data->created_player = false;
-	line = ft_strdup(av[1]);
-	mini_parse(data, line);
-	data->mlx = mlx_init();
-	init_textures(data);
-
-	data->win = mlx_new_window(data->mlx, WIDTH, HEIGHT, "Cub3D");
-	data->img.img = mlx_new_image(data->mlx, HEIGHT, WIDTH);
-	data->img.addr = mlx_get_data_addr(data->img.img, &data->img.bpp, &data->img.line_len, &data->img.endian);
-	data->player->player_angle = (FOV / 2) * PI / 180;
-
-	mlx_loop_hook(data->mlx, create_image, data);
-	mlx_hook(data->win, KEYPRESS, KEYPRESSMASK, &handle_keypressed, data);
-	mlx_hook(data->win, MOUSEMOVE, MOUSEMOVEMASK, &mouse_hook, data);
-	mlx_hook(data->win, KEYREALASE, KEYRELEASEMASK, &handle_keyrelease, data);
-	mlx_loop(data->mlx);
+	parse(&data, av[1]);
 	return (0);
+
+
+	//t_data		*data;
+	//char 		*line;
+//
+	//if (ac != 2)
+	//	return (printf("Error\n"), 0);
+//
+	//data = malloc(sizeof(t_data));
+	//data->player = malloc(sizeof(t_player));
+	//data->move = malloc(sizeof(t_move));
+	//data->flash_light = false;
+	//data->created_player = false;
+	//line = ft_strdup(av[1]);
+	//mini_parse(data, line);
+	//data->mlx = mlx_init();
+	//init_textures(data);
+//
+	//data->win = mlx_new_window(data->mlx, WIDTH, HEIGHT, "Cub3D");
+	//data->img.img = mlx_new_image(data->mlx, HEIGHT, WIDTH);
+	//data->img.addr = mlx_get_data_addr(data->img.img, &data->img.bpp, &data->img.line_len, &data->img.endian);
+	//data->player->player_angle = (FOV / 2) * PI / 180;
+//
+	//mlx_loop_hook(data->mlx, create_image, data);
+	//mlx_hook(data->win, KEYPRESS, KEYPRESSMASK, &handle_keypressed, data);
+	//mlx_hook(data->win, MOUSEMOVE, MOUSEMOVEMASK, &mouse_hook, data);
+	//mlx_hook(data->win, KEYREALASE, KEYRELEASEMASK, &handle_keyrelease, data);
+	//mlx_loop(data->mlx);
+	//return (0);
 }

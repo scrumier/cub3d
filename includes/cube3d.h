@@ -208,6 +208,34 @@ typedef struct	s_data
 	double			last_fps[FPS];
 }				t_data;
 
+// tmp parsing code
+typedef struct	s_parsedata
+{
+	int				ceiling_color;
+	int				floor_color;
+	t_player		*player;
+	char			**map;
+	int				mapX;
+	int				mapY;
+	t_texture		*texture[6];
+}				t_parsedata;
+
+typedef enum
+{
+	WALL_EA = 0,
+	WALL_WE,
+	WALL_SO,
+	WALL_NO,
+	BEAM,
+	DOOR,
+	CEILING,
+	FLOOR
+}	e_texture;
+
+int	parse(t_parsedata *data, char *file);
+void	load_texture(t_data *data, t_texture *texture, char *path);
+// end
+
 int	handle_keypressed(int key, t_data *data);
 int	handle_keyrelease(int key, t_data *data);
 void apply_custom_antialiasing(t_data *data);

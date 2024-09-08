@@ -20,6 +20,7 @@ void	mini_parse(t_data *data, char *file)
 	int		j;
 	int		k;
 
+	j = 0;
 	data->ceiling_color = 0x404040;
 	data->floor_color = 0x5C4033;
 	fd = open(file, O_RDONLY);

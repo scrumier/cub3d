@@ -1,10 +1,10 @@
 CC			=	cc
-FLAGS		=	-Wall -Wextra -Werror -Ofast -MMD -MP -O3 -g3
+FLAGS		=	-Ofast -MMD -MP -O3 -g3
 INC_DIR		=	includes/
 INC			=	$(addprefix $(INC_DIR), \
 				cube3d.h \
 				)
-SRC_DIR		=	exec/
+SRC_DIR		=	exec
 OBJ_DIR		=	.obj
 LIBFT_DIR	=	libft
 NAME		=	cub3d
@@ -23,6 +23,9 @@ SRC_FILES	=	$(addprefix $(SRC_DIR), \
 				mini_parse.c \
 				rays.c \
 				open_door.c \
+				$(addprefix parsing/, \
+					main_parser.c \
+				) \
 				)
 OBJ_FILES	=	$(SRC_FILES:$(SRC_DIR)%.c=$(OBJ_DIR)/%.o)
 DEP			=	$(OBJ_FILES:.o=.d)
@@ -49,7 +52,7 @@ $(NAME): $(OBJ_FILES) $(INC) Makefile $(OBJ_DIR)
 
 $(OBJ_DIR):
 	mkdir -p $@
-
+	mkdir -p $(OBJ_DIR)/parsing
 mlx:
 	@make -C $(MLX)
 
