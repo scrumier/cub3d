@@ -106,7 +106,7 @@ int mouse_hook(int button, t_data *data)
 	}
 	return (0);
 }
-
+/* TODO : fix type
 void	init_textures(t_data *data)
 {
 	load_texture(data, &data->texture[0], "textures/wall_1.xpm");
@@ -116,14 +116,31 @@ void	init_textures(t_data *data)
 	load_texture(data, &data->texture[4], "textures/beam.xpm");
 	load_texture(data, &data->texture[5], "textures/door.xpm");
 }
+*/
 
 int	main(int ac, char **av)
 {
-	t_parsedata	data;
+	t_data	*data;
 
 	if (ac != 2)
 		return (printf("Error\n"), 0);
-	parse(&data, av[1]);
+	data = malloc(sizeof(t_data));
+	data->player = malloc(sizeof(t_player));
+	data->move = malloc(sizeof(t_move));
+	data->flash_light = false;
+	data->created_player = false;
+	data->mlx = mlx_init();
+	data->texture[0] = NULL;
+	data->texture[1] = NULL;
+	data->texture[2] = NULL;
+	data->texture[3] = NULL;
+	data->texture[4] = NULL;
+	data->texture[5] = NULL;
+	parse(data, av[1]);
+	free(data->player);
+	free(data->move);
+	free(data->mlx);
+	free(data);
 	return (0);
 
 

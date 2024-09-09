@@ -156,7 +156,7 @@ void	render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, double line_heig
 		texture_index = 5;
 	}
 	wall_face = find_wall_facing(data, ray);
-	texture = &data->texture[texture_index];
+	texture = NULL; //&data->texture[texture_index]; TODO: fix type
 	
 	i = 0;
 	while (i < line_height)

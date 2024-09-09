@@ -32,28 +32,51 @@ void	load_texture(t_data *data, t_texture *texture, char *path)
 		exit(0);
 	}
 	texture->addr = mlx_get_data_addr(texture->img, &texture->bpp, &texture->line_len, &texture->endian);
+	texture->path = ft_strdup(path);
 }
 
-int	init_walls_texture(t_parsedata *data, char *line, e_texture texture)
+char *texture_to_string(e_texture texture)
+{
+	if (texture == WALL_EA)
+		return ("WALL_EA");
+	else if (texture == WALL_WE)
+		return ("WALL_WE");
+	else if (texture == WALL_SO)
+		return ("WALL_SO");
+	else if (texture == WALL_NO)
+		return ("WALL_NO");
+	else if (texture == BEAM)
+		return ("BEAM");
+	else if (texture == DOOR)
+		return ("DOOR");
+	else
+		return ("UNKNOWN");
+}
+
+int	init_walls_texture(t_data *data, char *line, e_texture texture)
 {
 	char	**sprites;
 	size_t	i;
 
+	if (data->texture[texture])
+		return (127); // TODO: print texture already initialized
 	i = 0;
+	while (line[i] == ' ')
+		i++;
 	sprites = ft_split(line, ' ');
 	if (!sprites)
 		return (-1);
-	data->texture[texture] = ft_calloc(strarray_len(sprites), sizeof(t_texture));
+	data->texture[texture] = ft_calloc(strarray_len(sprites) + 1, sizeof(t_texture));
 	if (!data->texture[texture])
 		return (free_strarray(sprites), -1);
 	while (sprites[i])
 	{
-		//load_texture(data, &data->texture[texture], sprites[i]);
+		load_texture(data, &(data->texture[texture][i]), sprites[i]); // TODO: check return for invalid path
 		i++;
 	}
 	return (free_strarray(sprites), 0);
 }
-int	init_wall(t_parsedata *data, char *line)
+int	init_wall(t_data *data, char *line)
 {
 	if (ft_strncmp(line, "NO ", 3) == 0)
 		return(init_walls_texture(data, line + 3, WALL_NO));
@@ -71,7 +94,7 @@ int	init_wall(t_parsedata *data, char *line)
 		return (127); // TODO: print identifier not found
 }
 
-int	init_colors(t_parsedata *data, char *line, e_texture type)
+int	init_colors(t_data *data, char *line, e_texture type)
 {
 	int		rgb[3];
 	size_t	i;
@@ -110,7 +133,27 @@ int	init_colors(t_parsedata *data, char *line, e_texture type)
 	return (0);
 }
 
-int	parse(t_parsedata *data, char *file)
+void free_texture(t_data *data)
+{
+	int i;
+	int j;
+
+	i = 0;
+	while (i < 4)
+	{
+		j = 0;
+		while (data->texture[i][j].path)
+		{
+			free(data->texture[i][j].path);
+			mlx_destroy_image(data->mlx, data->texture[i][j].img);
+			j++;
+		}
+		free(data->texture[i]);
+		i++;
+	}
+}
+
+int	parse(t_data *data, char *file)
 {
 	int		fd;
 	char	*line;
@@ -131,13 +174,27 @@ int	parse(t_parsedata *data, char *file)
 		else if (ft_strncmp(line, "F ", 2) == 0)
 			printf("%d\n", init_colors(data, line + 2, FLOOR));
 		//elseif (ft_isdigit(line[0]))
-		//else
-		//	init_wall(data, line);
+		else
+			init_wall(data, line);
 		free(tmp);
 		free(line);
 		tmp = get_next_line(fd); // might modify strtrim to free from inside + TODO: check function's return
 		line = ft_strtrim(tmp, " \t\n\v\f\r"); //TODO: check function's return
 	}
-	// print ceiling and floor colors
 	printf("ceiling: %x\nfloor: %x\n", data->ceiling_color, data->floor_color);
+	//print every texture path
+	i = 0;
+	int j = 0;
+	while (i < 4)
+	{
+		j = 0;
+		printf("Texture %s\n", texture_to_string((e_texture)i));
+		while (data->texture[i][j].path)
+		{
+			printf("%s\n", data->texture[i][j].path);
+			j++;
+		}
+		i++;
+	}
+	return (0);
 }

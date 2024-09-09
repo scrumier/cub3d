@@ -72,7 +72,7 @@
 # define WALL_ACCURACY 200
 # define THRESHOLD 0.1
 # define RENDER_DISTANCE 200
-
+# define TEXTURE_NB 6
 typedef struct s_line
 {
 	double x;
@@ -117,6 +117,7 @@ typedef struct s_texture
 	int		bpp;
 	int		line_len;
 	int		endian;
+	char 	*path; // debug
 }				t_texture;
 
 typedef struct s_coord
@@ -204,21 +205,11 @@ typedef struct	s_data
 	double			fps;
 	int				frame;
 	bool			flash_light;
-	t_texture		texture[6];
+	t_texture		*texture[TEXTURE_NB];
 	double			last_fps[FPS];
 }				t_data;
 
 // tmp parsing code
-typedef struct	s_parsedata
-{
-	int				ceiling_color;
-	int				floor_color;
-	t_player		*player;
-	char			**map;
-	int				mapX;
-	int				mapY;
-	t_texture		*texture[6];
-}				t_parsedata;
 
 typedef enum
 {
@@ -232,7 +223,7 @@ typedef enum
 	FLOOR
 }	e_texture;
 
-int	parse(t_parsedata *data, char *file);
+int	parse(t_data *data, char *file);
 void	load_texture(t_data *data, t_texture *texture, char *path);
 // end
 
