@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main_parser.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/10 09:41:33 by mwojtasi          #+#    #+#             */
+/*   Updated: 2024/09/12 01:50:45 by mwojtasi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cube3d.h"
 
 size_t	strarray_len(char **array)
@@ -21,6 +33,19 @@ void	free_strarray(char **array)
 		i++;
 	}
 	free(array);
+}
+
+void	free_llist(t_llist *list)
+{
+	t_llist	*tmp;
+
+	while (list)
+	{
+		tmp = list->next;
+		free(list->content);
+		free(list);
+		list = tmp;
+	}
 }
 
 void	load_texture(t_data *data, t_texture *texture, char *path)
@@ -153,18 +178,79 @@ void free_texture(t_data *data)
 	}
 }
 
+char	*ft_strndup(const char *s, size_t n)
+{
+    char	*dup;
+    size_t	i;
+
+    dup = (char *)malloc((n + 1) * sizeof(char));
+    if (!dup)
+        return (NULL);
+    i = 0;
+    while (i < n && s[i])
+    {
+        dup[i] = s[i];
+        i++;
+    }
+    dup[i] = '\0';
+    return (dup);
+}
+
+void	padding_map(t_data *data, char **map)
+{
+}
+
+void	parse_map(t_data *data, char *line, int fd)
+{
+	// TODO : protect mallocs
+	t_llist	*map;
+	t_llist	*last;
+	size_t	len;
+
+	map = NULL;
+	last = NULL;
+	while (line && line[0] != '\n')
+	{
+		if (!map)
+		{
+			map = ft_calloc(1, sizeof(t_llist));
+			map->content = ft_strndup(line, ft_strlen(line) - 1);
+			last = map;
+		}
+		else
+		{
+			last->next = ft_calloc(1, sizeof(t_llist));
+			last = last->next;
+			len = ft_strlen(line);
+			if (line[len - 1] == '\n')
+				last->content = ft_strndup(line, len - 1);
+			else
+				last->content = ft_strdup(line);
+		}
+		free(line);
+		line = get_next_line(fd);
+	}
+	data->parse_map = map;
+	//print map
+	t_llist *tmp = data->parse_map;
+	while (tmp)
+	{
+		printf("%s\n", tmp->content);
+		tmp = tmp->next;
+	}
+}
+
 int	parse(t_data *data, char *file)
 {
 	int		fd;
 	char	*line;
 	char	*tmp;
 	size_t	i;
-	int		ret;
 
 	i = 0;
 	fd = open(file, O_RDONLY);
 	if (fd < 0)
-		return (perror("cube3d: "), -1);
+		return (perror("cube3d: "), -1); // Error\n ?
 	tmp = get_next_line(fd); // might modify strtrim to free from inside + TODO: check function's return
 	line = ft_strtrim(tmp, " \t\n\v\f\r"); //TODO: check function's return
 	while (line)
@@ -173,7 +259,12 @@ int	parse(t_data *data, char *file)
 			printf("%d\n", init_colors(data, line + 2, CEILING));
 		else if (ft_strncmp(line, "F ", 2) == 0)
 			printf("%d\n", init_colors(data, line + 2, FLOOR));
-		//elseif (ft_isdigit(line[0]))
+		else if (line[0] == '1' || line[0] == '0')
+		{
+			parse_map(data, tmp, fd);
+			free(line);
+			break;
+		}
 		else
 			init_wall(data, line);
 		free(tmp);
@@ -181,6 +272,7 @@ int	parse(t_data *data, char *file)
 		tmp = get_next_line(fd); // might modify strtrim to free from inside + TODO: check function's return
 		line = ft_strtrim(tmp, " \t\n\v\f\r"); //TODO: check function's return
 	}
+	// check if all data is present and if there isn't any redefinition after map
 	printf("ceiling: %x\nfloor: %x\n", data->ceiling_color, data->floor_color);
 	//print every texture path
 	i = 0;
@@ -196,5 +288,11 @@ int	parse(t_data *data, char *file)
 		}
 		i++;
 	}
-	return (0);
+	
+	return (close(fd), 0);
 }
+
+/*
+check if nothing after map
+check if 1 letter in map
+*/

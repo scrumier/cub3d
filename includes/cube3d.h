@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cube3d.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 13:27:12 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/11 02:42:53 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,6 +186,12 @@ typedef struct	s_draw_wall
 	double	line_start;
 }				t_draw_wall;
 
+typedef struct	s_llist
+{
+	char			*content;
+	struct s_llist	*next;
+}				t_llist;
+
 typedef struct	s_data
 {
 	void			*mlx;
@@ -197,6 +203,7 @@ typedef struct	s_data
 	t_move			*move;
 	bool			created_player;
 	char			**map;
+	t_llist			*parse_map;
 	int				mapX;
 	int				mapY;
 	double			ray_len[RAYS];
@@ -222,6 +229,7 @@ typedef enum
 	CEILING,
 	FLOOR
 }	e_texture;
+
 
 int	parse(t_data *data, char *file);
 void	load_texture(t_data *data, t_texture *texture, char *path);
