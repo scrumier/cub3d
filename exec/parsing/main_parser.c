@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 09:41:33 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/09/13 05:24:08 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/09/13 11:39:43 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,20 +180,20 @@ void free_texture(t_data *data)
 
 char	*ft_strndup(const char *s, size_t n)
 {
-    char	*dup;
-    size_t	i;
+	char	*dup;
+	size_t	i;
 
-    dup = (char *)malloc((n + 1) * sizeof(char));
-    if (!dup)
-        return (NULL);
-    i = 0;
-    while (i < n && s[i])
-    {
-        dup[i] = s[i];
-        i++;
-    }
-    dup[i] = '\0';
-    return (dup);
+	dup = (char *)malloc((n + 1) * sizeof(char));
+	if (!dup)
+		return (NULL);
+	i = 0;
+	while (i < n && s[i])
+	{
+		dup[i] = s[i];
+		i++;
+	}
+	dup[i] = '\0';
+	return (dup);
 }
 
 size_t	get_max_size(t_llist *list)
@@ -223,7 +223,7 @@ char	*add_spaces(char *str, size_t amount)
 		return (NULL);
 	ft_strlcpy(tmp, str, i + 1);
 	while (amount--)
-		tmp[i++] = '*';
+		tmp[i++] = ' ';
 	return (tmp);
 }
 
@@ -289,6 +289,82 @@ void	parse_map(t_data *data, char *line, int fd)
 	}
 }
 
+/*
+to check:
+- maps must start with 1 or space
+- maps must end with 1 or space
+- maps first and last line should all be 1 or space
+
+to do:
+- space check in 8 directions
+- replace spaces with 0
+*/
+
+int space_check(t_data *data, size_t x, size_t y)
+{
+	size_t map_width;
+	size_t map_height;
+
+	map_width = data->mapX;
+	map_height = data->mapY;
+	// <- x - 1
+	if (x > 0 && data->map[y][x - 1] == '0')
+		return (0);
+	// -> x + 1
+	if (x + 1 < map_width && data->map[y][x + 1] == '0')
+		return (0);
+	// ⬆ y - 1
+	if (y > 0 && data->map[y - 1][x] == '0')
+		return (0);
+	// ⬇ y + 1
+	if (y + 1 < map_height && data->map[y + 1][x] == '0')
+		return (0);
+	// 🡥 (x + 1), (y + 1)
+	if (x > 0 && y > 0 && data->map[y - 1][x - 1] == '0')
+		return (0);
+	// 🡦 (x + 1), (y - 1)
+	if (x + 1 < map_width && y > 0 && data->map[y - 1][x + 1] == '0')
+		return (0);
+	// 🡧 (x - 1), (y + 1)
+	if (x > 0 && y + 1 < map_height && data->map[y + 1][x - 1] == '0')
+		return (0);
+	// 🡤 (x - 1), (y - 1)
+	if (x + 1 < map_width && y + 1 < map_height && data->map[y + 1][x + 1] == '0')
+		return (0);
+	return (1);
+}
+
+
+int	map_check(t_data *data)
+{
+	size_t	y;
+	size_t	x;
+	
+
+	y = 0;
+	while (y < data->mapY)
+	{
+		x = 0;
+		if (data->map[y][0] != '1' && data->map[y][0] != ' ')
+			return (22); // TODO: print invalid map
+		while (data->map[y][x])
+		{
+			if ((y == 0 || y == data->mapY - 1) && data->map[y][x] != '1' && data->map[y][x] != ' ')
+				return (22); // TODO: print invalid map
+			if (data->map[y][x] == ' ')
+			{
+				if (!space_check(data, x, y))
+					return (22); // TODO: print invalid map
+			}
+			x++;
+		}
+		if (data->map[y][x - 1] != '1' && data->map[y][x - 1] != ' ')
+			return (22); // TODO: print invalid map
+		y++;
+	}
+	return (0);
+}
+
 int	parse(t_data *data, char *file)
 {
 	int		fd;
@@ -324,6 +400,11 @@ int	parse(t_data *data, char *file)
 	// check if all data is present and if there isn't any redefinition after map
 	
 	printf("ceiling: %x\nfloor: %x\n", data->ceiling_color, data->floor_color);
+	// print map check
+	if (map_check(data) == 0)
+		printf("\033[0;32m%d\033[0m\n", map_check(data));
+	else
+		printf("\033[0;31m%d\033[0m\n", map_check(data));
 	//print every texture path
 	i = 0;
 	int j = 0;
