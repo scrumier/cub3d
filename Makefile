@@ -1,5 +1,5 @@
 CC			=	cc
-FLAGS		=	-Ofast -MMD -MP -O3 -g3
+FLAGS		=	-Ofast -MMD -MP -g3
 INC_DIR		=	includes/
 INC			=	$(addprefix $(INC_DIR), \
 				cube3d.h \
@@ -45,7 +45,7 @@ INCLUDES	=	-I/usr/include -I$(MLX_DIR) -Ilibft/includes -I$(INC_DIR)
 all: mlx libft $(NAME)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(INC) Makefile | $(OBJ_DIR)
-	$(CC) $(FLAGS) $(INCLUDES) -O3 -c $< -o $@ -I$(LIBFT_DIR)
+	$(CC) $(FLAGS) $(INCLUDES) -c $< -o $@ -I$(LIBFT_DIR)
 
 $(NAME): $(OBJ_FILES) $(INC) Makefile $(OBJ_DIR)
 	$(CC) $(OBJ_FILES) $(LIBRARIES) -o $@

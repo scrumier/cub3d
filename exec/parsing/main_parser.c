@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 09:41:33 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/09/12 01:50:45 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/09/13 05:24:08 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,8 +196,54 @@ char	*ft_strndup(const char *s, size_t n)
     return (dup);
 }
 
-void	padding_map(t_data *data, char **map)
+size_t	get_max_size(t_llist *list)
 {
+	size_t	max;
+	size_t	len;
+
+	max = 0;
+	while (list)
+	{
+		len = ft_strlen(list->content);
+		if (len > max)
+			max = len;
+		list = list->next;
+	}
+	return (max);
+}
+
+char	*add_spaces(char *str, size_t amount)
+{
+	char	*tmp;
+	size_t	i;
+
+	i = ft_strlen(str);
+	tmp = ft_calloc(i + amount + 1, sizeof(char));
+	if (!tmp)
+		return (NULL);
+	ft_strlcpy(tmp, str, i + 1);
+	while (amount--)
+		tmp[i++] = '*';
+	return (tmp);
+}
+
+void	padding_map(t_data *data, t_llist *map) // TODO: optimize by putting the space only where needed
+{
+	size_t	i;
+	t_llist	*tmp;
+	char	**padded_map;
+
+	data->mapX = get_max_size(map);
+	padded_map = ft_calloc(data->mapY + 1, sizeof(char *));
+	i = 0;
+	tmp = map;
+	while (tmp)
+	{
+		padded_map[i] = add_spaces(tmp->content, data->mapX - ft_strlen(tmp->content)); //TODO: check return
+		tmp = tmp->next;
+		i++;
+	}
+	data->map = padded_map;
 }
 
 void	parse_map(t_data *data, char *line, int fd)
@@ -209,6 +255,7 @@ void	parse_map(t_data *data, char *line, int fd)
 
 	map = NULL;
 	last = NULL;
+	data->mapY = 0;
 	while (line && line[0] != '\n')
 	{
 		if (!map)
@@ -227,16 +274,18 @@ void	parse_map(t_data *data, char *line, int fd)
 			else
 				last->content = ft_strdup(line);
 		}
+		data->mapY++;
 		free(line);
 		line = get_next_line(fd);
 	}
-	data->parse_map = map;
-	//print map
-	t_llist *tmp = data->parse_map;
-	while (tmp)
+	padding_map(data, map);
+	//print data->map
+	free_llist(map);
+	size_t i = 0;
+	while (i < data->mapY)
 	{
-		printf("%s\n", tmp->content);
-		tmp = tmp->next;
+		printf("%s\n", data->map[i]);
+		i++;
 	}
 }
 
@@ -273,6 +322,7 @@ int	parse(t_data *data, char *file)
 		line = ft_strtrim(tmp, " \t\n\v\f\r"); //TODO: check function's return
 	}
 	// check if all data is present and if there isn't any redefinition after map
+	
 	printf("ceiling: %x\nfloor: %x\n", data->ceiling_color, data->floor_color);
 	//print every texture path
 	i = 0;
