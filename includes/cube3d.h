@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cube3d.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/11 02:42:53 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/09/15 12:39:59 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@
 # include <errno.h>
 # include <stdbool.h>
 # include <sys/time.h>
+# include "errors.h"
 # define KEYPRESSMASK (1L<<0)
 # define KEYRELEASEMASK (1L<<1)
 # define MOUSEMOVEMASK (1L<<6)
@@ -203,7 +204,6 @@ typedef struct	s_data
 	t_move			*move;
 	bool			created_player;
 	char			**map;
-	t_llist			*parse_map;
 	int				mapX;
 	int				mapY;
 	double			ray_len[RAYS];
@@ -232,8 +232,7 @@ typedef enum
 
 
 int	parse(t_data *data, char *file);
-void	load_texture(t_data *data, t_texture *texture, char *path);
-// end
+int	load_texture(t_data *data, t_texture *texture, char *path);// end
 
 int	handle_keypressed(int key, t_data *data);
 int	handle_keyrelease(int key, t_data *data);

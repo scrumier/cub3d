@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycast.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 12:23:00 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/15 14:02:13 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,9 @@ int	main(int ac, char **av)
 	data->flash_light = false;
 	data->created_player = false;
 	data->mlx = mlx_init();
+	data->map = NULL;
+	data->ceiling_color = -1;
+	data->floor_color = -1;
 	data->texture[0] = NULL;
 	data->texture[1] = NULL;
 	data->texture[2] = NULL;
