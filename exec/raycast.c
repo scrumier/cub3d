@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/15 14:02:13 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/09/15 17:34:58 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,8 @@ int	main(int ac, char **av)
 		return (printf("Error\n"), 0);
 	data = malloc(sizeof(t_data));
 	data->player = malloc(sizeof(t_player));
+	data->player->x = 0;
+	data->player->y = 0;
 	data->move = malloc(sizeof(t_move));
 	data->flash_light = false;
 	data->created_player = false;

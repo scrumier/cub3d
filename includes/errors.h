@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 12:18:13 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/09/15 13:33:07 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/09/15 17:43:40 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,4 +23,7 @@
 # define MAP_NOT_INIT "Map not initialized"
 # define VALUE_AFTER_MAP "Value after map"
 # define INVALID_EXTENSION "Invalid extension"
+# define INVALID_TEXTURE_FORMAT "Invalid texture format"
+# define MULTIPLE_PLAYERS "Multiple player"
+# define NO_PLAYER "No player"
 #endif

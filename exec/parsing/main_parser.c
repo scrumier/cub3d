@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 09:41:33 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/09/15 14:02:39 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/09/15 18:33:50 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,9 +91,9 @@ int	init_walls_texture(t_data *data, char *line, e_texture texture)
 
 	if (data->texture[texture])
 		return (print_error(ALREADY_INIT), 127);
+	if (strncmp(line + strlen(line) - 4, ".xpm", 4) != 0)
+		return (print_error(INVALID_TEXTURE_FORMAT), 127);
 	i = 0;
-	while (line[i] == ' ')
-		i++;
 	sprites = ft_split(line, ' ');
 	if (!sprites)
 		return (-1);
@@ -102,7 +102,7 @@ int	init_walls_texture(t_data *data, char *line, e_texture texture)
 		return (free_strarray(sprites), -1);
 	while (sprites[i])
 	{
-		if (load_texture(data, &(data->texture[texture][i]), sprites[i]) == -1) // TODO: check return for invalid path
+		if (load_texture(data, &(data->texture[texture][i]), sprites[i]) == -1)
 			return (free_strarray(sprites), -1);
 		i++;
 	}
@@ -135,7 +135,7 @@ bool	is_valid_char_color(char *line)
 	i = 0;
 	while (line[i])
 	{
-		if (!ft_isdigit(line[i]) && line[i] != ',')
+		if (!ft_isdigit(line[i]) && line[i] != ',' && line[i] != ' ')
 			return (false);
 		i++;
 	}
@@ -162,9 +162,11 @@ int	init_colors(t_data *data, char *line, e_texture type)
 		return (print_error(INVALID_COLOR_ARG), 22);
 	while (line[i])
 	{
+		while (line[i] == ' ')
+			i++;
 		if (line[i] == ',' && color == 2)
 			return (print_error(INVALID_COLOR_ARG), 22);
-		if (!ft_isdigit(line[i]) && line[i] != ',')
+		if (!ft_isdigit(line[i]) && line[i] != ',' && line[i] != ' ')
 			return (print_error(INVALID_COLOR_ARG), 22);
 		if (line[i] == ',' || !line[i + 1])
 		{
@@ -462,6 +464,53 @@ bool	is_everything_init(t_data *data)
 	return (true);
 }
 
+double	get_player_angle(char c)
+{
+	if (c == 'N')
+		return (PI/2);
+	else if (c == 'S')
+		return ((3 * PI)/2);
+	else if (c == 'W')
+		return (PI);
+	else if (c == 'E')
+		return (2 * PI);
+}
+
+bool	is_map_char(char c)
+{
+	return (c == '0' || c == '1' || c == '2'
+		| c == ' ' || c == 'N' || c == 'S' || c == 'W' || c == 'E');
+}
+
+int	map_info_parse(t_data *data)
+{
+	size_t	i;
+	size_t	j;
+
+	i = 0;
+	j = 0;
+	while (i < data->mapY)
+	{
+		j = 0;
+		while (j < data->mapX)
+		{
+			if (!is_map_char(data->map[i][j]))
+				return (print_error(INVALID_MAP), 22);
+			if (ft_isalpha(data->map[i][j]))
+			{
+				if (!(data->player->x == 0 && data->player->y == 0))
+					return (print_error(MULTIPLE_PLAYERS), 127);
+				data->player->x = j;
+				data->player->y = i;
+				data->player->player_angle = get_player_angle(data->map[i][j]);
+			}
+			j++;
+		}
+		i++;
+	}
+	return (0);
+}
+
 int	parse(t_data *data, char *file)
 {
 	int		fd;
@@ -498,7 +547,6 @@ int	parse(t_data *data, char *file)
 		tmp = get_next_line(fd); // might modify strtrim to free from inside + TODO: check function's return
 		line = ft_strtrim(tmp, " \t\n\v\f\r"); //TODO: check function's return
 	}
-	// check if all data is present and if there isn't any redefinition after map
 	if (!is_everything_init(data))
 		return (127);
 	print_color("Ceiling", data->ceiling_color);
@@ -524,8 +572,14 @@ int	parse(t_data *data, char *file)
 		printf("\033[0;31m%d\033[0m\n", map_check(data));
 	// fill spaces with 0
 	map_fill_spaces(data);
+	map_info_parse(data);
+	if ((!data->player->x && !data->player->y))
+		return (print_error(NO_PLAYER), 127);
 	//print map
 	printc_map(data->map, data->mapY, data->mapX);
+	//print player position and angle
+	printf("Player position: %f, %f\n", data->player->x, data->player->y);
+	printf("Player angle: %f\n", data->player->player_angle);
 	return (close(fd), 0);
 }
 
