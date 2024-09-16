@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:21:06 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 11:33:45 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/16 12:55:35 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,9 @@ int	handle_keypressed(int key, t_data *data)
 	if (key == KEY_ESC)
 	{
 		mlx_destroy_window(data->mlx, data->win);
+		mlx_destroy_display(data->mlx);
+		free(data->mlx);
+		free(data);
 		exit(0);
 	}
 	if (key == KEY_F)
