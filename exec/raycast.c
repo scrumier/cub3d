@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/16 11:29:25 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/16 14:46:12 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,38 +57,13 @@ int create_image(t_data *data)
 		data->next_image = 0;
 		data->animated_texture_index++;
 	}
-	gettimeofday(&data->current_time, NULL);
-	double elapsed_time = (data->current_time.tv_sec - data->last_time.tv_sec) +
-						  (data->current_time.tv_usec - data->last_time.tv_usec) / 1000000.0;
-	data->fps = 1.0 / elapsed_time;
-	data->last_time = data->current_time;
 	move_player(data);
 	parse_rays(data);
 	print_minimap(data, 2);
 
-	data->last_fps[data->frame % FPS] = data->fps;
-	data->frame++;
-	char fps_str[20];
-	char lowest_fps_str[20];
-	char highest_fps_str[20];
-	char *tmp = ft_itoa((int)get_fps_average(data));
-	ft_strlcpy(fps_str, "FPS: ", 6);
-	ft_strlcat(fps_str, tmp, 20);
-	free(tmp);
-	tmp = ft_itoa(find_lowest_value(data->last_fps, FPS));
-	ft_strlcpy(lowest_fps_str, "Lowest FPS: ", 13);
-	ft_strlcat(lowest_fps_str, tmp, 20);
-	free(tmp);
-	tmp = ft_itoa(find_highest_value(data->last_fps, FPS));
-	ft_strlcpy(highest_fps_str, "Highest FPS: ", 14);
-	ft_strlcat(highest_fps_str, tmp, 20);
-	free(tmp);
 	if (FXAA_ENABLED == true)
 		apply_custom_antialiasing(data);
 	mlx_put_image_to_window(data->mlx, data->win, data->img.img, 0, 0);
-	mlx_string_put(data->mlx, data->win, WIDTH - 125, 30, 0xFFFFFF, lowest_fps_str);
-	mlx_string_put(data->mlx, data->win, WIDTH - 130, 50, 0xFFFFFF, highest_fps_str);
-	mlx_string_put(data->mlx, data->win, WIDTH - 75, 10, 0xFFFFFF, fps_str);
 	return (0);
 }
 
@@ -133,6 +108,16 @@ void	init_textures(t_data *data)
 }
 */
 
+void init_all(t_data *data)
+{
+	data->move->forward = false;
+	data->move->backward = false;
+	data->move->go_left = false;
+	data->move->go_right = false;
+	data->move->turn_left = false;
+	data->move->turn_right = false;
+}
+
 int	main(int ac, char **av)
 {
 	t_data	*data;
@@ -143,11 +128,11 @@ int	main(int ac, char **av)
 	data->player = malloc(sizeof(t_player));
 	data->player->x = 0;
 	data->player->y = 0;
+	data->next_image = 0;
 	data->move = malloc(sizeof(t_move));
 	data->flash_light = false;
 	data->animated_texture_index = 0;
 	data->created_player = false;
-	data->mlx = mlx_init();
 	data->map = NULL;
 	data->ceiling_color = -1;
 	data->floor_color = -1;
@@ -157,7 +142,9 @@ int	main(int ac, char **av)
 	data->texture[3] = NULL;
 	data->texture[4] = NULL;
 	data->texture[5] = NULL;
+	data->mlx = mlx_init();
 	parse(data, av[1]);
+	init_all(data);
 	data->win = mlx_new_window(data->mlx, WIDTH, HEIGHT, "Cub3D");
 	data->img.img = mlx_new_image(data->mlx, HEIGHT, WIDTH);
 	data->img.addr = mlx_get_data_addr(data->img.img, &data->img.bpp, &data->img.line_len, &data->img.endian);

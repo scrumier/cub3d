@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/16 12:04:54 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/16 14:40:25 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@
 # define PLAYER_ROTATE 0.5
 # define PI 3.14159265359
 # define FOV 60
-# define RAYS WIDTH
+# define RAYS WIDTH 
 # define BEAM_WIDTH 256
 # define FPS 40
 # define FXAA_ENABLED false
@@ -240,8 +240,6 @@ int	load_texture(t_data *data, t_texture *texture, char *path);// end
 int	handle_keypressed(int key, t_data *data);
 int	handle_keyrelease(int key, t_data *data);
 void apply_custom_antialiasing(t_data *data);
-double find_lowest_value(double *tab, int size);
-double find_highest_value(double *tab, int size);
 void	move_player(t_data *data);
 int deg_to_rad(int deg);
 void	print_minimap(t_data *data, int mode);

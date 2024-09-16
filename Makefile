@@ -13,7 +13,6 @@ SRC_FILES	=	$(addprefix $(SRC_DIR), \
 				raycast.c \
 				key_handle.c \
 				anti_aliasing.c \
-				find_fps.c \
 				move.c \
 				utils.c \
 				draw.c \
