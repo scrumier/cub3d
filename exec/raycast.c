@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycast.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42lyon.fr >     +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/15 17:34:58 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/09/16 10:30:11 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,38 +142,17 @@ int	main(int ac, char **av)
 	data->texture[4] = NULL;
 	data->texture[5] = NULL;
 	parse(data, av[1]);
+	data->win = mlx_new_window(data->mlx, WIDTH, HEIGHT, "Cub3D");
+	data->img.img = mlx_new_image(data->mlx, HEIGHT, WIDTH);
+	data->img.addr = mlx_get_data_addr(data->img.img, &data->img.bpp, &data->img.line_len, &data->img.endian);
+
+	mlx_loop_hook(data->mlx, create_image, data);
+	mlx_hook(data->win, KEYPRESS, KEYPRESSMASK, &handle_keypressed, data);
+	mlx_hook(data->win, KEYREALASE, KEYRELEASEMASK, &handle_keyrelease, data);
+	mlx_loop(data->mlx);
 	free(data->player);
 	free(data->move);
 	free(data->mlx);
 	free(data);
 	return (0);
-
-
-	//t_data		*data;
-	//char 		*line;
-//
-	//if (ac != 2)
-	//	return (printf("Error\n"), 0);
-//
-	//data = malloc(sizeof(t_data));
-	//data->player = malloc(sizeof(t_player));
-	//data->move = malloc(sizeof(t_move));
-	//data->flash_light = false;
-	//data->created_player = false;
-	//line = ft_strdup(av[1]);
-	//mini_parse(data, line);
-	//data->mlx = mlx_init();
-	//init_textures(data);
-//
-	//data->win = mlx_new_window(data->mlx, WIDTH, HEIGHT, "Cub3D");
-	//data->img.img = mlx_new_image(data->mlx, HEIGHT, WIDTH);
-	//data->img.addr = mlx_get_data_addr(data->img.img, &data->img.bpp, &data->img.line_len, &data->img.endian);
-	//data->player->player_angle = (FOV / 2) * PI / 180;
-//
-	//mlx_loop_hook(data->mlx, create_image, data);
-	//mlx_hook(data->win, KEYPRESS, KEYPRESSMASK, &handle_keypressed, data);
-	//mlx_hook(data->win, MOUSEMOVE, MOUSEMOVEMASK, &mouse_hook, data);
-	//mlx_hook(data->win, KEYREALASE, KEYRELEASEMASK, &handle_keyrelease, data);
-	//mlx_loop(data->mlx);
-	//return (0);
 }
