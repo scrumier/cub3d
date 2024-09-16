@@ -18,8 +18,7 @@ int	handle_keypressed(int key, t_data *data)
 	{
 		mlx_destroy_window(data->mlx, data->win);
 		mlx_destroy_display(data->mlx);
-		free(data->mlx);
-		free(data);
+		free_all(data);
 		exit(0);
 	}
 	if (key == KEY_F)

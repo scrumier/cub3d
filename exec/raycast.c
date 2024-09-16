@@ -118,6 +118,16 @@ void init_all(t_data *data)
 	data->move->turn_right = false;
 }
 
+void	free_all(t_data *data)
+{
+	free_texture(data);
+	free(data->player);
+	free(data->move);
+	free_strarray(data->map);
+	free(data->mlx);
+	free(data);
+}
+
 int	main(int ac, char **av)
 {
 	t_data	*data;
@@ -156,6 +166,8 @@ int	main(int ac, char **av)
 	free(data->player);
 	free(data->move);
 	free(data->mlx);
+	free_strarray(data->map);
+	free_texture(data);
 	free(data);
 	return (0);
 }

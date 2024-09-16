@@ -50,7 +50,8 @@ void	free_llist(t_llist *list)
 	while (list)
 	{
 		tmp = list->next;
-		free(list->content);
+		if (list->content)
+			free(list->content);
 		free(list);
 		list = tmp;
 	}
@@ -59,9 +60,11 @@ void	free_llist(t_llist *list)
 int	load_texture(t_data *data, t_texture *texture, char *path)
 {
 	texture->img = mlx_xpm_file_to_image(data->mlx, path, &texture->width, &texture->height);
+	printf("Loading %p\n", texture->img);
 	if (texture->img == NULL)
 		return (print_error(FAILED_LOAD_TEXTURE), -1);
 	texture->addr = mlx_get_data_addr(texture->img, &texture->bpp, &texture->line_len, &texture->endian);
+	// protect
 	texture->path = ft_strdup(path);
 	return (0);
 }
@@ -96,14 +99,14 @@ int	init_walls_texture(t_data *data, char *line, e_texture texture)
 	i = 0;
 	sprites = ft_split(line, ' ');
 	if (!sprites)
-		return (-1);
+		return (1);
 	data->texture[texture] = ft_calloc(strarray_len(sprites) + 1, sizeof(t_texture));
 	if (!data->texture[texture])
-		return (free_strarray(sprites), -1);
+		return (free_strarray(sprites), 1);
 	while (sprites[i])
 	{
 		if (load_texture(data, &(data->texture[texture][i]), sprites[i]) == -1)
-			return (free_strarray(sprites), -1);
+			return (free_strarray(sprites), 1);
 		i++;
 	}
 	return (free_strarray(sprites), 0);
@@ -195,13 +198,15 @@ void free_texture(t_data *data)
 	int j;
 
 	i = 0;
-	while (i < 4)
+	while (i < TEXTURE_NB)
 	{
 		j = 0;
 		while (data->texture[i][j].path)
 		{
-			free(data->texture[i][j].path);
+			printf("Freeing %p\n", data->texture[i][j].img);
 			mlx_destroy_image(data->mlx, data->texture[i][j].img);
+			free(data->texture[i][j].path);
+			data->texture[i][j].path = NULL;
 			j++;
 		}
 		free(data->texture[i]);
@@ -258,7 +263,7 @@ char	*add_spaces(char *str, size_t amount)
 	return (tmp);
 }
 
-void	padding_map(t_data *data, t_llist *map) // TODO: optimize by putting the space only where needed
+int	padding_map(t_data *data, t_llist *map)
 {
 	size_t	i;
 	t_llist	*tmp;
@@ -266,20 +271,24 @@ void	padding_map(t_data *data, t_llist *map) // TODO: optimize by putting the sp
 
 	data->mapX = get_max_size(map);
 	padded_map = ft_calloc(data->mapY + 1, sizeof(char *));
+	if (!padded_map)
+		return (1);
 	i = 0;
 	tmp = map;
 	while (tmp)
 	{
-		padded_map[i] = add_spaces(tmp->content, data->mapX - ft_strlen(tmp->content)); //TODO: check return
+		padded_map[i] = add_spaces(tmp->content, data->mapX - ft_strlen(tmp->content));
+		if (!padded_map[i])
+			return (free_strarray(padded_map), 1);
 		tmp = tmp->next;
 		i++;
 	}
 	data->map = padded_map;
+	return (0);
 }
 
 int	parse_map(t_data *data, char *line, int fd)
 {
-	// TODO : protect mallocs
 	t_llist	*map;
 	t_llist	*last;
 	size_t	len;
@@ -294,37 +303,39 @@ int	parse_map(t_data *data, char *line, int fd)
 		if (!map)
 		{
 			map = ft_calloc(1, sizeof(t_llist));
+			if (!map)
+				return (1);
 			map->content = ft_strndup(line, ft_strlen(line) - 1);
+			if (!map->content)
+				return (free(map), 1);
 			last = map;
 		}
 		else
 		{
 			last->next = ft_calloc(1, sizeof(t_llist));
+			if (!last->next)
+				return (free_llist(map), 1);
 			last = last->next;
 			len = ft_strlen(line);
 			if (line[len - 1] == '\n')
 				last->content = ft_strndup(line, len - 1);
 			else
 				last->content = ft_strdup(line);
+			if (!last->content)
+				return (free_llist(map), 1);
 		}
 		data->mapY++;
 		free(line);
+		errno = 0;
 		line = get_next_line(fd);
+		if (!line && errno)
+			return (1);
 	}
 	padding_map(data, map);
+	free_llist(map);
 	return (0);
 }
 
-/*
-to check:
-- maps must start with 1 or space
-- maps must end with 1 or space
-- maps first and last line should all be 1 or space
-
-to do:
-- space check in 8 directions
-- replace spaces with 0
-*/
 
 int space_check(t_data *data, size_t x, size_t y)
 {
@@ -456,8 +467,7 @@ bool	is_everything_init(t_data *data)
 		return (print_error(CEILING_NOT_INIT), false);
 	if (data->floor_color == -1)
 		return (print_error(FLOOR_NOT_INIT), false);
-	//  || !data->texture[BEAM] || !data->texture[DOOR]
-	if (!data->texture[WALL_NO] || !data->texture[WALL_SO] || !data->texture[WALL_WE] || !data->texture[WALL_EA])
+	if (!data->texture[WALL_NO] || !data->texture[WALL_SO] || !data->texture[WALL_WE] || !data->texture[WALL_EA] || !data->texture[BEAM] || !data->texture[DOOR])
 		return (print_error(WALLS_NOT_INIT), false);
 	if (!data->map)
 		return (print_error(MAP_NOT_INIT), false);
@@ -466,13 +476,13 @@ bool	is_everything_init(t_data *data)
 
 double	get_player_angle(char c)
 {
-	if (c == 'N')
+	if (c == 'S')
 		return (PI/2);
-	else if (c == 'S')
+	else if (c == 'N')
 		return ((3 * PI)/2);
 	else if (c == 'W')
 		return (PI);
-	else if (c == 'E')
+	else
 		return (2 * PI);
 }
 
@@ -511,11 +521,32 @@ int	map_info_parse(t_data *data)
 	return (0);
 }
 
+int	get_line_trimmed(char **line, char **line_trimmed, int fd)
+{
+	errno = 0;
+	*line = get_next_line(fd);
+	if (!*line && errno)
+		return (1);
+	*line_trimmed = ft_strtrim(*line, " \t\n\v\f\r");
+	if (!*line_trimmed && *line)
+		return (1);
+	return (0);
+}
+
+int	check_colors(t_data *data, char *line)
+{
+	if (ft_strncmp(line, "C ", 2) == 0)
+		return (init_colors(data, line + 2, CEILING));
+	else if (ft_strncmp(line, "F ", 2) == 0)
+		return (init_colors(data, line + 2, FLOOR));
+	return (0);
+}
+
 int	parse(t_data *data, char *file)
 {
 	int		fd;
+	char	*line_trimmed;
 	char	*line;
-	char	*tmp;
 	size_t	i;
 
 	i = 0;
@@ -524,28 +555,33 @@ int	parse(t_data *data, char *file)
 	fd = open(file, O_RDONLY);
 	if (fd < 0)
 		return (perror("Error\n"), -1);
-	tmp = get_next_line(fd); // TODO: check function's return
-	line = ft_strtrim(tmp, " \t\n\v\f\r"); //TODO: check function's return
-	while (line)
+	if (get_line_trimmed(&line, &line_trimmed, fd))
+		return (close(fd), 1);
+	while (line_trimmed)
 	{
-		if (ft_strncmp(line, "C ", 2) == 0)
-			init_colors(data, line + 2, CEILING);
-		else if (ft_strncmp(line, "F ", 2) == 0)
-			init_colors(data, line + 2, FLOOR);
-		else if (line[0] == '1' || line[0] == '0')
+		if (ft_strncmp(line_trimmed, "C ", 2) == 0)
+			init_colors(data, line_trimmed + 2, CEILING); // check return
+		else if (ft_strncmp(line_trimmed, "F ", 2) == 0)
+			init_colors(data, line_trimmed + 2, FLOOR);
+		else if (line_trimmed[0] == '1' || line_trimmed[0] == '0')
 		{
-			parse_map(data, tmp, fd);
+			if (parse_map(data, line, fd))
+				return (close(fd), free(line_trimmed), free(line), 1);
+			if (get_line_trimmed(&line, &line_trimmed, fd))
+				return (close(fd), 1);
 			free(line);
-			tmp = get_next_line(fd); // might modify strtrim to free from inside + TODO: check function's return
-			line = ft_strtrim(tmp, " \t\n\v\f\r"); //TODO: check function's return
+			free(line_trimmed);
 			continue;
 		}
-		else if (line[0])
-			init_wall(data, line);
-		free(tmp);
+		else if (line_trimmed[0])
+		{
+			if (init_wall(data, line_trimmed))
+				return (close(fd), free(line), free(line_trimmed), 1);
+		}
 		free(line);
-		tmp = get_next_line(fd); // might modify strtrim to free from inside + TODO: check function's return
-		line = ft_strtrim(tmp, " \t\n\v\f\r"); //TODO: check function's return
+		free(line_trimmed);
+		if (get_line_trimmed(&line, &line_trimmed, fd))
+			return (close(fd), 1);
 	}
 	if (!is_everything_init(data))
 		return (127);
@@ -586,4 +622,5 @@ int	parse(t_data *data, char *file)
 /*
 check if nothing after map
 check if 1 letter in map
+
 */

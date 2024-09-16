@@ -264,5 +264,7 @@ void	open_door(t_data *data);
 void render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, double line_height, double line_start);
 void	print_tab(double *tab);
 size_t	strarray_len(char **array);
-
+void	free_strarray(char **array);
+void	free_texture(t_data *data);
+void	free_all(t_data *data);
 #endif
