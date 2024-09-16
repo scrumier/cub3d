@@ -43,7 +43,7 @@ int	is_out_of_bounds(int map_x, int map_y)
 
 int	is_wall_hit(char **map, int map_x, int map_y)
 {
-	return (map[map_x][map_y] == '1' || map[map_x][map_y] == '2');
+	return (map[map_y][map_x] == '1' || map[map_y][map_x] == '2');
 }
 
 void	update_ray_destination(t_ray *ray, double x0, double y0)

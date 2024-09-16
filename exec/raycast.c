@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/16 10:32:33 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/16 11:29:25 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,20 @@ void	draw_rectangle(t_data *data, int x, int y, int height, int width, int color
 	}
 }
 
+bool is_valid_texture(t_data *data)
+{
+	int i = 0;
+	int j = 0;
+
+	while (data->texture[i] != NULL)
+	{
+		j = 0;
+		if (data->texture[i][j].addr == NULL)
+			return (false);
+		i++;
+	}
+	return (true);
+}
 int create_image(t_data *data)
 {
 	int i;
@@ -43,35 +57,13 @@ int create_image(t_data *data)
 		data->next_image = 0;
 		data->animated_texture_index++;
 	}
-	if (data->animated_texture_index == 4)
-		data->animated_texture_index = 0;
 	gettimeofday(&data->current_time, NULL);
 	double elapsed_time = (data->current_time.tv_sec - data->last_time.tv_sec) +
 						  (data->current_time.tv_usec - data->last_time.tv_usec) / 1000000.0;
 	data->fps = 1.0 / elapsed_time;
 	data->last_time = data->current_time;
 	move_player(data);
-	if (data->created_player == false)
-	{
-		while (i < data->mapX)
-		{
-			j = 0;
-			while (j < data->mapY)
-			{
-				if (data->map[i][j] == '0' && !data->created_player) {
-					data->player->x = i;
-					data->player->y = j;
-					parse_rays(data);
-					data->created_player = true;
-					break ;
-				}
-				j++;
-			}
-			i++;
-		}
-	}
-	else
-		parse_rays(data);
+	parse_rays(data);
 	print_minimap(data, 2);
 
 	data->last_fps[data->frame % FPS] = data->fps;

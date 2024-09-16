@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:35:31 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 13:03:44 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/16 10:53:22 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,10 @@ bool	is_out_of_the_map(t_data *data, double x, double y)
 
 bool	is_wall(t_data *data, double x, double y)
 {
-	return (data->map[double_to_int(x)][double_to_int(y)] == '1' || \
-			data->map[double_to_int(x)][double_to_int(y)] == '2');
+	if (is_out_of_the_map(data, x, y))
+		return (true);
+	return (data->map[double_to_int(y)][double_to_int(x)] == '1' || \
+			data->map[double_to_int(y)][double_to_int(x)] == '2');
 }
 
 bool	check_x_collision(t_data *data, double new_x, \

@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 11:17:49 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/16 10:33:21 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/16 12:09:56 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ int	get_texture_color(t_texture *texture, double texture_offset, int tex_x)
 		tex_y = 0;
 	if (tex_y >= texture->height)
 		tex_y = texture->height - 1;
-	color = *(int *)(texture->addr + (tex_y * texture->line_len + tex_x * \
+	if (texture->addr)
+		color = *(int *)(texture->addr + (tex_y * texture->line_len + tex_x * \
 			(texture->bpp / 8)));
 	return (color);
 }
@@ -108,8 +109,6 @@ void	render_ceiling_and_floor(t_data *data, int ray_nbr, \
 	i = line_start + line_height;
 	while (i < HEIGHT)
 	{
-		//printf("data->mapX = %i\ndata->mapY = %i\n", data->mapX, data->mapY);
-
 		floor_color = darken_color(data->floor_color, HEIGHT - i, HEIGHT);
 		if (!(ray_nbr < data->mapX * COEF && i < data->mapY * COEF))
 			my_mlx_pixel_put(data, ray_nbr, i, floor_color);
@@ -141,11 +140,24 @@ void	draw_texture_pixel(t_data *data, t_ray *ray, t_draw_wall draw_wall, t_textu
 	double texture_offset;
 	int tex_x, texture_color;
 
+	tex_x = 0;
+	texture_color = 0;
+	texture_offset = 0;
 	texture_offset = calculate_texture_offset(draw_wall.i, draw_wall.line_height, texture->height);
 	tex_x = calculate_tex_x(ray, draw_wall.wall_face, texture->width);
 	texture_color = get_texture_color(texture, texture_offset, tex_x);
 	texture_color = darken_color(texture_color, data->ray_len[draw_wall.ray_nbr], RENDER_DISTANCE);
 	my_mlx_pixel_put(data, draw_wall.ray_nbr, draw_wall.i + draw_wall.line_start, texture_color);
+}
+
+size_t	texture_array_len(t_texture *array)
+{
+	size_t	i;
+
+	i = 0;
+	while (array[i].addr)
+		i++;
+	return (i);
 }
 
 void	render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, double line_height, double line_start)
@@ -159,15 +171,12 @@ void	render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, double line_heig
 	texture_index = find_ray_texture(data, ray);
 	if (ray->dstx >= 0 && ray->dstx < data->mapX && ray->dsty >= 0 && ray->dsty < data->mapY)
 	{
-		if (data->map[(int)ray->dstx][(int)ray->dsty] == '2')
-		texture_index = 5;
+		if (data->map[(int)ray->dsty][(int)ray->dstx] == '2')
+			texture_index = (int)DOOR;
 	}
 	wall_face = find_wall_facing(data, ray);
-	if (texture_index != 4)
-		texture = &data->texture[texture_index][data->animated_texture_index];
-	else
-		texture = &data->texture[texture_index][0];
-	
+	texture = &data->texture[texture_index][data->animated_texture_index % texture_array_len(data->texture[texture_index])];
+
 	i = 0;
 	while (i < line_height)
 	{

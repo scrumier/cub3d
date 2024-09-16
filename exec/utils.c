@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:36:06 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 12:57:04 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/16 10:57:48 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,11 @@ void	print_minimap(t_data *data, int mode)
 		{
 			coord.x = i * COEF;
 			coord.y = j * COEF;
-			if ((data->map[i][j] == '1' || data->map[i][j] == '2') && mode == 2)
+			if ((data->map[j][i] == '1' || data->map[j][i] == '2') && mode == 2)
 				draw_square(data, coord, COEF, 0x00000000);
-			else if (data->map[i][j] == '0' && mode == !data->flash_light)
+			else if (data->map[j][i] == '0' && mode == !data->flash_light)
 				draw_square(data, coord, COEF, 0x00A9A9A9);
-			else if (data->map[i][j] == '0' && mode == 3)
+			else if (data->map[j][i] == '0' && mode == 3)
 				draw_square(data, coord, COEF, 0x00000000);
 			j++;
 		}

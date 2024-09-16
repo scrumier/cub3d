@@ -1,5 +1,5 @@
 CC			=	cc
-FLAGS		=	-Ofast -MMD -MP -g3
+FLAGS		=	-MMD -MP -g3
 INC_DIR		=	includes/
 INC			=	$(addprefix $(INC_DIR), \
 				cube3d.h \

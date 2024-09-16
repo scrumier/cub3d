@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/16 10:33:51 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/16 12:04:54 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,11 +69,12 @@
 # define RAYS WIDTH
 # define BEAM_WIDTH 256
 # define FPS 40
-# define FXAA_ENABLED true
+# define FXAA_ENABLED false
 # define WALL_ACCURACY 200
 # define THRESHOLD 0.1
-# define RENDER_DISTANCE 200
+# define RENDER_DISTANCE 100
 # define TEXTURE_NB 6
+
 typedef struct s_line
 {
 	double x;
@@ -264,5 +265,6 @@ void	draw_rectangle(t_data *data, int x, int y, int height, int width, int color
 void	open_door(t_data *data);
 void render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, double line_height, double line_start);
 void	print_tab(double *tab);
+size_t	strarray_len(char **array);
 
 #endif
