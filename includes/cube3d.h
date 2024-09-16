@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 16:28:05 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/16 10:33:51 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@
 # include <errno.h>
 # include <stdbool.h>
 # include <sys/time.h>
+# include "errors.h"
 # define KEYPRESSMASK (1L<<0)
 # define KEYRELEASEMASK (1L<<1)
 # define MOUSEMOVEMASK (1L<<6)
@@ -71,8 +72,8 @@
 # define FXAA_ENABLED true
 # define WALL_ACCURACY 200
 # define THRESHOLD 0.1
-# define RENDER_DISTANCE 100
-
+# define RENDER_DISTANCE 200
+# define TEXTURE_NB 6
 typedef struct s_line
 {
 	double x;
@@ -117,6 +118,7 @@ typedef struct s_texture
 	int		bpp;
 	int		line_len;
 	int		endian;
+	char 	*path; // debug
 }				t_texture;
 
 typedef struct s_coord
@@ -185,6 +187,12 @@ typedef struct	s_draw_wall
 	double	line_start;
 }				t_draw_wall;
 
+typedef struct	s_llist
+{
+	char			*content;
+	struct s_llist	*next;
+}				t_llist;
+
 typedef struct	s_data
 {
 	int				animated_texture_index;
@@ -206,9 +214,27 @@ typedef struct	s_data
 	double			fps;
 	int				frame;
 	bool			flash_light;
-	t_texture		texture[6][5];
+	t_texture		*texture[TEXTURE_NB];
 	double			last_fps[FPS];
 }				t_data;
+
+// tmp parsing code
+
+typedef enum
+{
+	WALL_EA = 0,
+	WALL_WE,
+	WALL_SO,
+	WALL_NO,
+	BEAM,
+	DOOR,
+	CEILING,
+	FLOOR
+}	e_texture;
+
+
+int	parse(t_data *data, char *file);
+int	load_texture(t_data *data, t_texture *texture, char *path);// end
 
 int	handle_keypressed(int key, t_data *data);
 int	handle_keyrelease(int key, t_data *data);
