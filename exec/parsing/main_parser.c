@@ -146,44 +146,22 @@ bool	is_valid_char_color(char *line)
 	return (true);
 }
 
-int	init_colors(t_data *data, char *line, e_texture type)
+int	colors_init_check(size_t *i, char **line, size_t *start, size_t *color)
 {
-	int		rgb[3];
-	size_t	i;
-	size_t	start;
-	size_t	color;
+	*i = 0;
+	*color = 0;
+	while ((*line)[*i] == ' ')
+		(*i)++;
+	if (!(*line)[*i])
+		return (print_error(INVALID_COLOR_ARG), 22);
+	*start = *i;
+	if (!is_valid_char_color(*line))
+		return (print_error(INVALID_COLOR_ARG), 22);
+	return (0);
+}
 
-	i = 0;
-	color = 0;
-	if (data->map)
-		return (print_error(VALUE_AFTER_MAP), 1);
-	while (line[i] == ' ')
-		i++;
-	if (!line[i])
-		return (print_error(INVALID_COLOR_ARG), 22);
-	start = i;
-	if (!is_valid_char_color(line))
-		return (print_error(INVALID_COLOR_ARG), 22);
-	while (line[i])
-	{
-		while (line[i] == ' ')
-			i++;
-		if (line[i] == ',' && color == 2)
-			return (print_error(INVALID_COLOR_ARG), 22);
-		if (!ft_isdigit(line[i]) && line[i] != ',' && line[i] != ' ')
-			return (print_error(INVALID_COLOR_ARG), 22);
-		if (line[i] == ',' || !line[i + 1])
-		{
-			if (i == start && line[i + 1])
-				return (print_error(INVALID_COLOR_ARG), 22);
-			rgb[color] = ft_atoi(line + start);
-			if (rgb[color] < 0 || rgb[color] > 255)
-				return (print_error(INVALID_COLOR_ARG), 22);
-			color++;
-			start = i + 1;
-		}
-		i++;
-	}
+int	init_color_return(size_t color, e_texture type, t_data *data, int *rgb)
+{
 	if (color != 3)
 		return (print_error(INVALID_COLOR_ARG), 22);
 	if (type == CEILING)
@@ -191,6 +169,46 @@ int	init_colors(t_data *data, char *line, e_texture type)
 	else
 		data->floor_color = rgb[0] << 16 | rgb[1] << 8 | rgb[2];
 	return (0);
+}
+
+int	color_line_check(char *line, int i)
+{
+	while (line[i] == ' ')
+		i++;
+	if (line[i] == ',' || !line[i + 1])
+		return (print_error(INVALID_COLOR_ARG), 22);
+	if (!ft_isdigit(line[i]) && line[i] != ',' && line[i] != ' ')
+		return (print_error(INVALID_COLOR_ARG), 22);
+	return (0);
+}
+
+int	init_colors(t_data *data, char *line, e_texture type)
+{
+	int		rgb[3];
+	size_t	i;
+	size_t	start;
+	size_t	color;
+
+	if (data->map)
+		return (print_error(VALUE_AFTER_MAP), 1);
+	if (colors_init_check(&i, &line, &start, &color))
+		return (22);
+	while (line[i])
+	{
+		if (color_line_check(line, i))
+			return (22);
+		if (line[i] == ',' || !line[i + 1])
+		{
+			if (i == start && line[i + 1])
+				return (print_error(INVALID_COLOR_ARG), 22);
+			rgb[color] = ft_atoi(line + start);
+			if (rgb[color] < 0 || rgb[color++] > 255)
+				return (print_error(INVALID_COLOR_ARG), 22);
+			start = i + 1;
+		}
+		i++;
+	}
+	return (init_color_return(color, type, data, rgb));
 }
 
 void free_texture(t_data *data)
@@ -287,11 +305,51 @@ int	padding_map(t_data *data, t_llist *map)
 	return (0);
 }
 
+int	first_map_node(t_data *data, char *line, t_llist **map, t_llist **last)
+{
+	*map = ft_calloc(1, sizeof(t_llist));
+	if (!*map)
+		return (1);
+	(*map)->content = ft_strndup(line, ft_strlen(line) - 1);
+	if (!(*map)->content)
+		return (free(*map), 1);
+	*last = *map;
+	return (0);
+}
+
+int	add_map_node(t_data *data, char *line, t_llist **map, t_llist **last)
+{
+	size_t	len;
+
+	(*last)->next = ft_calloc(1, sizeof(t_llist));
+	if (!(*last)->next)
+		return (free_llist(*map), 1);
+	*last = (*last)->next;
+	len = ft_strlen(line);
+	if (line[len - 1] == '\n')
+		(*last)->content = ft_strndup(line, len - 1);
+	else
+		(*last)->content = ft_strdup(line);
+	if (!(*last)->content)
+		return (free_llist(*map), 1);
+	return (0);
+}
+
+int	parse_map_iterate(t_data *data, char **line, int fd)
+{
+	data->mapY++;
+	free(*line);
+	errno = 0;
+	*line = get_next_line(fd);
+	if (!*line && errno)
+		return (1);
+	return (0);
+}
+
 int	parse_map(t_data *data, char *line, int fd)
 {
 	t_llist	*map;
 	t_llist	*last;
-	size_t	len;
 
 	map = NULL;
 	last = NULL;
@@ -302,39 +360,19 @@ int	parse_map(t_data *data, char *line, int fd)
 	{
 		if (!map)
 		{
-			map = ft_calloc(1, sizeof(t_llist));
-			if (!map)
+			if (first_map_node(data, line, &map, &last))
 				return (1);
-			map->content = ft_strndup(line, ft_strlen(line) - 1);
-			if (!map->content)
-				return (free(map), 1);
-			last = map;
 		}
 		else
 		{
-			last->next = ft_calloc(1, sizeof(t_llist));
-			if (!last->next)
-				return (free_llist(map), 1);
-			last = last->next;
-			len = ft_strlen(line);
-			if (line[len - 1] == '\n')
-				last->content = ft_strndup(line, len - 1);
-			else
-				last->content = ft_strdup(line);
-			if (!last->content)
-				return (free_llist(map), 1);
+			if (add_map_node(data, line, &map, &last))
+				return (1);
 		}
-		data->mapY++;
-		free(line);
-		errno = 0;
-		line = get_next_line(fd);
-		if (!line && errno)
-			return (1);
+		if (parse_map_iterate(data, &line, fd))
+			return (free_llist(map), 1);
 	}
-	free(line);
 	padding_map(data, map);
-	free_llist(map);
-	return (0);
+	return (free(line), free_llist(map), 0);
 }
 
 
@@ -345,28 +383,20 @@ int space_check(t_data *data, size_t x, size_t y)
 
 	map_width = data->mapX;
 	map_height = data->mapY;
-	// <- x - 1
 	if (x > 0 && (data->map[y][x - 1] != '1' && data->map[y][x - 1] != ' '))
 		return (0);
-	// -> x + 1
 	if (x + 1 < map_width && (data->map[y][x + 1] != '1' && data->map[y][x + 1] != ' '))
 		return (0);
-	// ⬆ y - 1
 	if (y > 0 && (data->map[y - 1][x] != '1' && data->map[y - 1][x] != ' '))
 		return (0);
-	// ⬇ y + 1
 	if (y + 1 < map_height && (data->map[y + 1][x] != '1' && data->map[y + 1][x] != ' '))
 		return (0);
-	// 🡥 (x + 1), (y + 1)
 	if (x > 0 && y > 0 && (data->map[y - 1][x - 1] != '1' && data->map[y - 1][x - 1] != ' '))
 		return (0);
-	// 🡦 (x + 1), (y - 1)
 	if (x + 1 < map_width && y > 0 && (data->map[y - 1][x + 1] != '1' && data->map[y - 1][x + 1] != ' '))
 		return (0);
-	// 🡧 (x - 1), (y + 1)
 	if (x > 0 && y + 1 < map_height && (data->map[y + 1][x - 1] != '1' && data->map[y + 1][x - 1] != ' '))
 		return (0);
-	// 🡤 (x - 1), (y - 1)
 	if (x + 1 < map_width && y + 1 < map_height && (data->map[y + 1][x + 1] != '1' && data->map[y + 1][x + 1] != ' '))
 		return (0);
 	return (1);
@@ -591,38 +621,13 @@ int	parse(t_data *data, char *file)
 	}
 	if (!is_everything_init(data))
 		return (127);
-	print_color("Ceiling", data->ceiling_color);
-    print_color("Floor", data->floor_color);
-	//print every texture path
-	i = 0;
-	int j = 0;
-	while (i < 4)
-	{
-		j = 0;
-		printf("Texture %s\n", texture_to_string((e_texture)i));
-		while (data->texture[i][j].path)
-		{
-			printf("%s\n", data->texture[i][j].path);
-			j++;
-		}
-		i++;
-	}
-	// print map check
-	if (map_check(data) == 0)
-		printf("\033[0;32m%d\033[0m\n", map_check(data));
-	else
+	if (map_check(data))
 		return (1);
-	// fill spaces with 0
 	map_fill_spaces(data);
 	if (map_info_parse(data))
 		return (1);
 	if (data->player->x == -1 || data->player->y == -1)
 		return (print_error(NO_PLAYER), 127);
-	//print map
-	printc_map(data->map, data->mapY, data->mapX);
-	//print player position and angle
-	printf("Player position: %f, %f\n", data->player->x, data->player->y);
-	printf("Player angle: %f\n", data->player->player_angle);
 	return (close(fd), 0);
 }
 
