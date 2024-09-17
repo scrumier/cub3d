@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:36:06 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/16 13:03:51 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/17 15:45:07 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,34 +24,33 @@ void	print_tab(double *tab)
 	}
 }
 
-int deg_to_rad(int deg)
+int	deg_to_rad(int deg)
 {
 	return (deg * PI / 180);
 }
 
 void	print_minimap(t_data *data, int mode)
 {
-	int	j;
-	int	i;
-	t_coord coord;
+	int		j;
+	int		i;
+	t_coord	coord;
 
 	i = 0;
 	j = 0;
-	while (i < data->mapX)
+	while (i < data->mapx)
 	{
 		j = 0;
-		while (j < data->mapY)
+		while (j < data->mapy)
 		{
 			coord.x = i * COEF;
 			coord.y = j * COEF;
 			if ((data->map[j][i] == '1' || data->map[j][i] == '2') && mode == 2)
 				draw_square(data, coord, COEF, 0x00000000);
-			else if (data->map[j][i] == '3' && mode == 2) // its a door
+			else if (data->map[j][i] == '3' && mode == 2)
 				draw_square(data, coord, COEF, 0x00FF0000);
-			else if ((data->map[j][i] == '0' || ft_isalpha(data->map[j][i])) && mode == !data->flash_light)
+			else if ((data->map[j][i] == '0' || ft_isalpha(data->map[j][i])) \
+						&& mode == !data->flash_light)
 				draw_square(data, coord, COEF, 0x00A9A9A9);
-			else if (data->map[j][i] == '0' && mode == 3)
-				draw_square(data, coord, COEF, 0x00000000);
 			j++;
 		}
 		i++;
@@ -90,7 +89,7 @@ int	ft_abs(int x)
 void	print_map(char **map)
 {
 	int	i;
-	int j;
+	int	j;
 
 	i = 0;
 	while (map[i])

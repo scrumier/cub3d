@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 11:17:17 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 11:38:38 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/17 15:45:07 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	mini_parse(t_data *data, char *file)
 		line = get_next_line(fd);
 		i++;
 	}
-	data->mapX = i;
-	data->mapY = j / 2 + 1;
+	data->mapx = i;
+	data->mapy = j / 2 + 1;
 	print_map(data->map);
 }

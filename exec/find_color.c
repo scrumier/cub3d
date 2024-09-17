@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:47:05 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 13:02:04 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/17 15:45:07 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ double	find_cube_center_y(t_data *data, double y)
 	int	i;
 
 	i = 0;
-	while (i < data->mapY)
+	while (i < data->mapy)
 	{
 		if (y < i + 1)
 			return (i + 0.5);
@@ -31,7 +31,7 @@ double	find_cube_center_x(t_data *data, double x)
 	int	i;
 
 	i = 0;
-	while (i < data->mapX)
+	while (i < data->mapx)
 	{
 		if (x < i + 1)
 			return (i + 0.5);

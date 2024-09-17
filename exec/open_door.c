@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/05 11:37:05 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/16 10:53:22 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/17 14:59:56 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,4 @@ void	close_door(t_data *data)
 		data->map[double_to_int(y)][double_to_int(x - 0.5)] = '2';
 	if (data->map[double_to_int(y + 0.5)][double_to_int(x - 0.5)] == '3')
 		data->map[double_to_int(y + 0.5)][double_to_int(x - 0.5)] = '2';
-	if (is_wall(data, x, y) || check_x_collision(data, x, y, 0.2) || check_y_collision(data, x, y, 0.2))
-		open_door(data);
 }

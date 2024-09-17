@@ -6,30 +6,11 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/17 14:49:17 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/17 15:09:01 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3d.h"
-
-void	draw_rectangle(t_data *data, int x, int y, int height, int width, int color)
-{
-	int	i;
-	int	j;
-
-	i = 0;
-	j = 0;
-	while (i < height)
-	{
-		j = 0;
-		while (j < width)
-		{
-			my_mlx_pixel_put(data, x + i, y + j, color);
-			j++;
-		}
-		i++;
-	}
-}
 
 bool	is_valid_texture(t_data *data)
 {
@@ -47,13 +28,13 @@ bool	is_valid_texture(t_data *data)
 	}
 	return (true);
 }
+
 int	create_image(t_data *data)
 {
 	int	i;
 	int	j;
 
 	i = 0;
-
 	data->next_image++;
 	if (data->next_image == 10)
 	{
@@ -69,7 +50,7 @@ int	create_image(t_data *data)
 	return (0);
 }
 
-int mouse_hook(int button, t_data *data)
+int	mouse_hook(int button, t_data *data)
 {
 	if (button == 4)
 	{
@@ -84,7 +65,7 @@ int mouse_hook(int button, t_data *data)
 	return (0);
 }
 
-void init_all(t_data *data)
+void	init_all(t_data *data)
 {
 	data->player = malloc(sizeof(t_player));
 	data->player->x = -1;
@@ -158,7 +139,8 @@ int	main(int ac, char **av)
 		return (free_parse(data), 0);
 	data->win = mlx_new_window(data->mlx, WIDTH, HEIGHT, "Cub3D");
 	data->img.img = mlx_new_image(data->mlx, HEIGHT, WIDTH);
-	data->img.addr = mlx_get_data_addr(data->img.img, &data->img.bpp, &data->img.line_len, &data->img.endian);
+	data->img.addr = mlx_get_data_addr(data->img.img, &data->img.bpp, \
+						&data->img.line_len, &data->img.endian);
 	mlx_loop_hook(data->mlx, create_image, data);
 	mlx_hook(data->win, KEYPRESS, KEYPRESSMASK, &handle_keypressed, data);
 	mlx_hook(data->win, KEYREALASE, KEYRELEASEMASK, &handle_keyrelease, data);

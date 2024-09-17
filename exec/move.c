@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:35:31 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/16 14:33:26 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/17 15:45:07 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 bool	is_out_of_the_map(t_data *data, double x, double y)
 {
-	if (x < 0 || y < 0 || x >= data->mapX || y >= data->mapY)
+	if (x < 0 || y < 0 || x >= data->mapx || y >= data->mapy)
 		return (true);
 	return (false);
 }

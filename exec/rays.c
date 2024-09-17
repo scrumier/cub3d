@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 11:17:49 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/17 12:02:22 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/17 15:45:07 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ void	render_ceiling_and_floor(t_data *data, int ray_nbr, \
 	while (i < line_start)
 	{
 		ceil_color = darken_color(data->ceiling_color, i, HEIGHT / 1.5);
-		if (!(ray_nbr < data->mapX * COEF && i < data->mapY * COEF))
+		if (!(ray_nbr < data->mapx * COEF && i < data->mapy * COEF))
 			my_mlx_pixel_put(data, ray_nbr, i, ceil_color);
 		i++;
 	}
@@ -110,7 +110,7 @@ void	render_ceiling_and_floor(t_data *data, int ray_nbr, \
 	while (i < HEIGHT)
 	{
 		floor_color = darken_color(data->floor_color, HEIGHT - i, HEIGHT / 1.5);
-		if (!(ray_nbr < data->mapX * COEF && i < data->mapY * COEF))
+		if (!(ray_nbr < data->mapx * COEF && i < data->mapy * COEF))
 			my_mlx_pixel_put(data, ray_nbr, i, floor_color);
 		i++;
 	}
@@ -124,30 +124,38 @@ double	calculate_texture_offset(int i, double line_height, int texture_height)
 int	calculate_tex_x(t_ray *ray, int wall_face, int texture_width)
 {
 	if (wall_face == 'e')
-		return (texture_width - (int)((ray->dstx - floor(ray->dstx)) * texture_width) - 1);
+		return (texture_width - (int)((ray->dstx - \
+				floor(ray->dstx)) * texture_width) - 1);
 	else if (wall_face == 'w')
-		return ((int)((ray->dstx - floor(ray->dstx)) * texture_width));
+		return ((int)((ray->dstx - floor(ray->dstx)) * \
+				texture_width));
 	else if (wall_face == 's')
-		return (texture_width - (int)((ray->dsty - floor(ray->dsty)) * texture_width) - 1);
+		return (texture_width - (int)((ray->dsty - \
+				floor(ray->dsty)) * texture_width) - 1);
 	else if (wall_face == 'n')
-		return ((int)((ray->dsty - floor(ray->dsty)) * texture_width));
+		return ((int)((ray->dsty - floor(ray->dsty)) * \
+				texture_width));
 	return (0);
 }
 
-
-void	draw_texture_pixel(t_data *data, t_ray *ray, t_draw_wall draw_wall, t_texture *texture)
+void	draw_texture_pixel(t_data *data, t_ray *ray, t_draw_wall draw_wall, \
+		t_texture *texture)
 {
-	double texture_offset;
-	int tex_x, texture_color;
+	double	texture_offset;
+	int		tex_x;
+	int		texture_color;
 
 	tex_x = 0;
 	texture_color = 0;
 	texture_offset = 0;
-	texture_offset = calculate_texture_offset(draw_wall.i, draw_wall.line_height, texture->height);
+	texture_offset = calculate_texture_offset(draw_wall.i, \
+					draw_wall.line_height, texture->height);
 	tex_x = calculate_tex_x(ray, draw_wall.wall_face, texture->width);
 	texture_color = get_texture_color(texture, texture_offset, tex_x);
-	texture_color = darken_color(texture_color, data->ray_len[draw_wall.ray_nbr], RENDER_DISTANCE);
-	my_mlx_pixel_put(data, draw_wall.ray_nbr, draw_wall.i + draw_wall.line_start, texture_color);
+	texture_color = darken_color(texture_color, \
+					data->ray_len[draw_wall.ray_nbr], RENDER_DISTANCE);
+	my_mlx_pixel_put(data, draw_wall.ray_nbr, draw_wall.i + \
+					draw_wall.line_start, texture_color);
 }
 
 size_t	texture_array_len(t_texture *array)
@@ -160,7 +168,8 @@ size_t	texture_array_len(t_texture *array)
 	return (i);
 }
 
-void	render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, double line_height, double line_start)
+void	render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, \
+							t_line_3d line)
 {
 	int			i;
 	int			wall_face;
@@ -169,25 +178,23 @@ void	render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, double line_heig
 	t_draw_wall	draw_wall;
 
 	texture_index = find_ray_texture(data, ray);
-	if (ray->dstx >= 0 && ray->dstx < data->mapX && ray->dsty >= 0 && ray->dsty < data->mapY)
-	{
+	if (ray->dstx >= 0 && ray->dstx < data->mapx && ray->dsty >= 0 \
+			&& ray->dsty < data->mapy)
 		if (data->map[(int)ray->dsty][(int)ray->dstx] == '2')
 			texture_index = (int)DOOR;
-	}
 	wall_face = find_wall_facing(data, ray);
-	texture = &data->texture[texture_index][data->animated_texture_index % texture_array_len(data->texture[texture_index])];
-
-	i = 0;
-	while (i < line_height)
+	texture = &data->texture[texture_index][data->animated_texture_index \
+				% texture_array_len(data->texture[texture_index])];
+	i = -1;
+	while (++i < line.line_height)
 	{
 		draw_wall.i = i;
 		draw_wall.wall_face = wall_face;
 		draw_wall.ray_nbr = ray_nbr;
-		draw_wall.line_height = line_height;
-		draw_wall.line_start = line_start;
-		if (!(ray_nbr < data->mapX * COEF && i + line_start < data->mapY * COEF))
+		draw_wall.line_height = line.line_height;
+		draw_wall.line_start = line.line_start;
+		if (!(i + line.line_start < data->mapy * COEF))
 			draw_texture_pixel(data, ray, draw_wall, texture);
-		i++;
 	}
 }
 
@@ -205,20 +212,19 @@ static void	adjust_ray_direction(t_ray *ray, double cos_val, double sin_val)
 	ray->ry += RENDER_DISTANCE * sin_val;
 }
 
-static void	render_ray(t_data *data, t_ray *ray, int ray_nbr, double line_height, double line_start)
+static void	render_ray(t_data *data, t_ray *ray, int ray_nbr, \
+			t_line_3d line)
 {
-	render_wall_texture(data, ray, ray_nbr, line_height, line_start);
-	render_ceiling_and_floor(data, ray_nbr, line_height, line_start);
+	render_wall_texture(data, ray, ray_nbr, line);
+	render_ceiling_and_floor(data, ray_nbr, line.line_height, line.line_start);
 }
 
 void	cast_rays(t_data *data, t_ray *ray, int total_rays, double ray_angle)
 {
-	int		ray_nbr;
-	double	line_height;
-	double	line_start;
-	double	cos_val;
-	double	sin_val;
-
+	int			ray_nbr;
+	t_line_3d	line;
+	double		cos_val;
+	double		sin_val;
 
 	ray_nbr = 0;
 	while (ray_nbr < total_rays)
@@ -228,9 +234,9 @@ void	cast_rays(t_data *data, t_ray *ray, int total_rays, double ray_angle)
 		calculate_ray_position(data, ray);
 		adjust_ray_direction(ray, cos_val, sin_val);
 		data->ray_len[ray_nbr] = draw_and_correct_ray(ray, data, WALL_ACCURACY);
-		line_height = HEIGHT * COEF3D / data->ray_len[ray_nbr];
-		line_start = (WIDTH / 2) - (line_height / 2);
-		render_ray(data, ray, ray_nbr, line_height, line_start);
+		line.line_height = HEIGHT * COEF3D / data->ray_len[ray_nbr];
+		line.line_start = (WIDTH / 2) - (line.line_height / 2);
+		render_ray(data, ray, ray_nbr, line);
 		ray->ra += ray_angle;
 		ray_nbr++;
 	}
