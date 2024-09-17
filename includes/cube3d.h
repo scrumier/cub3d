@@ -6,11 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-<<<<<<< Updated upstream
-/*   Updated: 2024/09/17 08:58:01 by scrumier         ###   ########.fr       */
-=======
-/*   Updated: 2024/09/16 14:40:25 by scrumier         ###   ########.fr       */
->>>>>>> Stashed changes
+/*   Updated: 2024/09/17 12:04:31 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +57,8 @@
 # define MOUSEMOVE 6
 # define KEYPRESS 2
 # define KEYREALASE 3
+# define DESTROYNOTIFY 17
+# define STRUCTURENOTIFYMASK (1L<<17)
 # define HEIGHT (900)
 # define WIDTH (900)
 # define COEF 7
@@ -74,7 +72,7 @@
 # define BEAM_WIDTH 256
 # define FPS 40
 # define FXAA_ENABLED false
-# define WALL_ACCURACY 200
+# define WALL_ACCURACY 70
 # define THRESHOLD 0.1
 # define RENDER_DISTANCE 100
 # define TEXTURE_NB 6
@@ -271,4 +269,12 @@ size_t	strarray_len(char **array);
 void	free_strarray(char **array);
 void	free_texture(t_data *data);
 void	free_all(t_data *data);
+bool	check_x_collision(t_data *data, double new_x, \
+						double player_y, double radius);
+bool    check_y_collision(t_data *data, double player_x, double new_y, \
+                            double radius);
+bool	is_wall(t_data *data, double x, double y);
+bool	door_around(t_data *data, double x, double y);
+bool	closed_door_around(t_data *data, double x, double y);
+void	close_door(t_data *data);
 #endif

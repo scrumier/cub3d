@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 11:17:49 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/17 09:19:17 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/17 12:02:22 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ void	render_ceiling_and_floor(t_data *data, int ray_nbr, \
 	i = 0;
 	while (i < line_start)
 	{
-		ceil_color = darken_color(data->ceiling_color, i, HEIGHT);
+		ceil_color = darken_color(data->ceiling_color, i, HEIGHT / 1.5);
 		if (!(ray_nbr < data->mapX * COEF && i < data->mapY * COEF))
 			my_mlx_pixel_put(data, ray_nbr, i, ceil_color);
 		i++;
@@ -109,7 +109,7 @@ void	render_ceiling_and_floor(t_data *data, int ray_nbr, \
 	i = line_start + line_height;
 	while (i < HEIGHT)
 	{
-		floor_color = darken_color(data->floor_color, HEIGHT - i, HEIGHT);
+		floor_color = darken_color(data->floor_color, HEIGHT - i, HEIGHT / 1.5);
 		if (!(ray_nbr < data->mapX * COEF && i < data->mapY * COEF))
 			my_mlx_pixel_put(data, ray_nbr, i, floor_color);
 		i++;

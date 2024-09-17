@@ -6,29 +6,14 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:21:06 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/16 12:55:35 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/17 14:42:19 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3d.h"
 
-int	handle_keypressed(int key, t_data *data)
+void	set_move(t_data *data, int key)
 {
-	if (key == KEY_ESC)
-	{
-<<<<<<< Updated upstream
-		mlx_destroy_window(data->mlx, data->win);
-		mlx_destroy_display(data->mlx);
-=======
->>>>>>> Stashed changes
-		free_all(data);
-		exit(0);
-	}
-	if (key == KEY_F)
-	{
-		data->flash_light = !data->flash_light;
-		print_minimap(data, 3);
-	}
 	if (key == KEY_W)
 		data->move->forward = true;
 	if (key == KEY_S)
@@ -41,8 +26,28 @@ int	handle_keypressed(int key, t_data *data)
 		data->move->go_left = true;
 	if (key == KEY_D)
 		data->move->go_right = true;
+}
+
+int	handle_keypressed(int key, t_data *data)
+{
+	if (key == KEY_ESC)
+	{
+		free_all(data);
+		exit(0);
+	}
+	if (key == KEY_F)
+	{
+		data->flash_light = !data->flash_light;
+		print_minimap(data, 3);
+	}
+	set_move(data, key);
 	if (key == KEY_E)
-		open_door(data);
+	{
+		if (door_around(data, data->player->x, data->player->y))
+			open_door(data);
+		else if (closed_door_around(data, data->player->x, data->player->y))
+			close_door(data);
+	}
 	return (0);
 }
 

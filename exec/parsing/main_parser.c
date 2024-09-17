@@ -204,10 +204,6 @@ void free_texture(t_data *data)
 		j = 0;
 		while (data->texture[i] && data->texture[i][j].path)
 		{
-<<<<<<< Updated upstream
-			printf("Freeing %p\n", data->texture[i][j].img);
-=======
->>>>>>> Stashed changes
 			mlx_destroy_image(data->mlx, data->texture[i][j].img);
 			free(data->texture[i][j].path);
 			data->texture[i][j].path = NULL;
@@ -534,11 +530,7 @@ int	get_line_trimmed(char **line, char **line_trimmed, int fd)
 		return (1);
 	*line_trimmed = ft_strtrim(*line, " \t\n\v\f\r");
 	if (!*line_trimmed && *line)
-<<<<<<< Updated upstream
-		return (1);
-=======
 		return (free(*line), 1);
->>>>>>> Stashed changes
 	return (0);
 }
 
@@ -551,10 +543,6 @@ int	check_colors(t_data *data, char *line)
 	return (0);
 }
 
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 int	parse(t_data *data, char *file)
 {
 	int		fd;
@@ -573,19 +561,6 @@ int	parse(t_data *data, char *file)
 	while (line_trimmed)
 	{
 		if (ft_strncmp(line_trimmed, "C ", 2) == 0)
-<<<<<<< Updated upstream
-			init_colors(data, line_trimmed + 2, CEILING); // check return
-		else if (ft_strncmp(line_trimmed, "F ", 2) == 0)
-			init_colors(data, line_trimmed + 2, FLOOR);
-		else if (line_trimmed[0] == '1' || line_trimmed[0] == '0')
-		{
-			if (parse_map(data, line, fd))
-				return (close(fd), free(line_trimmed), free(line), 1);
-			if (get_line_trimmed(&line, &line_trimmed, fd))
-				return (close(fd), 1);
-			free(line);
-			free(line_trimmed);
-=======
 		{
 			if (init_colors(data, line_trimmed + 2, CEILING))
 				return (close(fd), free(line_trimmed), free(line), 1);
@@ -602,7 +577,6 @@ int	parse(t_data *data, char *file)
 				return (close(fd), free(line), 1);
 			if (get_line_trimmed(&line, &line_trimmed, fd))
 				return (close(fd), 1);
->>>>>>> Stashed changes
 			continue;
 		}
 		else if (line_trimmed[0])

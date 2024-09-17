@@ -37,6 +37,31 @@ bool	door_around(t_data *data, double x, double y)
 	return (false);
 }
 
+bool	closed_door_around(t_data *data, double x, double y)
+{
+	if (data->map[double_to_int(y)][double_to_int(x)] == '3')
+		return (true);
+	if (data->map[double_to_int(y + 0.5)][double_to_int(x)] == '3')
+		return (true);
+	if (data->map[double_to_int(y + 0.5)][double_to_int(x + 0.5)] == '3')
+		return (true);
+	if (data->map[double_to_int(y)][double_to_int(x + 0.5)] == '3')
+		return (true);
+	if (data->map[double_to_int(y)][double_to_int(x - 0.5)] == '3')
+		return (true);
+	if (data->map[double_to_int(y - 0.5)][double_to_int(x + 0.5)] == '3')
+		return (true);
+	if (data->map[double_to_int(y - 0.5)][double_to_int(x)] == '3')
+		return (true);
+	if (data->map[double_to_int(y - 0.5)][double_to_int(x - 0.5)] == '3')
+		return (true);
+	if (data->map[double_to_int(y)][double_to_int(x - 0.5)] == '3')
+		return (true);
+	if (data->map[double_to_int(y + 0.5)][double_to_int(x - 0.5)] == '3')
+		return (true);
+	return (false);
+}
+
 void	open_door(t_data *data)
 {
 	double	x;
@@ -45,23 +70,54 @@ void	open_door(t_data *data)
 	x = data->player->x;
 	y = data->player->y;
 	if (data->map[double_to_int(y)][double_to_int(x)] == '2')
-		data->map[double_to_int(y)][double_to_int(x)] = '0';
+		data->map[double_to_int(y)][double_to_int(x)] = '3';
 	if (data->map[double_to_int(y + 0.5)][double_to_int(x)] == '2')
-		data->map[double_to_int(y + 0.5)][double_to_int(x)] = '0';
+		data->map[double_to_int(y + 0.5)][double_to_int(x)] = '3';
 	if (data->map[double_to_int(y + 0.5)][double_to_int(x + 0.5)] == '2')
-		data->map[double_to_int(y + 0.5)][double_to_int(x + 0.5)] = '0';
+		data->map[double_to_int(y + 0.5)][double_to_int(x + 0.5)] = '3';
 	if (data->map[double_to_int(y)][double_to_int(x + 0.5)] == '2')
-		data->map[double_to_int(y)][double_to_int(x + 0.5)] = '0';
+		data->map[double_to_int(y)][double_to_int(x + 0.5)] = '3';
 	if (data->map[double_to_int(y)][double_to_int(x - 0.5)] == '2')
-		data->map[double_to_int(y)][double_to_int(x - 0.5)] = '0';
+		data->map[double_to_int(y)][double_to_int(x - 0.5)] = '3';
 	if (data->map[double_to_int(y - 0.5)][double_to_int(x + 0.5)] == '2')
-		data->map[double_to_int(y - 0.5)][double_to_int(x + 0.5)] = '0';
+		data->map[double_to_int(y - 0.5)][double_to_int(x + 0.5)] = '3';
 	if (data->map[double_to_int(y - 0.5)][double_to_int(x)] == '2')
-		data->map[double_to_int(y - 0.5)][double_to_int(x)] = '0';
+		data->map[double_to_int(y - 0.5)][double_to_int(x)] = '3';
 	if (data->map[double_to_int(y - 0.5)][double_to_int(x - 0.5)] == '2')
-		data->map[double_to_int(y - 0.5)][double_to_int(x - 0.5)] = '0';
+		data->map[double_to_int(y - 0.5)][double_to_int(x - 0.5)] = '3';
 	if (data->map[double_to_int(y)][double_to_int(x - 0.5)] == '2')
-		data->map[double_to_int(y)][double_to_int(x - 0.5)] = '0';
+		data->map[double_to_int(y)][double_to_int(x - 0.5)] = '3';
 	if (data->map[double_to_int(y + 0.5)][double_to_int(x - 0.5)] == '2')
-		data->map[double_to_int(y + 0.5)][double_to_int(x - 0.5)] = '0';
+		data->map[double_to_int(y + 0.5)][double_to_int(x - 0.5)] = '3';
+}
+
+void	close_door(t_data *data)
+{
+	double	x;
+	double	y;
+
+	x = data->player->x;
+	y = data->player->y;
+	if (data->map[double_to_int(y)][double_to_int(x)] == '3')
+		data->map[double_to_int(y)][double_to_int(x)] = '2';
+	if (data->map[double_to_int(y + 0.5)][double_to_int(x)] == '3')
+		data->map[double_to_int(y + 0.5)][double_to_int(x)] = '2';
+	if (data->map[double_to_int(y + 0.5)][double_to_int(x + 0.5)] == '3')
+		data->map[double_to_int(y + 0.5)][double_to_int(x + 0.5)] = '2';
+	if (data->map[double_to_int(y)][double_to_int(x + 0.5)] == '3')
+		data->map[double_to_int(y)][double_to_int(x + 0.5)] = '2';
+	if (data->map[double_to_int(y)][double_to_int(x - 0.5)] == '3')
+		data->map[double_to_int(y)][double_to_int(x - 0.5)] = '2';
+	if (data->map[double_to_int(y - 0.5)][double_to_int(x + 0.5)] == '3')
+		data->map[double_to_int(y - 0.5)][double_to_int(x + 0.5)] = '2';
+	if (data->map[double_to_int(y - 0.5)][double_to_int(x)] == '3')
+		data->map[double_to_int(y - 0.5)][double_to_int(x)] = '2';
+	if (data->map[double_to_int(y - 0.5)][double_to_int(x - 0.5)] == '3')
+		data->map[double_to_int(y - 0.5)][double_to_int(x - 0.5)] = '2';
+	if (data->map[double_to_int(y)][double_to_int(x - 0.5)] == '3')
+		data->map[double_to_int(y)][double_to_int(x - 0.5)] = '2';
+	if (data->map[double_to_int(y + 0.5)][double_to_int(x - 0.5)] == '3')
+		data->map[double_to_int(y + 0.5)][double_to_int(x - 0.5)] = '2';
+	if (is_wall(data, x, y) || check_x_collision(data, x, y, 0.2) || check_y_collision(data, x, y, 0.2))
+		open_door(data);
 }

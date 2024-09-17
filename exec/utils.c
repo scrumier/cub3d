@@ -6,11 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:36:06 by scrumier          #+#    #+#             */
-<<<<<<< Updated upstream
-/*   Updated: 2024/09/16 16:31:24 by scrumier         ###   ########.fr       */
-=======
 /*   Updated: 2024/09/16 13:03:51 by scrumier         ###   ########.fr       */
->>>>>>> Stashed changes
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +46,8 @@ void	print_minimap(t_data *data, int mode)
 			coord.y = j * COEF;
 			if ((data->map[j][i] == '1' || data->map[j][i] == '2') && mode == 2)
 				draw_square(data, coord, COEF, 0x00000000);
+			else if (data->map[j][i] == '3' && mode == 2) // its a door
+				draw_square(data, coord, COEF, 0x00FF0000);
 			else if ((data->map[j][i] == '0' || ft_isalpha(data->map[j][i])) && mode == !data->flash_light)
 				draw_square(data, coord, COEF, 0x00A9A9A9);
 			else if (data->map[j][i] == '0' && mode == 3)
