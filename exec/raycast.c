@@ -6,11 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-<<<<<<< Updated upstream
-/*   Updated: 2024/09/16 14:48:51 by scrumier         ###   ########.fr       */
-=======
 /*   Updated: 2024/09/16 14:46:12 by scrumier         ###   ########.fr       */
->>>>>>> Stashed changes
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,12 +121,9 @@ void init_all(t_data *data)
 void	free_all(t_data *data)
 {
 	free_texture(data);
-<<<<<<< Updated upstream
-=======
 	mlx_destroy_image(data->mlx, data->img.img);
 	mlx_destroy_window(data->mlx, data->win);
 	mlx_destroy_display(data->mlx);
->>>>>>> Stashed changes
 	free(data->player);
 	free(data->move);
 	free_strarray(data->map);
@@ -146,13 +139,8 @@ int	main(int ac, char **av)
 		return (printf("Error\n"), 0);
 	data = malloc(sizeof(t_data));
 	data->player = malloc(sizeof(t_player));
-<<<<<<< Updated upstream
-	data->player->x = 0;
-	data->player->y = 0;
-=======
 	data->player->x = -1;
 	data->player->y = -1;
->>>>>>> Stashed changes
 	data->next_image = 0;
 	data->move = malloc(sizeof(t_move));
 	data->flash_light = false;
@@ -168,10 +156,6 @@ int	main(int ac, char **av)
 	data->texture[4] = NULL;
 	data->texture[5] = NULL;
 	data->mlx = mlx_init();
-<<<<<<< Updated upstream
-	parse(data, av[1]);
-=======
->>>>>>> Stashed changes
 	init_all(data);
 	data->win = mlx_new_window(data->mlx, WIDTH, HEIGHT, "Cub3D");
 	data->img.img = mlx_new_image(data->mlx, HEIGHT, WIDTH);

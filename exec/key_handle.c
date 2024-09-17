@@ -16,11 +16,6 @@ int	handle_keypressed(int key, t_data *data)
 {
 	if (key == KEY_ESC)
 	{
-<<<<<<< Updated upstream
-		mlx_destroy_window(data->mlx, data->win);
-		mlx_destroy_display(data->mlx);
-=======
->>>>>>> Stashed changes
 		free_all(data);
 		exit(0);
 	}
