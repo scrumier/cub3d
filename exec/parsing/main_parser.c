@@ -60,32 +60,19 @@ void	free_llist(t_llist *list)
 
 int	load_texture(t_data *data, t_texture *texture, char *path)
 {
-	texture->img = mlx_xpm_file_to_image(data->mlx, path, &texture->width, &texture->height);
+	texture->img = mlx_xpm_file_to_image(data->mlx, path, \
+		&texture->width, &texture->height);
 	printf("Loading %p\n", texture->img);
 	if (texture->img == NULL)
 		return (print_error(FAILED_LOAD_TEXTURE), -1);
-	texture->addr = mlx_get_data_addr(texture->img, &texture->bpp, &texture->line_len, &texture->endian);
-	// protect
+	texture->addr = mlx_get_data_addr(texture->img, &texture->bpp, \
+		&texture->line_len, &texture->endian);
+	if (texture->addr == NULL)
+		return (print_error(FAILED_LOAD_TEXTURE), -1);
 	texture->path = ft_strdup(path);
+	if (!texture->path)
+		return (print_error(FAILED_LOAD_TEXTURE), -1);
 	return (0);
-}
-
-char *texture_to_string(e_texture texture)
-{
-	if (texture == WALL_EA)
-		return ("WALL_EA");
-	else if (texture == WALL_WE)
-		return ("WALL_WE");
-	else if (texture == WALL_SO)
-		return ("WALL_SO");
-	else if (texture == WALL_NO)
-		return ("WALL_NO");
-	else if (texture == BEAM)
-		return ("BEAM");
-	else if (texture == DOOR)
-		return ("DOOR");
-	else
-		return ("UNKNOWN");
 }
 
 int	init_walls_texture(t_data *data, char *line, e_texture texture)
@@ -101,7 +88,8 @@ int	init_walls_texture(t_data *data, char *line, e_texture texture)
 	sprites = ft_split(line, ' ');
 	if (!sprites)
 		return (1);
-	data->texture[texture] = ft_calloc(strarray_len(sprites) + 1, sizeof(t_texture));
+	data->texture[texture] = ft_calloc(strarray_len(sprites) + 1, \
+		sizeof(t_texture));
 	if (!data->texture[texture])
 		return (free_strarray(sprites), 1);
 	while (sprites[i])
@@ -112,22 +100,23 @@ int	init_walls_texture(t_data *data, char *line, e_texture texture)
 	}
 	return (free_strarray(sprites), 0);
 }
+
 int	init_wall(t_data *data, char *line)
 {
 	if (data->map)
 		return (print_error(VALUE_AFTER_MAP), 1);
 	if (ft_strncmp(line, "NO ", 3) == 0)
-		return(init_walls_texture(data, line + 3, WALL_NO));
+		return (init_walls_texture(data, line + 3, WALL_NO));
 	else if (ft_strncmp(line, "SO ", 3) == 0)
-		return(init_walls_texture(data, line + 3, WALL_SO));
+		return (init_walls_texture(data, line + 3, WALL_SO));
 	else if (ft_strncmp(line, "WE ", 3) == 0)
-		return(init_walls_texture(data, line + 3, WALL_WE));
+		return (init_walls_texture(data, line + 3, WALL_WE));
 	else if (ft_strncmp(line, "EA ", 3) == 0)
-		return(init_walls_texture(data, line + 3, WALL_EA));
+		return (init_walls_texture(data, line + 3, WALL_EA));
 	else if (ft_strncmp(line, "BEAM ", 5) == 0)
-		return(init_walls_texture(data, line + 5, BEAM));
+		return (init_walls_texture(data, line + 5, BEAM));
 	else if (ft_strncmp(line, "DOOR ", 5) == 0)
-		return(init_walls_texture(data, line + 5, DOOR));
+		return (init_walls_texture(data, line + 5, DOOR));
 	else
 		return (print_error(IDENTIFIER_NOT_FOUND), 127);
 }
@@ -171,13 +160,13 @@ int	init_color_return(size_t color, e_texture type, t_data *data, int *rgb)
 	return (0);
 }
 
-int	color_line_check(char *line, int i)
+int	color_line_check(char *line, size_t *i, size_t color)
 {
-	while (line[i] == ' ')
-		i++;
-	if (line[i] == ',' || !line[i + 1])
+	while (line[*i] == ' ')
+		(*i)++;
+	if (line[*i] == ',' && color == 2)
 		return (print_error(INVALID_COLOR_ARG), 22);
-	if (!ft_isdigit(line[i]) && line[i] != ',' && line[i] != ' ')
+	if (!ft_isdigit(line[*i]) && line[*i] != ',' && line[*i] != ' ')
 		return (print_error(INVALID_COLOR_ARG), 22);
 	return (0);
 }
@@ -195,7 +184,7 @@ int	init_colors(t_data *data, char *line, e_texture type)
 		return (22);
 	while (line[i])
 	{
-		if (color_line_check(line, i))
+		if (color_line_check(line, &i, color))
 			return (22);
 		if (line[i] == ',' || !line[i + 1])
 		{
@@ -211,10 +200,10 @@ int	init_colors(t_data *data, char *line, e_texture type)
 	return (init_color_return(color, type, data, rgb));
 }
 
-void free_texture(t_data *data)
+void	free_texture(t_data *data)
 {
-	int i;
-	int j;
+	int	i;
+	int	j;
 
 	i = 0;
 	while (i < TEXTURE_NB)
@@ -295,7 +284,8 @@ int	padding_map(t_data *data, t_llist *map)
 	tmp = map;
 	while (tmp)
 	{
-		padded_map[i] = add_spaces(tmp->content, data->mapX - ft_strlen(tmp->content));
+		padded_map[i] = add_spaces(tmp->content, \
+			data->mapX - ft_strlen(tmp->content));
 		if (!padded_map[i])
 			return (free_strarray(padded_map), 1);
 		tmp = tmp->next;
@@ -375,11 +365,10 @@ int	parse_map(t_data *data, char *line, int fd)
 	return (free(line), free_llist(map), 0);
 }
 
-
-int space_check(t_data *data, size_t x, size_t y)
+int	space_check(t_data *data, size_t x, size_t y)
 {
-	size_t map_width;
-	size_t map_height;
+	size_t	map_width;
+	size_t	map_height;
 
 	map_width = data->mapX;
 	map_height = data->mapY;
@@ -406,7 +395,6 @@ int	map_check(t_data *data)
 {
 	size_t	y;
 	size_t	x;
-	
 
 	y = 0;
 	while (y < data->mapY)
@@ -430,47 +418,6 @@ int	map_check(t_data *data)
 		y++;
 	}
 	return (0);
-}
-
-void print_color(const char *label, unsigned int color)
-{
-    int red = (color >> 16) & 0xFF;
-    int green = (color >> 8) & 0xFF;
-    int blue = color & 0xFF;
-
-    printf("\033[38;2;%d;%d;%dm%s: #%06x\033[0m\n", red, green, blue, label, color);
-}
-
-void printc_map(char **map, size_t height, size_t width)
-{
-    // Loop over each row in the map
-    for (size_t y = 0; y < height; y++)
-    {
-        // Loop over each column in the row
-        for (size_t x = 0; x < width; x++)
-        {
-            char c = map[y][x];
-
-            // Check what to print and set the color accordingly
-            if (c == '1') // Walls, print in red
-            {
-                printf("\033[31m%c\033[0m", c); // Red color
-            }
-            else if (c == '2') // Doors, print in blue
-            {
-                printf("\033[34m%c\033[0m", c); // Blue color
-            }
-            else if (ft_isalpha(c)) // Players, print in green
-            {
-                printf("\033[32m%c\033[0m", c); // Green color
-            }
-            else // Any other character, print without color
-            {
-                printf("%c", c);
-            }
-        }
-        printf("\n"); // Move to the next line after each row
-    }
 }
 
 void	map_fill_spaces(t_data *data)
@@ -498,7 +445,9 @@ bool	is_everything_init(t_data *data)
 		return (print_error(CEILING_NOT_INIT), false);
 	if (data->floor_color == -1)
 		return (print_error(FLOOR_NOT_INIT), false);
-	if (!data->texture[WALL_NO] || !data->texture[WALL_SO] || !data->texture[WALL_WE] || !data->texture[WALL_EA] || !data->texture[BEAM] || !data->texture[DOOR])
+	if (!data->texture[WALL_NO] || !data->texture[WALL_SO] \
+		|| !data->texture[WALL_WE] || !data->texture[WALL_EA] \
+		|| !data->texture[BEAM] || !data->texture[DOOR])
 		return (print_error(WALLS_NOT_INIT), false);
 	if (!data->map)
 		return (print_error(MAP_NOT_INIT), false);
@@ -508,9 +457,9 @@ bool	is_everything_init(t_data *data)
 double	get_player_angle(char c)
 {
 	if (c == 'S')
-		return (PI/2);
+		return (PI / 2);
 	else if (c == 'N')
-		return ((3 * PI)/2);
+		return ((3 * PI) / 2);
 	else if (c == 'W')
 		return (PI);
 	else
@@ -573,52 +522,39 @@ int	check_colors(t_data *data, char *line)
 	return (0);
 }
 
-int	parse(t_data *data, char *file)
+int parse_init(size_t *i, char *file, int *fd)
 {
-	int		fd;
-	char	*line_trimmed;
-	char	*line;
-	size_t	i;
-
-	i = 0;
+	*i = 0;
 	if (ft_strncmp(file + ft_strlen(file) - 4, ".cub", 4) != 0)
 		return (print_error(INVALID_EXTENSION), 127);
-	fd = open(file, O_RDONLY);
-	if (fd < 0)
-		return (perror("Error\n"), -1);
-	if (get_line_trimmed(&line, &line_trimmed, fd))
-		return (close(fd), 1);
-	while (line_trimmed)
+	*fd = open(file, O_RDONLY);
+	if (*fd < 0)
+		return (perror("Error\n"), 1);
+	return (0);
+}
+
+bool	is_color_line(char *line)
+{
+	return (ft_strncmp(line, "C ", 2) == 0 || ft_strncmp(line, "F ", 2) == 0);
+}
+
+int	parse_colors(t_data *data, char **line_trimmed, char **line, int fd)
+{
+	if (ft_strncmp(*line_trimmed, "C ", 2) == 0)
 	{
-		if (ft_strncmp(line_trimmed, "C ", 2) == 0)
-		{
-			if (init_colors(data, line_trimmed + 2, CEILING))
-				return (close(fd), free(line_trimmed), free(line), 1);
-		}
-		else if (ft_strncmp(line_trimmed, "F ", 2) == 0)
-		{
-			if (init_colors(data, line_trimmed + 2, FLOOR))
-				return (close(fd), free(line_trimmed), free(line), 1);
-		}
-		else if (line_trimmed[0] == '1' || line_trimmed[0] == '0')
-		{
-			free(line_trimmed);
-			if (parse_map(data, line, fd))
-				return (close(fd), free(line), 1);
-			if (get_line_trimmed(&line, &line_trimmed, fd))
-				return (close(fd), 1);
-			continue;
-		}
-		else if (line_trimmed[0])
-		{
-			if (init_wall(data, line_trimmed))
-				return (close(fd), free(line), free(line_trimmed), 1);
-		}
-		free(line);
-		free(line_trimmed);
-		if (get_line_trimmed(&line, &line_trimmed, fd))
-			return (close(fd), 1);
+		if (init_colors(data, *line_trimmed + 2, CEILING))
+			return (close(fd), free(*line_trimmed), free(*line), 1);
 	}
+	else if (ft_strncmp(*line_trimmed, "F ", 2) == 0)
+	{
+		if (init_colors(data, *line_trimmed + 2, FLOOR))
+			return (close(fd), free(*line_trimmed), free(*line), 1);
+	}
+	return (0);
+}
+
+int	parse_return(t_data *data, int fd)
+{
 	if (!is_everything_init(data))
 		return (127);
 	if (map_check(data))
@@ -631,8 +567,56 @@ int	parse(t_data *data, char *file)
 	return (close(fd), 0);
 }
 
-/*
-check if nothing after map
-check if 1 letter in map
+int	parse_iter(char **line, char **line_trimmed, int fd)
+{
+	free(*line);
+	free(*line_trimmed);
+	if (get_line_trimmed(line, line_trimmed, fd))
+		return (close(fd), 1);
+	return (0);
+}
 
-*/
+int	parse_process(t_data *data, char **line, char **line_trimmed, int fd)
+{
+	while (*line_trimmed)
+	{
+		if (is_color_line(*line_trimmed))
+		{
+			if (parse_colors(data, line_trimmed, line, fd))
+				return (1);
+		}
+		else if ((*line_trimmed)[0] == '1' || (*line_trimmed)[0] == '0')
+		{
+			free(*line_trimmed);
+			if (parse_map(data, *line, fd))
+				return (close(fd), free(*line), 1);
+			if (get_line_trimmed(line, line_trimmed, fd))
+				return (close(fd), 1);
+			continue ;
+		}
+		else if ((*line_trimmed)[0])
+		{
+			if (init_wall(data, *line_trimmed))
+				return (close(fd), free(*line), free(*line_trimmed), 1);
+		}
+		if (parse_iter(line, line_trimmed, fd))
+			return (1);
+	}
+	return (0);
+}
+
+int	parse(t_data *data, char *file)
+{
+	int		fd;
+	char	*line_trimmed;
+	char	*line;
+	size_t	i;
+
+	if (parse_init(&i, file, &fd))
+		return (1);
+	if (get_line_trimmed(&line, &line_trimmed, fd))
+		return (close(fd), 1);
+	if (parse_process(data, &line, &line_trimmed, fd))
+		return (1);
+	return (parse_return(data, fd));
+}
