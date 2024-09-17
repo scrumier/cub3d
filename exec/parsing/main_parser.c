@@ -62,7 +62,6 @@ int	load_texture(t_data *data, t_texture *texture, char *path)
 {
 	texture->img = mlx_xpm_file_to_image(data->mlx, path, \
 		&texture->width, &texture->height);
-	printf("Loading %p\n", texture->img);
 	if (texture->img == NULL)
 		return (print_error(FAILED_LOAD_TEXTURE), -1);
 	texture->addr = mlx_get_data_addr(texture->img, &texture->bpp, \
@@ -365,6 +364,28 @@ int	parse_map(t_data *data, char *line, int fd)
 	return (free(line), free_llist(map), 0);
 }
 
+int	space_check_diagonal(t_data *data, size_t x, size_t y)
+{
+	size_t	map_width;
+	size_t	map_height;
+
+	map_width = data->mapX;
+	map_height = data->mapY;
+	if (x > 0 && y > 0 && (data->map[y - 1][x - 1] != '1'
+		&& data->map[y - 1][x - 1] != ' '))
+		return (0);
+	if (x + 1 < map_width && y > 0 && (data->map[y - 1][x + 1] != '1'
+		&& data->map[y - 1][x + 1] != ' '))
+		return (0);
+	if (x > 0 && y + 1 < map_height && (data->map[y + 1][x - 1] != '1'
+		&& data->map[y + 1][x - 1] != ' '))
+		return (0);
+	if (x + 1 < map_width && y + 1 < map_height
+		&& (data->map[y + 1][x + 1] != '1' && data->map[y + 1][x + 1] != ' '))
+		return (0);
+	return (1);
+}
+
 int	space_check(t_data *data, size_t x, size_t y)
 {
 	size_t	map_width;
@@ -374,21 +395,25 @@ int	space_check(t_data *data, size_t x, size_t y)
 	map_height = data->mapY;
 	if (x > 0 && (data->map[y][x - 1] != '1' && data->map[y][x - 1] != ' '))
 		return (0);
-	if (x + 1 < map_width && (data->map[y][x + 1] != '1' && data->map[y][x + 1] != ' '))
+	if (x + 1 < map_width && (data->map[y][x + 1] != '1'
+		&& data->map[y][x + 1] != ' '))
 		return (0);
 	if (y > 0 && (data->map[y - 1][x] != '1' && data->map[y - 1][x] != ' '))
 		return (0);
-	if (y + 1 < map_height && (data->map[y + 1][x] != '1' && data->map[y + 1][x] != ' '))
+	if (y + 1 < map_height && (data->map[y + 1][x] != '1'
+		&& data->map[y + 1][x] != ' '))
 		return (0);
-	if (x > 0 && y > 0 && (data->map[y - 1][x - 1] != '1' && data->map[y - 1][x - 1] != ' '))
-		return (0);
-	if (x + 1 < map_width && y > 0 && (data->map[y - 1][x + 1] != '1' && data->map[y - 1][x + 1] != ' '))
-		return (0);
-	if (x > 0 && y + 1 < map_height && (data->map[y + 1][x - 1] != '1' && data->map[y + 1][x - 1] != ' '))
-		return (0);
-	if (x + 1 < map_width && y + 1 < map_height && (data->map[y + 1][x + 1] != '1' && data->map[y + 1][x + 1] != ' '))
+	if (!space_check_diagonal(data, x, y))
 		return (0);
 	return (1);
+}
+
+int	map_check_init_x(size_t *x, size_t y, t_data *data)
+{
+	*x = 0;
+	if (data->map[y][0] != '1' && data->map[y][0] != ' ')
+		return (print_error(INVALID_MAP), 22);
+	return (0);
 }
 
 int	map_check(t_data *data)
@@ -399,12 +424,12 @@ int	map_check(t_data *data)
 	y = 0;
 	while (y < data->mapY)
 	{
-		x = 0;
-		if (data->map[y][0] != '1' && data->map[y][0] != ' ')
-			return (print_error(INVALID_MAP), 22);
+		if (map_check_init_x(&x, y, data))
+			return (22);
 		while (data->map[y][x])
 		{
-			if ((y == 0 || y == data->mapY - 1) && data->map[y][x] != '1' && data->map[y][x] != ' ')
+			if ((y == 0 || y == data->mapY - 1)
+				&& data->map[y][x] != '1' && data->map[y][x] != ' ')
 				return (print_error(INVALID_MAP), 22);
 			if (data->map[y][x] == ' ')
 			{
@@ -522,7 +547,7 @@ int	check_colors(t_data *data, char *line)
 	return (0);
 }
 
-int parse_init(size_t *i, char *file, int *fd)
+int	parse_init(size_t *i, char *file, int *fd)
 {
 	*i = 0;
 	if (ft_strncmp(file + ft_strlen(file) - 4, ".cub", 4) != 0)
