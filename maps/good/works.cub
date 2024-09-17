@@ -9,7 +9,8 @@ F      17,    38,     64
 
 EA textures/wolfenstein/wood.xpm
 
-
+DOOR textures/door_animated-1.xpm textures/door_animated-2.xpm textures/door_animated-3.xpm textures/door_animated-4.xpm
+BEAM textures/beam.xpm
 
 C 218, 234, 235
 

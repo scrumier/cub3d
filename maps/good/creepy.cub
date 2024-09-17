@@ -2,7 +2,8 @@ NO textures/simonkraft/respawn_anchor_side0.xpm
 EA textures/simonkraft/respawn_anchor_side2.xpm
 SO textures/simonkraft/respawn_anchor_side4.xpm
 WE textures/simonkraft/respawn_anchor_side3.xpm
-
+DOOR textures/door_animated-1.xpm textures/door_animated-2.xpm textures/door_animated-3.xpm textures/door_animated-4.xpm
+BEAM textures/beam.xpm
 C 35,19,73
 F 15,6,40
 

@@ -1,7 +1,8 @@
    WE                            textures/wolfenstein/eagle.xpm 
 NO      textures/wolfenstein/grey_stone.xpm
 
-
+DOOR textures/door_animated-1.xpm textures/door_animated-2.xpm textures/door_animated-3.xpm textures/door_animated-4.xpm
+BEAM textures/beam.xpm
 
 SO textures/wolfenstein/red_brick.xpm
 

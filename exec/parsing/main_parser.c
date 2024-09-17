@@ -17,7 +17,6 @@ void	print_error(char *reason)
 	write(2, "Error\n", 7);
 	write(2, reason, ft_strlen(reason));
 	write(2, "\n", 1);
-	exit(0);
 }
 
 size_t	strarray_len(char **array)
@@ -34,6 +33,8 @@ void	free_strarray(char **array)
 {
 	size_t	i;
 
+	if (!array)
+		return ;
 	i = 0;
 	while (array[i])
 	{
@@ -201,9 +202,12 @@ void free_texture(t_data *data)
 	while (i < TEXTURE_NB)
 	{
 		j = 0;
-		while (data->texture[i][j].path)
+		while (data->texture[i] && data->texture[i][j].path)
 		{
+<<<<<<< Updated upstream
 			printf("Freeing %p\n", data->texture[i][j].img);
+=======
+>>>>>>> Stashed changes
 			mlx_destroy_image(data->mlx, data->texture[i][j].img);
 			free(data->texture[i][j].path);
 			data->texture[i][j].path = NULL;
@@ -331,6 +335,7 @@ int	parse_map(t_data *data, char *line, int fd)
 		if (!line && errno)
 			return (1);
 	}
+	free(line);
 	padding_map(data, map);
 	free_llist(map);
 	return (0);
@@ -508,7 +513,7 @@ int	map_info_parse(t_data *data)
 				return (print_error(INVALID_MAP), 22);
 			if (ft_isalpha(data->map[i][j]))
 			{
-				if (!(data->player->x == 0 && data->player->y == 0))
+				if (data->player->x != -1 || data->player->y != -1)
 					return (print_error(MULTIPLE_PLAYERS), 127);
 				data->player->x = j;
 				data->player->y = i;
@@ -529,7 +534,11 @@ int	get_line_trimmed(char **line, char **line_trimmed, int fd)
 		return (1);
 	*line_trimmed = ft_strtrim(*line, " \t\n\v\f\r");
 	if (!*line_trimmed && *line)
+<<<<<<< Updated upstream
 		return (1);
+=======
+		return (free(*line), 1);
+>>>>>>> Stashed changes
 	return (0);
 }
 
@@ -542,6 +551,10 @@ int	check_colors(t_data *data, char *line)
 	return (0);
 }
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 int	parse(t_data *data, char *file)
 {
 	int		fd;
@@ -560,6 +573,7 @@ int	parse(t_data *data, char *file)
 	while (line_trimmed)
 	{
 		if (ft_strncmp(line_trimmed, "C ", 2) == 0)
+<<<<<<< Updated upstream
 			init_colors(data, line_trimmed + 2, CEILING); // check return
 		else if (ft_strncmp(line_trimmed, "F ", 2) == 0)
 			init_colors(data, line_trimmed + 2, FLOOR);
@@ -571,6 +585,24 @@ int	parse(t_data *data, char *file)
 				return (close(fd), 1);
 			free(line);
 			free(line_trimmed);
+=======
+		{
+			if (init_colors(data, line_trimmed + 2, CEILING))
+				return (close(fd), free(line_trimmed), free(line), 1);
+		}
+		else if (ft_strncmp(line_trimmed, "F ", 2) == 0)
+		{
+			if (init_colors(data, line_trimmed + 2, FLOOR))
+				return (close(fd), free(line_trimmed), free(line), 1);
+		}
+		else if (line_trimmed[0] == '1' || line_trimmed[0] == '0')
+		{
+			free(line_trimmed);
+			if (parse_map(data, line, fd))
+				return (close(fd), free(line), 1);
+			if (get_line_trimmed(&line, &line_trimmed, fd))
+				return (close(fd), 1);
+>>>>>>> Stashed changes
 			continue;
 		}
 		else if (line_trimmed[0])
@@ -605,11 +637,12 @@ int	parse(t_data *data, char *file)
 	if (map_check(data) == 0)
 		printf("\033[0;32m%d\033[0m\n", map_check(data));
 	else
-		printf("\033[0;31m%d\033[0m\n", map_check(data));
+		return (1);
 	// fill spaces with 0
 	map_fill_spaces(data);
-	map_info_parse(data);
-	if ((!data->player->x && !data->player->y))
+	if (map_info_parse(data))
+		return (1);
+	if (data->player->x == -1 || data->player->y == -1)
 		return (print_error(NO_PLAYER), 127);
 	//print map
 	printc_map(data->map, data->mapY, data->mapX);
