@@ -6,11 +6,21 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:42:18 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/05 12:59:39 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/17 16:35:43 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3d.h"
+
+void	draw_player_on_minimap(t_data *data)
+{
+	t_coord	coord;
+
+	coord.x = data->player->x * COEF;
+	coord.y = data->player->y * COEF;
+	print_minimap(data, 1);
+	draw_square(data, coord, COEF, 0x00FF00);
+}
 
 void	draw_square(t_data *data, t_coord coord, int coef, int color)
 {
@@ -29,35 +39,6 @@ void	draw_square(t_data *data, t_coord coord, int coef, int color)
 		}
 		i++;
 	}
-}
-
-double	calculate_distance(double x0, double y0, double xo, double yo)
-{
-	return (sqrt(pow(x0 - xo, 2) + pow(y0 - yo, 2)));
-}
-
-int	is_out_of_bounds(int map_x, int map_y)
-{
-	return (map_x < 0 || map_x >= WIDTH || map_y < 0 || map_y >= HEIGHT);
-}
-
-int	is_wall_hit(char **map, int map_x, int map_y)
-{
-	return (map[map_y][map_x] == '1' || map[map_y][map_x] == '2');
-}
-
-void	update_ray_destination(t_ray *ray, double x0, double y0)
-{
-	ray->dstx = x0 / COEF;
-	ray->dsty = y0 / COEF;
-}
-
-void	init_bresenham(t_bresenham *bresenham, t_ray *ray, int wall_accuracy)
-{
-	bresenham->x0 = ray->xo;
-	bresenham->y0 = ray->yo;
-	bresenham->xinc = cos(ray->ra) / wall_accuracy;
-	bresenham->yinc = sin(ray->ra) / wall_accuracy;
 }
 
 double	draw_line(t_ray *ray, t_data *data, int mode, int wall_accuracy)
@@ -87,4 +68,32 @@ double	draw_line(t_ray *ray, t_data *data, int mode, int wall_accuracy)
 					(int)bresenham.y0, 0x00FFFFFF);
 	}
 	return (RENDER_DISTANCE);
+}
+
+void	print_minimap(t_data *data, int mode)
+{
+	int		j;
+	int		i;
+	t_coord	coord;
+
+	i = 0;
+	j = 0;
+	while (i < data->mapx)
+	{
+		j = 0;
+		while (j < data->mapy)
+		{
+			coord.x = i * COEF;
+			coord.y = j * COEF;
+			if ((data->map[j][i] == '1' || data->map[j][i] == '2') && mode == 2)
+				draw_square(data, coord, COEF, 0x00000000);
+			else if (data->map[j][i] == '3' && mode == 2)
+				draw_square(data, coord, COEF, 0x00FF0000);
+			else if ((data->map[j][i] == '0' || ft_isalpha(data->map[j][i])) \
+						&& mode == !data->flash_light)
+				draw_square(data, coord, COEF, 0x00A9A9A9);
+			j++;
+		}
+		i++;
+	}
 }

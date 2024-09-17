@@ -22,6 +22,14 @@ SRC_FILES	=	$(addprefix $(SRC_DIR), \
 				mini_parse.c \
 				rays.c \
 				open_door.c \
+				pixel_color.c \
+				draw_utils.c \
+				find_wall.c \
+				check_collisions.c \
+				free_utils.c \
+				cast_rays.c \
+				darken_color.c \
+				render_texture.c \
 				$(addprefix parsing/, \
 					main_parser.c \
 				) \

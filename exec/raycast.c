@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/17 15:09:01 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/17 16:28:55 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,40 +92,6 @@ void	init_all(t_data *data)
 	data->texture[5] = NULL;
 }
 
-void	free_mlx_image(t_data *data, t_img *img)
-{
-	mlx_destroy_image(data->mlx, data->img.img);
-	mlx_destroy_window(data->mlx, data->win);
-	mlx_destroy_display(data->mlx);
-}
-
-void	free_all(t_data *data)
-{
-	free_texture(data);
-	free_mlx_image(data, &data->img);
-	free(data->player);
-	free(data->move);
-	free_strarray(data->map);
-	free(data->mlx);
-	free(data);
-}
-
-void	free_parse(t_data *data)
-{
-	free_texture(data);
-	free(data->player);
-	free(data->move);
-	free_strarray(data->map);
-	free(data->mlx);
-	free(data);
-}
-
-int	free_exit(t_data *data)
-{
-	free_all(data);
-	exit(0);
-}
-
 int	main(int ac, char **av)
 {
 	t_data	*data;
@@ -142,9 +108,9 @@ int	main(int ac, char **av)
 	data->img.addr = mlx_get_data_addr(data->img.img, &data->img.bpp, \
 						&data->img.line_len, &data->img.endian);
 	mlx_loop_hook(data->mlx, create_image, data);
-	mlx_hook(data->win, KEYPRESS, KEYPRESSMASK, &handle_keypressed, data);
-	mlx_hook(data->win, KEYREALASE, KEYRELEASEMASK, &handle_keyrelease, data);
-	mlx_hook(data->win, DESTROYNOTIFY, STRUCTURENOTIFYMASK, &free_exit, data);
+	mlx_hook(data->win, KEYPRESS, 1L << 0, &handle_keypressed, data);
+	mlx_hook(data->win, KEYREALASE, 1L << 1, &handle_keyrelease, data);
+	mlx_hook(data->win, DESTROYNOTIFY, 1L << 17, &free_exit, data);
 	mlx_loop(data->mlx);
 	free(data->player);
 	free(data->move);

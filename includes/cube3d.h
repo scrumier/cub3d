@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/17 15:54:13 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/17 16:40:02 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,6 @@
 # include <sys/time.h>
 # include "errors.h"
 # include "mlx.h"
-// i want to use keypress mask of minilibx
-# define KEYPRESSMASK 1L<<0
-# define KEYRELEASEMASK 1L<<1
-# define STRUCTURENOTIFYMASK 1L<<17
 # define MOUSEMOVE 6
 # define KEYPRESS 2
 # define KEYREALASE 3
@@ -72,6 +68,8 @@
 # define THRESHOLD 0.1
 # define RENDER_DISTANCE 100
 # define TEXTURE_NB 6
+# define HITBOX_RADIUS 0.2
+// hitbox not below 0.1
 
 typedef struct s_line
 {
@@ -223,7 +221,7 @@ typedef struct s_data
 	double			last_fps[FPS];
 }				t_data;
 
-enum
+typedef enum e_texture
 {
 	WALL_EA = 0,
 	WALL_WE,
@@ -233,44 +231,74 @@ enum
 	DOOR,
 	CEILING,
 	FLOOR
-}	e_texture;
+}				t_texture_enum;
 
+int				parse(t_data *data, char *file);
+int				load_texture(t_data *data, t_texture *texture, char *path);
+int				handle_keypressed(int key, t_data *data);
+int				handle_keyrelease(int key, t_data *data);
+void			apply_custom_antialiasing(t_data *data);
+void			move_player(t_data *data);
+int				deg_to_rad(int deg);
+void			print_minimap(t_data *data, int mode);
+double			find_angle(int total_rays);
+double			ft_dabs(double d);
+void			draw_square(t_data *data, t_coord coord, int coef, int color);
+void			my_mlx_pixel_put(t_data *data, int x, int y, int color);
+int				double_to_int(double x);
+int				ft_abs(int x);
+int				find_ray_texture(t_data *data, t_ray *ray);
+double			draw_line(t_ray *ray, t_data *data, int mode, \
+							int wall_accuracy);
+bool			wall_around_01(t_data *data, double x, double y);
+bool			wall_around_05(t_data *data, double x, double y);
+void			parse_rays(t_data *data);
+int				find_wall_facing(t_data *data, t_ray *ray);
+void			open_door(t_data *data);
+void			render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, \
+									t_line_3d line);
+void			print_tab(double *tab);
+size_t			strarray_len(char **array);
+void			free_strarray(char **array);
+void			free_texture(t_data *data);
+void			free_all(t_data *data);
+bool			check_x_collision(t_data *data, double new_x, \
+								double player_y, double radius);
+bool			check_y_collision(t_data *data, double player_x, double new_y, \
+										double radius);
+bool			is_wall(t_data *data, double x, double y);
+bool			door_around(t_data *data, double x, double y);
+bool			closed_door_around(t_data *data, double x, double y);
+void			close_door(t_data *data);
+unsigned int	get_pixel_color(t_data *data, int x, int y);
+double			calculate_distance(double x0, double y0, double xo, double yo);
+int				is_out_of_bounds(int map_x, int map_y);
+int				is_wall_hit(char **map, int map_x, int map_y);
+void			update_ray_destination(t_ray *ray, double x0, double y0);
+void			init_bresenham(t_bresenham *bresenham, t_ray *ray, \
+								int wall_accuracy);
+double			find_cube_center_y(t_data *data, double y);
+double			find_cube_center_x(t_data *data, double x);
+int				find_closest_to_05(double x, double y);
+bool			is_wall(t_data *data, double x, double y);
+bool			check_corner_collision(t_data *data, double new_x, \
+										double new_y, double radius);
+bool			is_out_of_the_map(t_data *data, double x, double y);
+void			set_pixel_color(t_data *data, int x, int y, unsigned int color);
+void			free_mlx_image(t_data *data, t_img *img);
+void			free_all(t_data *data);
+void			free_parse(t_data *data);
+int				free_exit(t_data *data);
+void			cast_rays(t_data *data, t_ray *ray, int total_rays, \
+							double ray_angle);
+int				get_texture_color(t_texture *texture, \
+									double texture_offset, int tex_x);
+int				darken_color(int color, double distance, double max_distance);
+void			draw_player_on_minimap(t_data *data);
+void			render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, \
+							t_line_3d line);
+double			draw_and_correct_ray(t_ray *ray, t_data *data, \
+								int wall_accuracy);
+size_t			texture_array_len(t_texture *array);
 
-int		parse(t_data *data, char *file);
-int		load_texture(t_data *data, t_texture *texture, char *path);
-int		handle_keypressed(int key, t_data *data);
-int		handle_keyrelease(int key, t_data *data);
-void	apply_custom_antialiasing(t_data *data);
-void	move_player(t_data *data);
-int		deg_to_rad(int deg);
-void	print_minimap(t_data *data, int mode);
-double	find_angle(int total_rays);
-double	ft_dabs(double d);
-void		draw_square(t_data *data, t_coord coord, int coef, int color);
-void	my_mlx_pixel_put(t_data *data, int x, int y, int color);
-int		double_to_int(double x);
-void	print_map(char **map);
-int		ft_abs(int x);
-int		find_ray_texture(t_data *data, t_ray *ray);
-double	draw_line(t_ray *ray, t_data *data, int mode, int wall_accuracy);
-bool	wall_around_01(t_data *data, double x, double y);
-bool	wall_around_05(t_data *data, double x, double y);
-void	parse_rays(t_data *data);
-void	mini_parse(t_data *data, char *file);
-int		find_wall_facing(t_data *data, t_ray *ray);
-void	open_door(t_data *data);
-void	render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, t_line_3d line);
-void	print_tab(double *tab);
-size_t	strarray_len(char **array);
-void	free_strarray(char **array);
-void	free_texture(t_data *data);
-void	free_all(t_data *data);
-bool	check_x_collision(t_data *data, double new_x, \
-						double player_y, double radius);
-bool	check_y_collision(t_data *data, double player_x, double new_y, \
-								double radius);
-bool	is_wall(t_data *data, double x, double y);
-bool	door_around(t_data *data, double x, double y);
-bool	closed_door_around(t_data *data, double x, double y);
-void	close_door(t_data *data);
 #endif

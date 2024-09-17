@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 09:41:33 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/09/17 15:55:25 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/17 15:57:53 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ int	load_texture(t_data *data, t_texture *texture, char *path)
 	return (0);
 }
 
-char *texture_to_string(e_texture texture)
+char *texture_to_string(t_texture_enum texture)
 {
 	if (texture == WALL_EA)
 		return ("WALL_EA");
@@ -88,7 +88,7 @@ char *texture_to_string(e_texture texture)
 		return ("UNKNOWN");
 }
 
-int	init_walls_texture(t_data *data, char *line, t_texture texture)
+int	init_walls_texture(t_data *data, char *line,t_texture_enum texture)
 {
 	char	**sprites;
 	size_t	i;
@@ -146,7 +146,7 @@ bool	is_valid_char_color(char *line)
 	return (true);
 }
 
-int	init_colors(t_data *data, char *line, t_texture type)
+int	init_colors(t_data *data, char *line,t_texture_enum type)
 {
 	int		rgb[3];
 	size_t	i;
@@ -599,7 +599,7 @@ int	parse(t_data *data, char *file)
 	while (i < 4)
 	{
 		j = 0;
-		printf("Texture %s\n", texture_to_string((e_texture)i));
+		printf("Texture %s\n", texture_to_string((t_texture_enum)i));
 		while (data->texture[i][j].path)
 		{
 			printf("%s\n", data->texture[i][j].path);

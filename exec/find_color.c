@@ -6,50 +6,20 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:47:05 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/17 15:45:07 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/17 16:33:20 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3d.h"
 
-double	find_cube_center_y(t_data *data, double y)
+size_t	texture_array_len(t_texture *array)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
-	while (i < data->mapy)
-	{
-		if (y < i + 1)
-			return (i + 0.5);
+	while (array[i].addr)
 		i++;
-	}
-	return (0);
-}
-
-double	find_cube_center_x(t_data *data, double x)
-{
-	int	i;
-
-	i = 0;
-	while (i < data->mapx)
-	{
-		if (x < i + 1)
-			return (i + 0.5);
-		i++;
-	}
-	return (0);
-}
-
-int	find_closest_to_05(double x, double y)
-{
-	double	delta_x;
-	double	delta_y;
-
-	delta_x = ft_dabs(x - 0.5);
-	delta_y = ft_dabs(y - 0.5);
-	if (delta_x < delta_y)
-		return (0);
-	return (1);
+	return (i);
 }
 
 double	adjust_angle(double angle)
