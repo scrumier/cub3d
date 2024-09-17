@@ -6,7 +6,7 @@
 #    By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/30 14:25:42 by scrumier          #+#    #+#              #
-#    Updated: 2024/08/15 10:17:09 by scrumier         ###   ########.fr        #
+#    Updated: 2024/09/17 10:41:51 by scrumier         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,15 +49,16 @@ LIBFT_NAME = libft.a
 LIBFT_RM = rm -rf
 
 all: $(LIBFT_NAME)
+	@echo "libft: Done"
 
 $(LIBFT_OBJ_DIR)%.o: $(LIBFT_SRC_DIR)%.c | $(LIBFT_OBJ_DIR)
-	$(LIBFT_CC) $(LIBFT_FLAGS) -MMD -MP -c $< -o $@
+	@$(LIBFT_CC) $(LIBFT_FLAGS) -MMD -MP -c $< -o $@
 
 $(GNL_OBJ_DIR)%.o: $(GNL_SRC_DIR)%.c | $(GNL_OBJ_DIR)
-	$(LIBFT_CC) $(LIBFT_FLAGS) -MMD -MP -c $< -o $@
+	@$(LIBFT_CC) $(LIBFT_FLAGS) -MMD -MP -c $< -o $@
 
 $(PRINTF_OBJ_DIR)%.o: $(PRINTF_SRC_DIR)%.c | $(PRINTF_OBJ_DIR)
-	$(LIBFT_CC) $(LIBFT_FLAGS) -MMD -MP -c $< -o $@
+	@$(LIBFT_CC) $(LIBFT_FLAGS) -MMD -MP -c $< -o $@
 
 $(LIBFT_OBJ_DIR) $(GNL_OBJ_DIR) $(PRINTF_OBJ_DIR):
 	mkdir -p $@

@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 11:17:49 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/16 12:09:56 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/17 09:19:17 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,27 +191,46 @@ void	render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, double line_heig
 	}
 }
 
+static void	calculate_ray_position(t_data *data, t_ray *ray)
+{
+	ray->rx = data->player->x * COEF + (COEF / 2);
+	ray->ry = data->player->y * COEF + (COEF / 2);
+	ray->xo = ray->rx + 1;
+	ray->yo = ray->ry + 1;
+}
+
+static void	adjust_ray_direction(t_ray *ray, double cos_val, double sin_val)
+{
+	ray->rx += RENDER_DISTANCE * cos_val;
+	ray->ry += RENDER_DISTANCE * sin_val;
+}
+
+static void	render_ray(t_data *data, t_ray *ray, int ray_nbr, double line_height, double line_start)
+{
+	render_wall_texture(data, ray, ray_nbr, line_height, line_start);
+	render_ceiling_and_floor(data, ray_nbr, line_height, line_start);
+}
 
 void	cast_rays(t_data *data, t_ray *ray, int total_rays, double ray_angle)
 {
 	int		ray_nbr;
 	double	line_height;
 	double	line_start;
+	double	cos_val;
+	double	sin_val;
+
 
 	ray_nbr = 0;
 	while (ray_nbr < total_rays)
 	{
-		ray->rx = data->player->x * COEF + (COEF / 2);
-		ray->ry = data->player->y * COEF + (COEF / 2);
-		ray->xo = ray->rx + 1;
-		ray->yo = ray->ry + 1;
-		ray->rx += RENDER_DISTANCE * cos(ray->ra);
-		ray->ry += RENDER_DISTANCE * sin(ray->ra);
+		cos_val = cos(ray->ra);
+		sin_val = sin(ray->ra);
+		calculate_ray_position(data, ray);
+		adjust_ray_direction(ray, cos_val, sin_val);
 		data->ray_len[ray_nbr] = draw_and_correct_ray(ray, data, WALL_ACCURACY);
 		line_height = HEIGHT * COEF3D / data->ray_len[ray_nbr];
 		line_start = (WIDTH / 2) - (line_height / 2);
-		render_wall_texture(data, ray, ray_nbr, line_height, line_start);
-		render_ceiling_and_floor(data, ray_nbr, line_height, line_start);
+		render_ray(data, ray, ray_nbr, line_height, line_start);
 		ray->ra += ray_angle;
 		ray_nbr++;
 	}
