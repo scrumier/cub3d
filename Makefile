@@ -19,7 +19,6 @@ SRC_FILES	=	$(addprefix $(SRC_DIR), \
 				mlx_utils.c \
 				find_color.c \
 				opti.c \
-				mini_parse.c \
 				rays.c \
 				open_door.c \
 				pixel_color.c \
@@ -32,6 +31,15 @@ SRC_FILES	=	$(addprefix $(SRC_DIR), \
 				render_texture.c \
 				$(addprefix parsing/, \
 					main_parser.c \
+					color_parse.c \
+					color_parse_utils.c \
+					free_utils.c \
+					map_check.c \
+					map_check_utils.c \
+					map_parse.c \
+					map_parse_utils.c \
+					parse_utils.c \
+					wall_utils.c \
 				) \
 				)
 OBJ_FILES	=	$(SRC_FILES:$(SRC_DIR)%.c=$(OBJ_DIR)/%.o)

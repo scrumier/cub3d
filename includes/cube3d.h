@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cube3d.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/18 10:10:53 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/18 11:12:40 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -300,5 +300,43 @@ void			render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, \
 double			draw_and_correct_ray(t_ray *ray, t_data *data, \
 								int wall_accuracy);
 size_t			texture_array_len(t_texture *array);
-
+bool			is_color_line(char *line);
+bool			is_valid_char_color(char *line);
+int				check_colors(t_data *data, char *line);
+int				colors_init_check(size_t *i, char **line, size_t *start, size_t *color);
+int				init_color_return(size_t color, t_texture_enum type, t_data *data, int *rgb);
+int				color_line_check(char *line, size_t *i, size_t color);
+int				init_colors(t_data *data, char *line, t_texture_enum type);
+int				parse_colors(t_data *data, char **line_trimmed, char **line, int fd);
+void			free_strarray(char **array);
+void			free_llist(t_llist *list);
+void			free_texture(t_data *data);
+int				parse_init(size_t *i, char *file, int *fd);
+int				parse_return(t_data *data, int fd);
+int				parse_iter(char **line, char **line_trimmed, int fd);
+int				parse_process(t_data *data, char **line, char **line_trimmed, int fd);
+int				parse(t_data *data, char *file);
+bool			is_map_char(char c);
+void			map_fill_spaces(t_data *data);
+int				map_check_init_x(size_t *x, size_t y, t_data *data);
+char			*add_spaces(char *str, size_t amount);
+int				padding_map(t_data *data, t_llist *map);
+bool			is_everything_init(t_data *data);
+int				space_check_diagonal(t_data *data, size_t x, size_t y);
+int				space_check(t_data *data, size_t x, size_t y);
+int				map_check(t_data *data);
+double			get_player_angle(char c);
+int				first_map_node(t_data *data, char *line, t_llist **map, t_llist **last);
+int				add_map_node(t_data *data, char *line, t_llist **map, t_llist **last);
+int				parse_map_iterate(t_data *data, char **line, int fd);
+int				map_info_parse(t_data *data);
+int				parse_map(t_data *data, char *line, int fd);
+void			print_error(char *reason);
+size_t			strarray_len(char **array);
+char			*ft_strndup(const char *s, size_t n);
+int				get_line_trimmed(char **line, char **line_trimmed, int fd);
+int				load_texture(t_data *data, t_texture *texture, char *path);
+int				init_walls_texture(t_data *data, char *line, t_texture_enum texture);
+int				init_wall(t_data *data, char *line);
+size_t			get_max_size(t_llist *list);
 #endif
