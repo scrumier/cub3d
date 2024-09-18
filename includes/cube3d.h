@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cube3d.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/18 11:12:40 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/09/18 11:35:26 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@
 # define FPS 40
 # define FXAA_ENABLED false
 # define WALL_ACCURACY 50
-# define THRESHOLD 0.1
+# define THRESHOLD 1
 # define RENDER_DISTANCE 100
 # define TEXTURE_NB 6
 # define HITBOX_RADIUS 0.2

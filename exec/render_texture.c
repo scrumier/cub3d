@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 16:36:37 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/17 16:38:05 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/18 11:29:17 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,8 @@ void	render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, \
 		draw_wall.ray_nbr = ray_nbr;
 		draw_wall.line_height = line.line_height;
 		draw_wall.line_start = line.line_start;
-		if (!(i + line.line_start < data->mapy * COEF))
+		if (!(ray_nbr < data->mapx * COEF && i + line.line_start < \
+				data->mapy * COEF))
 			draw_texture_pixel(data, ray, draw_wall, texture);
 	}
 }
