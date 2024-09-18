@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/17 16:40:02 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/18 11:31:01 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,9 @@
 # define RAYS WIDTH 
 # define BEAM_WIDTH 256
 # define FPS 40
-# define FXAA_ENABLED false
+# define FXAA_ENABLED true
 # define WALL_ACCURACY 50
-# define THRESHOLD 0.1
+# define THRESHOLD 1
 # define RENDER_DISTANCE 100
 # define TEXTURE_NB 6
 # define HITBOX_RADIUS 0.2

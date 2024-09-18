@@ -7,7 +7,7 @@ INC			=	$(addprefix $(INC_DIR), \
 SRC_DIR		=	exec
 OBJ_DIR		=	.obj
 LIBFT_DIR	=	libft
-NAME		=	cub3d
+NAME		=	cub3D
 RM			=	rm -f
 SRC_FILES	=	$(addprefix $(SRC_DIR), \
 				raycast.c \
@@ -19,7 +19,6 @@ SRC_FILES	=	$(addprefix $(SRC_DIR), \
 				mlx_utils.c \
 				find_color.c \
 				opti.c \
-				mini_parse.c \
 				rays.c \
 				open_door.c \
 				pixel_color.c \
