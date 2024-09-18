@@ -1,47 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   pixel_color.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/26 10:36:06 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/18 10:13:02 by scrumier         ###   ########.fr       */
+/*   Created: 2024/09/17 16:03:45 by scrumier          #+#    #+#             */
+/*   Updated: 2024/09/17 16:03:50 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3d.h"
 
-int	deg_to_rad(int deg)
+unsigned int	get_pixel_color(t_data *data, int x, int y)
 {
-	return (deg * PI / 180);
+	char	*dst;
+
+	dst = data->img.addr + (y * data->img.line_len + x * (data->img.bpp / 8));
+	return (*(unsigned int *)dst);
 }
 
-double	find_angle(int total_rays)
+void	set_pixel_color(t_data *data, int x, int y, unsigned int color)
 {
-	double	rad;
+	char	*dst;
 
-	rad = FOV * PI / 180;
-	return (rad / total_rays);
-}
-
-double	ft_dabs(double d)
-{
-	if (d < 0)
-		d = -d;
-	return (d);
-}
-
-int	double_to_int(double x)
-{
-	if (x - (int)x >= 0.4)
-		return ((int)x + 1);
-	return ((int)x);
-}
-
-int	ft_abs(int x)
-{
-	if (x < 0)
-		return (-x);
-	return (x);
+	dst = data->img.addr + (y * data->img.line_len + x * (data->img.bpp / 8));
+	*(unsigned int *)dst = color;
 }

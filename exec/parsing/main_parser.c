@@ -6,7 +6,7 @@
 /*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 09:41:33 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/09/16 16:18:59 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/18 10:14:58 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int	load_texture(t_data *data, t_texture *texture, char *path)
 	return (0);
 }
 
-int	init_walls_texture(t_data *data, char *line, e_texture texture)
+int	init_walls_texture(t_data *data, char *line, t_texture_enum texture)
 {
 	char	**sprites;
 	size_t	i;
@@ -148,7 +148,7 @@ int	colors_init_check(size_t *i, char **line, size_t *start, size_t *color)
 	return (0);
 }
 
-int	init_color_return(size_t color, e_texture type, t_data *data, int *rgb)
+int	init_color_return(size_t color, t_texture_enum type, t_data *data, int *rgb)
 {
 	if (color != 3)
 		return (print_error(INVALID_COLOR_ARG), 22);
@@ -170,7 +170,7 @@ int	color_line_check(char *line, size_t *i, size_t color)
 	return (0);
 }
 
-int	init_colors(t_data *data, char *line, e_texture type)
+int	init_colors(t_data *data, char *line, t_texture_enum type)
 {
 	int		rgb[3];
 	size_t	i;
@@ -275,8 +275,8 @@ int	padding_map(t_data *data, t_llist *map)
 	t_llist	*tmp;
 	char	**padded_map;
 
-	data->mapX = get_max_size(map);
-	padded_map = ft_calloc(data->mapY + 1, sizeof(char *));
+	data->mapx = get_max_size(map);
+	padded_map = ft_calloc(data->mapy + 1, sizeof(char *));
 	if (!padded_map)
 		return (1);
 	i = 0;
@@ -284,7 +284,7 @@ int	padding_map(t_data *data, t_llist *map)
 	while (tmp)
 	{
 		padded_map[i] = add_spaces(tmp->content, \
-			data->mapX - ft_strlen(tmp->content));
+			data->mapx - ft_strlen(tmp->content));
 		if (!padded_map[i])
 			return (free_strarray(padded_map), 1);
 		tmp = tmp->next;
@@ -326,7 +326,7 @@ int	add_map_node(t_data *data, char *line, t_llist **map, t_llist **last)
 
 int	parse_map_iterate(t_data *data, char **line, int fd)
 {
-	data->mapY++;
+	data->mapy++;
 	free(*line);
 	errno = 0;
 	*line = get_next_line(fd);
@@ -342,7 +342,7 @@ int	parse_map(t_data *data, char *line, int fd)
 
 	map = NULL;
 	last = NULL;
-	data->mapY = 0;
+	data->mapy = 0;
 	if (data->map)
 		return (print_error(VALUE_AFTER_MAP), 127);
 	while (line && line[0] != '\n')
@@ -369,8 +369,8 @@ int	space_check_diagonal(t_data *data, size_t x, size_t y)
 	size_t	map_width;
 	size_t	map_height;
 
-	map_width = data->mapX;
-	map_height = data->mapY;
+	map_width = data->mapx;
+	map_height = data->mapy;
 	if (x > 0 && y > 0 && (data->map[y - 1][x - 1] != '1'
 		&& data->map[y - 1][x - 1] != ' '))
 		return (0);
@@ -391,8 +391,8 @@ int	space_check(t_data *data, size_t x, size_t y)
 	size_t	map_width;
 	size_t	map_height;
 
-	map_width = data->mapX;
-	map_height = data->mapY;
+	map_width = data->mapx;
+	map_height = data->mapy;
 	if (x > 0 && (data->map[y][x - 1] != '1' && data->map[y][x - 1] != ' '))
 		return (0);
 	if (x + 1 < map_width && (data->map[y][x + 1] != '1'
@@ -422,13 +422,13 @@ int	map_check(t_data *data)
 	size_t	x;
 
 	y = 0;
-	while (y < data->mapY)
+	while (y < data->mapy)
 	{
 		if (map_check_init_x(&x, y, data))
 			return (22);
 		while (data->map[y][x])
 		{
-			if ((y == 0 || y == data->mapY - 1)
+			if ((y == 0 || y == data->mapy - 1)
 				&& data->map[y][x] != '1' && data->map[y][x] != ' ')
 				return (print_error(INVALID_MAP), 22);
 			if (data->map[y][x] == ' ')
@@ -451,7 +451,7 @@ void	map_fill_spaces(t_data *data)
 	size_t	x;
 
 	y = 0;
-	while (y < data->mapY)
+	while (y < data->mapy)
 	{
 		x = 0;
 		while (data->map[y][x])
@@ -504,10 +504,10 @@ int	map_info_parse(t_data *data)
 
 	i = 0;
 	j = 0;
-	while (i < data->mapY)
+	while (i < data->mapy)
 	{
 		j = 0;
-		while (j < data->mapX)
+		while (j < data->mapx)
 		{
 			if (!is_map_char(data->map[i][j]))
 				return (print_error(INVALID_MAP), 22);
