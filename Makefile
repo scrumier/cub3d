@@ -7,7 +7,7 @@ INC			=	$(addprefix $(INC_DIR), \
 SRC_DIR		=	exec
 OBJ_DIR		=	.obj
 LIBFT_DIR	=	libft
-NAME		=	cub3d
+NAME		=	cub3D
 RM			=	rm -f
 SRC_FILES	=	$(addprefix $(SRC_DIR), \
 				raycast.c \
