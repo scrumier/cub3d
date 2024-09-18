@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 10:40:39 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/09/18 10:58:48 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/09/18 11:48:44 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	map_fill_spaces(t_data *data)
 	size_t	x;
 
 	y = 0;
-	while (y < data->mapy)
+	while (y < (size_t)data->mapy)
 	{
 		x = 0;
 		while (data->map[y][x])
@@ -67,7 +67,7 @@ int	padding_map(t_data *data, t_llist *map)
 	char	**padded_map;
 
 	data->mapx = get_max_size(map);
-	padded_map = ft_calloc(data->mapy + 1, sizeof(char *));
+	padded_map = ft_calloc((size_t)data->mapy + 1, sizeof(char *));
 	if (!padded_map)
 		return (1);
 	i = 0;

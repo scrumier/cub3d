@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   darken_color.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 16:33:57 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/17 16:34:28 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/18 11:46:12 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,8 @@ int	get_texture_color(t_texture *texture, double texture_offset, int tex_x)
 		tex_y = 0;
 	if (tex_y >= texture->height)
 		tex_y = texture->height - 1;
-	if (texture->addr)
-		color = *(int *)(texture->addr + (tex_y * texture->line_len + tex_x * \
-			(texture->bpp / 8)));
+	color = *(int *)(texture->addr + (tex_y * texture->line_len + tex_x * \
+		(texture->bpp / 8)));
 	return (color);
 }
 

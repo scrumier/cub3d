@@ -1,5 +1,5 @@
 CC			=	cc
-FLAGS		=	-MMD -MP -g3
+FLAGS		=	-Wall -Werror -Wextra -MMD -MP -g3
 INC_DIR		=	includes/
 INC			=	$(addprefix $(INC_DIR), \
 				cube3d.h \
@@ -58,16 +58,17 @@ endif
 INCLUDES	=	-I/usr/include -I$(MLX_DIR) -Ilibft/includes -I$(INC_DIR)
 
 all: mlx libft $(NAME)
+	@echo "\033[0;32m$(NAME): Done\033[0m"
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(INC) Makefile | $(OBJ_DIR)
-	$(CC) $(FLAGS) $(INCLUDES) -c $< -o $@ -I$(LIBFT_DIR)
+	@$(CC) $(FLAGS) $(INCLUDES) -c $< -o $@ -I$(LIBFT_DIR)
 
 $(NAME): $(OBJ_FILES) $(INC) Makefile $(OBJ_DIR)
-	$(CC) $(OBJ_FILES) $(LIBRARIES) -o $@
+	@$(CC) $(OBJ_FILES) $(LIBRARIES) -o $@
 
 $(OBJ_DIR):
-	mkdir -p $@
-	mkdir -p $(OBJ_DIR)/parsing
+	@mkdir -p $@
+	@mkdir -p $(OBJ_DIR)/parsing
 mlx:
 	@make -C $(MLX)
 
@@ -77,15 +78,20 @@ libft: FORCE
 -include $(DEP)
 
 clean:
-	$(RM) -r $(OBJ_DIR)
+	@$(RM) -r $(OBJ_DIR)
 	@make -C $(LIBFT_DIR) clean
+	@make -C $(MLX_DIR) clean
+	@echo "\033[0;33m$(NAME): Cleaned\033[0m"
 
 fclean: clean
-	$(RM) $(NAME)
+	@$(RM) $(NAME)
 	@make -C $(LIBFT_DIR) fclean
+	@make -C $(MLX_DIR) clean
+	@echo "\033[0;31m$(NAME): Fcleaned\033[0m"
 
 FORCE:
 
 re: fclean all
+	
 
 .PHONY: all clean fclean re mlx libft

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cube3d.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:17:42 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/18 11:35:26 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/18 13:38:05 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@
 # define FOV 60
 # define RAYS WIDTH 
 # define BEAM_WIDTH 256
-# define FPS 40
 # define FXAA_ENABLED false
 # define WALL_ACCURACY 50
 # define THRESHOLD 1
@@ -218,7 +217,6 @@ typedef struct s_data
 	int				frame;
 	bool			flash_light;
 	t_texture		*texture[TEXTURE_NB];
-	double			last_fps[FPS];
 }				t_data;
 
 typedef enum e_texture
@@ -285,7 +283,7 @@ bool			check_corner_collision(t_data *data, double new_x, \
 										double new_y, double radius);
 bool			is_out_of_the_map(t_data *data, double x, double y);
 void			set_pixel_color(t_data *data, int x, int y, unsigned int color);
-void			free_mlx_image(t_data *data, t_img *img);
+void			free_mlx_image(t_data *data);
 void			free_all(t_data *data);
 void			free_parse(t_data *data);
 int				free_exit(t_data *data);
@@ -326,8 +324,8 @@ int				space_check_diagonal(t_data *data, size_t x, size_t y);
 int				space_check(t_data *data, size_t x, size_t y);
 int				map_check(t_data *data);
 double			get_player_angle(char c);
-int				first_map_node(t_data *data, char *line, t_llist **map, t_llist **last);
-int				add_map_node(t_data *data, char *line, t_llist **map, t_llist **last);
+int				first_map_node(char *line, t_llist **map, t_llist **last);
+int				add_map_node(char *line, t_llist **map, t_llist **last);
 int				parse_map_iterate(t_data *data, char **line, int fd);
 int				map_info_parse(t_data *data);
 int				parse_map(t_data *data, char *line, int fd);

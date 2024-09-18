@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycast.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/20 07:16:58 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/18 10:12:54 by scrumier         ###   ########.fr       */
+/*   Updated: 2024/09/18 11:45:07 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ bool	is_valid_texture(t_data *data)
 int	create_image(t_data *data)
 {
 	int	i;
-	int	j;
 
 	i = 0;
 	data->next_image++;

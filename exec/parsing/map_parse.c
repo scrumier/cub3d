@@ -6,13 +6,13 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 10:41:59 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/09/18 10:58:28 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/09/18 13:38:29 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3d.h"
 
-int	first_map_node(t_data *data, char *line, t_llist **map, t_llist **last)
+int	first_map_node(char *line, t_llist **map, t_llist **last)
 {
 	*map = ft_calloc(1, sizeof(t_llist));
 	if (!*map)
@@ -24,7 +24,7 @@ int	first_map_node(t_data *data, char *line, t_llist **map, t_llist **last)
 	return (0);
 }
 
-int	add_map_node(t_data *data, char *line, t_llist **map, t_llist **last)
+int	add_map_node(char *line, t_llist **map, t_llist **last)
 {
 	size_t	len;
 
@@ -60,10 +60,10 @@ int	map_info_parse(t_data *data)
 
 	i = 0;
 	j = 0;
-	while (i < data->mapy)
+	while (i < (size_t)data->mapy)
 	{
 		j = 0;
-		while (j < data->mapx)
+		while (j < (size_t)data->mapx)
 		{
 			if (!is_map_char(data->map[i][j]))
 				return (print_error(INVALID_MAP), 22);
@@ -96,12 +96,12 @@ int	parse_map(t_data *data, char *line, int fd)
 	{
 		if (!map)
 		{
-			if (first_map_node(data, line, &map, &last))
+			if (first_map_node(line, &map, &last))
 				return (1);
 		}
 		else
 		{
-			if (add_map_node(data, line, &map, &last))
+			if (add_map_node(line, &map, &last))
 				return (1);
 		}
 		if (parse_map_iterate(data, &line, fd))

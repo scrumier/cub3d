@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+         #
+#    By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/30 14:25:42 by scrumier          #+#    #+#              #
-#    Updated: 2024/09/17 10:41:51 by scrumier         ###   ########.fr        #
+#    Updated: 2024/09/18 11:43:16 by mwojtasi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,7 +49,7 @@ LIBFT_NAME = libft.a
 LIBFT_RM = rm -rf
 
 all: $(LIBFT_NAME)
-	@echo "libft: Done"
+	@echo "\033[0;32mlibft: Done\033[0m"
 
 $(LIBFT_OBJ_DIR)%.o: $(LIBFT_SRC_DIR)%.c | $(LIBFT_OBJ_DIR)
 	@$(LIBFT_CC) $(LIBFT_FLAGS) -MMD -MP -c $< -o $@
@@ -61,22 +61,24 @@ $(PRINTF_OBJ_DIR)%.o: $(PRINTF_SRC_DIR)%.c | $(PRINTF_OBJ_DIR)
 	@$(LIBFT_CC) $(LIBFT_FLAGS) -MMD -MP -c $< -o $@
 
 $(LIBFT_OBJ_DIR) $(GNL_OBJ_DIR) $(PRINTF_OBJ_DIR):
-	mkdir -p $@
+	@mkdir -p $@
 
 -include $(LIBFT_OBJ:.o=.d)
 -include $(GNL_OBJ:.o=.d)
 -include $(PRINTF_OBJ:.o=.d)
 
 $(LIBFT_NAME): $(LIBFT_OBJ) $(GNL_OBJ) $(PRINTF_OBJ)
-	ar rc $@ $^
-	ranlib $@
+	@ar rc $@ $^
+	@ranlib $@
 
 clean:
-	$(LIBFT_RM) $(LIBFT_OBJ) $(GNL_OBJ) $(PRINTF_OBJ)
+	@$(LIBFT_RM) $(LIBFT_OBJ) $(GNL_OBJ) $(PRINTF_OBJ)
+	@echo "\033[0;33mlibft: Cleaned\033[0m"
 
 fclean: clean
-	$(LIBFT_RM) $(LIBFT_NAME)
-	$(LIBFT_RM) $(LIBFT_OBJ_DIR) $(GNL_OBJ_DIR) $(PRINTF_OBJ_DIR)
+	@$(LIBFT_RM) $(LIBFT_NAME)
+	@$(LIBFT_RM) $(LIBFT_OBJ_DIR) $(GNL_OBJ_DIR) $(PRINTF_OBJ_DIR)
+	@echo "\033[0;31mlibft: Fcleaned\033[0m"
 
 re: fclean all
 

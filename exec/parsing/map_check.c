@@ -6,7 +6,7 @@
 /*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 09:41:49 by mwojtasi          #+#    #+#             */
-/*   Updated: 2024/09/18 10:58:20 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/09/18 11:47:31 by mwojtasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,13 +77,13 @@ int	map_check(t_data *data)
 	size_t	x;
 
 	y = 0;
-	while (y < data->mapy)
+	while (y < (size_t)data->mapy)
 	{
 		if (map_check_init_x(&x, y, data))
 			return (22);
 		while (data->map[y][x])
 		{
-			if ((y == 0 || y == data->mapy - 1)
+			if ((y == 0 || y == (size_t)data->mapy - 1)
 				&& data->map[y][x] != '1' && data->map[y][x] != ' ')
 				return (print_error(INVALID_MAP), 22);
 			if (data->map[y][x] == ' ')
