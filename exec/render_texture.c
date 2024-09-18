@@ -3,14 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   render_texture.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mwojtasi <mwojtasi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: scrumier <scrumier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 16:36:37 by scrumier          #+#    #+#             */
-/*   Updated: 2024/09/18 13:41:32 by mwojtasi         ###   ########.fr       */
+/*   Updated: 2024/09/18 13:55:18 by scrumier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3d.h"
+
+void	init_wall_pixel(t_draw_wall *draw_wall, int i, int wall_face, int ray_nbr)
+{
+	draw_wall->i = i;
+	draw_wall->wall_face = wall_face;
+	draw_wall->ray_nbr = ray_nbr;
+}
 
 double	calculate_texture_offset(int i, double line_height, int texture_height)
 {
@@ -74,9 +81,7 @@ void	render_wall_texture(t_data *data, t_ray *ray, int ray_nbr, \
 	i = -1;
 	while (++i < line.line_height)
 	{
-		draw_wall.i = i;
-		draw_wall.wall_face = wall_face;
-		draw_wall.ray_nbr = ray_nbr;
+		init_wall_pixel(&draw_wall, i, wall_face, ray_nbr);
 		draw_wall.line_height = line.line_height;
 		draw_wall.line_start = line.line_start;
 		if (!(ray_nbr < data->mapx * COEF && i + line.line_start < \
